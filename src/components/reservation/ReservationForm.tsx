@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useReservationForm } from '@/hooks';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { TIME_SLOTS, GUEST_OPTIONS } from '@/lib/constants';
@@ -12,13 +13,93 @@ interface ReservationFormProps {
   onBack?: () => void;
 }
 
+// Custom Guests Input Component
+interface GuestsInputProps {
+  value?: string;
+  onChange: (value: string) => void;
+  error?: string;
+}
+
+function GuestsInput({ value, onChange, error }: GuestsInputProps) {
+  const [selectedShortcut, setSelectedShortcut] = useState<number | null>(null);
+  const shortcuts = [5, 10, 15, 20];
+
+  useEffect(() => {
+    if (value && shortcuts.includes(parseInt(value))) {
+      setSelectedShortcut(parseInt(value));
+    } else {
+      setSelectedShortcut(null);
+    }
+  }, [value]);
+
+  const handleShortcutClick = (num: number) => {
+    onChange(num.toString());
+    setSelectedShortcut(num);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    onChange(inputValue);
+    
+    // Update selected shortcut if input matches a shortcut
+    const numValue = parseInt(inputValue);
+    if (shortcuts.includes(numValue)) {
+      setSelectedShortcut(numValue);
+    } else {
+      setSelectedShortcut(null);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-foreground">
+        Nombre d'invités
+        <span className="text-destructive ml-1">*</span>
+      </label>
+      
+      <Input
+        type="number"
+        min="1"
+        max="50"
+        value={value || ''}
+        onChange={handleInputChange}
+        placeholder="Entrez le nombre d'invités"
+        error={error}
+      />
+      
+      <div className="flex gap-2 mt-3">
+        {shortcuts.map(num => (
+          <button
+            key={num}
+            type="button"
+            onClick={() => handleShortcutClick(num)}
+            className={`
+              px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+              border bg-input text-foreground min-w-[50px]
+              hover:border-white/70 hover:bg-white/5
+              ${selectedShortcut === num 
+                ? 'border-white/70 bg-white/10 text-white' 
+                : 'border-input'
+              }
+            `}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
   const {
-    form: { register, handleSubmit, formState: { errors } },
+    form: { register, handleSubmit, formState: { errors }, setValue, watch },
     isSubmitting,
     submitError,
     onSubmit
   } = useReservationForm();
+
+  const guestsValue = watch('guests');
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
@@ -104,17 +185,11 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             </Select>
           </div>
 
-          <Select
-            label="Nombre d'invités"
+          <GuestsInput
+            value={guestsValue}
+            onChange={(value) => setValue('guests', value)}
             error={errors.guests?.message}
-            {...register('guests')}
-          >
-            {GUEST_OPTIONS.map(num => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? 'Invité' : 'Invités'}
-              </option>
-            ))}
-          </Select>
+          />
 
           <Textarea
             label="Demandes spéciales (Optionnel)"
