@@ -2,7 +2,7 @@
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PageLoadingSpinner, Alert } from '@/components/ui';
-import { AdminHeader, StatsCards, AdminFilters, ReservationTable } from '@/components/admin';
+import { AdminHeader, AdminTabs, TabPanel, OverviewTab, SettingsTab } from '@/components/admin';
 import { useAdminDashboard } from '@/hooks';
 
 export default function AdminPage() {
@@ -37,20 +37,23 @@ export default function AdminPage() {
             </Alert>
           )}
 
-          <StatsCards stats={stats} totalGuests={totalGuests} />
-
-          <AdminFilters
-            filters={filters}
-            onFiltersChange={onFiltersChange}
-            onRefresh={refetch}
-            isLoading={loading}
-          />
-
-          <ReservationTable
-            reservations={reservations}
-            selectedDate={filters.date || ''}
-            onReservationUpdate={refetch}
-          />
+          <AdminTabs defaultTab="overview">
+            <TabPanel id="overview">
+              <OverviewTab
+                stats={stats}
+                totalGuests={totalGuests}
+                reservations={reservations}
+                filters={filters}
+                loading={loading}
+                onFiltersChange={onFiltersChange}
+                onRefresh={refetch}
+              />
+            </TabPanel>
+            
+            <TabPanel id="settings">
+              <SettingsTab />
+            </TabPanel>
+          </AdminTabs>
         </div>
       </div>
     </ErrorBoundary>
