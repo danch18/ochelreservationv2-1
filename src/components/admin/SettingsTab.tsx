@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardContent, Button } from '@/components/ui';
 import { RESTAURANT_CONFIG, TIME_SLOTS } from '@/lib/constants';
+import { DateAvailabilityManager } from './DateAvailabilityManager';
 
 export function SettingsTab() {
   return (
@@ -12,6 +13,9 @@ export function SettingsTab() {
           View and manage your restaurant configuration and operating hours.
         </p>
       </div>
+
+      {/* Date Availability Management */}
+      <DateAvailabilityManager />
 
       {/* Restaurant Information */}
       <Card className="bg-card/80 backdrop-blur-sm border-border/50">

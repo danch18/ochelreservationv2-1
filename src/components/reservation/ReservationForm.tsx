@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useReservationForm } from '@/hooks';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { TIME_SLOTS, GUEST_OPTIONS } from '@/lib/constants';
 import { getTodayDate } from '@/lib/utils';
+import { dateAvailabilityService } from '@/services';
 import type { Reservation } from '@/types';
 
 
@@ -20,7 +22,30 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
     onSubmit
   } = useReservationForm();
 
+  const [dateAvailable, setDateAvailable] = useState(true);
+  const [checkingDate, setCheckingDate] = useState(false);
+  
+  const selectedDate = watch('date');
 
+  // Check date availability when date changes
+  useEffect(() => {
+    if (selectedDate) {
+      const checkDate = async () => {
+        setCheckingDate(true);
+        try {
+          const available = await dateAvailabilityService.isDateAvailable(selectedDate);
+          setDateAvailable(available);
+        } catch (error) {
+          setDateAvailable(true); // Default to available on error
+        } finally {
+          setCheckingDate(false);
+        }
+      };
+      checkDate();
+    } else {
+      setDateAvailable(true);
+    }
+  }, [selectedDate]);
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
@@ -84,13 +109,26 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
           />
 
           <div className="grid md:grid-cols-1 gap-4">
-            <Input
-              type="date"
-              label="Date"
-              min={getTodayDate()}
-              error={errors.date?.message}
-              {...register('date')}
-            />
+            <div className="space-y-2">
+              <Input
+                type="date"
+                label="Date"
+                min={getTodayDate()}
+                error={errors.date?.message || (!dateAvailable && selectedDate ? 'This date is not available for reservations' : undefined)}
+                {...register('date')}
+              />
+              {selectedDate && (
+                <div className="text-sm">
+                  {checkingDate ? (
+                    <span className="text-muted-foreground">Checking availability...</span>
+                  ) : dateAvailable ? (
+                    <span className="text-primary">✓ Date is available</span>
+                  ) : (
+                    <span className="text-destructive">✗ Restaurant is closed on this date</span>
+                  )}
+                </div>
+              )}
+            </div>
             
             <Select
               label="Time"
@@ -132,11 +170,11 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
           <Button
             type="submit"
             loading={isSubmitting}
-            disabled={isSubmitting}
+            disabled={isSubmitting || (!dateAvailable && !!selectedDate)}
             className="w-full mb-2 !text-black"
             size="md"
           >
-            {isSubmitting ? 'Creating Reservation...' : 'Reserve Table'}
+            {isSubmitting ? 'Creating Reservation...' : (!dateAvailable && selectedDate ? 'Date Not Available' : 'Reserve Table')}
           </Button>
           <p className="text-xs text-muted-foreground text-center">
             powered by Ochel

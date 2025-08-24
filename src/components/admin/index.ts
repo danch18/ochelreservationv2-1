@@ -6,3 +6,4 @@ export { ReservationTable } from './ReservationTable';
 export { AdminTabs, TabPanel } from './AdminTabs';
 export { OverviewTab } from './OverviewTab';
 export { SettingsTab } from './SettingsTab';
+export { DateAvailabilityManager } from './DateAvailabilityManager';
