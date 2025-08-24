@@ -19,18 +19,18 @@ class ReservationServiceClass {
       // Log additional error details to help with debugging
       if (error && typeof error === 'object') {
         console.error('Error details:', {
-          message: (error as any).message,
-          code: (error as any).code,
-          details: (error as any).details,
-          hint: (error as any).hint,
-          stack: (error as any).stack
+          message: (error as Record<string, unknown>).message,
+          code: (error as Record<string, unknown>).code,
+          details: (error as Record<string, unknown>).details,
+          hint: (error as Record<string, unknown>).hint,
+          stack: (error as Record<string, unknown>).stack
         });
       }
     }
     
     // Map specific Supabase errors to user-friendly messages
     if (error && typeof error === 'object') {
-      const err = error as any;
+      const err = error as Record<string, unknown>;
       
       // Supabase specific error codes
       if (err.code === 'PGRST116') {

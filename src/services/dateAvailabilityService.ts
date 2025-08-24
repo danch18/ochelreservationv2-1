@@ -19,14 +19,22 @@ class DateAvailabilityService {
         .single();
 
       if (error && error.code !== 'PGRST116') { // PGRST116 means no rows returned
-        console.error('Error checking date availability:', error);
+        console.error('Error checking date availability:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         return true; // Default to available on error
       }
 
       // If data exists, the date is closed
       return !data;
     } catch (error) {
-      console.error('Error checking date availability:', error);
+      console.error('Error checking date availability:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
       return true; // Default to available on error
     }
   }
@@ -40,13 +48,22 @@ class DateAvailabilityService {
         .order('date', { ascending: true });
 
       if (error) {
-        console.error('Error fetching closed dates:', error);
+        console.error('Error fetching closed dates:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        // Return empty array if table doesn't exist or has permission issues
         return [];
       }
 
-      return data?.map(item => item.date) || [];
+      return data?.map((item: { date: string }) => item.date) || [];
     } catch (error) {
-      console.error('Error fetching closed dates:', error);
+      console.error('Error fetching closed dates:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
       return [];
     }
   }
@@ -128,3 +145,6 @@ class DateAvailabilityService {
 }
 
 export const dateAvailabilityService = new DateAvailabilityService();
+
+
+

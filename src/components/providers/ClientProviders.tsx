@@ -13,3 +13,4 @@ export function ClientProviders({ children }: ClientProvidersProps) {
     </LanguageProvider>
   );
 }
+

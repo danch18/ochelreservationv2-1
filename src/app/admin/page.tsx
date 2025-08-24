@@ -7,7 +7,7 @@ import { AdminTabs, AdminHeader, OverviewTab, SettingsTab } from '@/components/a
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { reservations, isLoading, error, refetch } = useReservations();
+  const { reservations, loading, error, refetch } = useReservations();
 
   if (error) {
     return (
@@ -40,7 +40,7 @@ export default function AdminPage() {
             {activeTab === 'overview' && (
               <OverviewTab 
                 reservations={reservations}
-                isLoading={isLoading}
+                isLoading={loading}
                 onReservationsUpdate={refetch}
               />
             )}

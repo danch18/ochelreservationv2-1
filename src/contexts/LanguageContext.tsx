@@ -44,7 +44,6 @@ const translations: Translations = {
   'yourReservations': { fr: 'Vos réservations', en: 'Your Reservations' },
   'noReservations': { fr: 'Aucune réservation trouvée pour cet email.', en: 'No reservations found for this email.' },
   'guest': { fr: 'invité', en: 'guest' },
-  'guests': { fr: 'invités', en: 'guests' },
   'cancel': { fr: 'Annuler', en: 'Cancel' },
   'confirmCancel': { fr: 'Êtes-vous sûr de vouloir annuler cette réservation ?', en: 'Are you sure you want to cancel this reservation?' },
   'yes': { fr: 'Oui', en: 'Yes' },

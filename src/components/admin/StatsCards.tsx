@@ -1,66 +1,58 @@
-'use client';
-
-import { Card } from '@/components/ui';
-import type { Reservation } from '@/types';
+import { Card, CardContent } from '@/components/ui';
+import type { ReservationStats } from '@/types';
 
 interface StatsCardsProps {
-  reservations: Reservation[];
+  stats: ReservationStats;
+  totalGuests: number;
 }
 
-export function StatsCards({ reservations }: StatsCardsProps) {
-  const today = new Date().toISOString().split('T')[0];
-  
-  const stats = {
-    total: reservations.length,
-    today: reservations.filter(r => r.reservation_date === today).length,
-    confirmed: reservations.filter(r => r.status === 'confirmed').length,
-    cancelled: reservations.filter(r => r.status === 'cancelled').length,
-  };
-
-  const statCards = [
+export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
+  const statItems = [
     {
-      title: 'Total Reservations',
+      title: 'Total',
       value: stats.total,
-      icon: '📊',
-      color: 'text-blue-600'
-    },
-    {
-      title: 'Today\'s Reservations',
-      value: stats.today,
-      icon: '📅',
-      color: 'text-green-600'
+      subtitle: 'reservations',
+      color: 'text-white'
     },
     {
       title: 'Confirmed',
       value: stats.confirmed,
-      icon: '✅',
-      color: 'text-emerald-600'
+      subtitle: 'active bookings',
+      color: 'text-green-200'
+    },
+    {
+      title: 'Completed',
+      value: stats.completed,
+      subtitle: 'finished meals',
+      color: 'text-blue-200'
     },
     {
       title: 'Cancelled',
       value: stats.cancelled,
-      icon: '❌',
-      color: 'text-red-600'
+      subtitle: 'cancelled bookings',
+      color: 'text-red-200'
     },
+    {
+      title: 'Total Guests',
+      value: totalGuests,
+      subtitle: 'expected today',
+      color: 'text-amber-200'
+    }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {statCards.map((stat, index) => (
-        <Card key={index} className="p-6 bg-[#191919] border-white/10">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-white/70">
-                {stat.title}
-              </p>
-              <p className={`text-3xl font-bold ${stat.color}`}>
-                {stat.value}
-              </p>
-            </div>
-            <div className="text-2xl">
-              {stat.icon}
-            </div>
-          </div>
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+      {statItems.map((item, index) => (
+        <Card key={index}>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {item.title}
+            </h3>
+            <p className={`text-3xl font-bold ${item.color}`}>
+              {item.value}
+            </p>
+            <p className="text-sm text-gray-300">{item.subtitle}</p>
+          </CardContent>
         </Card>
       ))}
     </div>

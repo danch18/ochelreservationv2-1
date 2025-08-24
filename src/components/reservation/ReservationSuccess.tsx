@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui';
 import { formatDate, getShortId } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
 import type { Reservation } from '@/types';
 
 interface ReservationSuccessProps {
@@ -16,7 +15,6 @@ export function ReservationSuccess({
   onViewReservations,
   onBack
 }: ReservationSuccessProps) {
-  const { t } = useLanguage();
   return (
     <div className="text-center">
       {onBack && (
@@ -32,22 +30,28 @@ export function ReservationSuccess({
       
       <div className="text-primary text-4xl mb-4">✓</div>
       
-      <h3 className="text-lg font-bold text-popover-foreground mb-3">
-        {t('reservationConfirmed')}
+      <h3 className="text-lg font-bold text-card-foreground mb-3">
+        Reservation Confirmed!
       </h3>
       
-      <p className="text-sm text-muted-foreground mb-4">
-        {t('thankYouMessage', {
-          name: reservation.name,
-          guests: reservation.guests,
-          date: formatDate(reservation.reservation_date),
-          time: reservation.reservation_time
-        })}
+      <p className="text-sm text-muted-foreground mb-3">
+        Thank you, {reservation.name}! Your table for {reservation.guests} has been reserved 
+        for {formatDate(reservation.reservation_date)} at {reservation.reservation_time}.
       </p>
       
+      {reservation.id && (
+        <p className="text-xs text-muted-foreground mb-4">
+          Reservation ID: {getShortId(reservation.id)}
+        </p>
+      )}
+      
       <div className="space-y-2">
-        <Button onClick={onMakeAnother} className="w-full !text-black" size="sm">
-          {t('makeAnotherReservation')}
+        <Button onClick={onMakeAnother} className="w-full" size="sm">
+          Make Another Reservation
+        </Button>
+        
+        <Button onClick={onViewReservations} variant="secondary" className="w-full" size="sm">
+          View My Reservations
         </Button>
       </div>
     </div>

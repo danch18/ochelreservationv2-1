@@ -1,9 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/contexts/LanguageContext';
-
 export function AdminHeader() {
-  const { t } = useLanguage();
 
   return (
     <header className="bg-[#191919] border-b border-border">

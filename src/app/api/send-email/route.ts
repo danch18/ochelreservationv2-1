@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 import type { EmailData } from '@/services/emailService';
+import { ENV_CONFIG } from '@/lib/constants';
 
 // Email configuration - you can switch to different providers
-const createTransporter = () => {
+const createTransporter = (): nodemailer.Transporter => {
   // Option 1: Gmail (requires app password)
   if (process.env.EMAIL_PROVIDER === 'gmail') {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -18,7 +19,7 @@ const createTransporter = () => {
 
   // Option 2: SMTP (works with most providers)
   if (process.env.EMAIL_PROVIDER === 'smtp') {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: parseInt(process.env.EMAIL_PORT || '587'),
       secure: process.env.EMAIL_SECURE === 'true',
@@ -31,7 +32,7 @@ const createTransporter = () => {
 
   // Option 3: Resend (modern email service)
   if (process.env.EMAIL_PROVIDER === 'resend') {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       host: 'smtp.resend.com',
       port: 587,
       secure: false,
@@ -43,8 +44,8 @@ const createTransporter = () => {
   }
 
   // Fallback: log emails to console in development
-  if (process.env.NODE_ENV === 'development') {
-    return nodemailer.createTransporter({
+  if (ENV_CONFIG.isDevelopment) {
+    return nodemailer.createTransport({
       streamTransport: true,
       newline: 'unix',
       buffer: true
@@ -101,13 +102,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: false,
           error: 'Failed to send email via Resend',
-          details: process.env.NODE_ENV === 'development' ? (resendError as any).message : undefined
+          details: ENV_CONFIG.isDevelopment ? (resendError as Error).message : undefined
         }, { status: 500 });
       }
     }
 
     // In development, just log the email instead of sending it
-    if (process.env.NODE_ENV === 'development') {
+    if (ENV_CONFIG.isDevelopment) {
       console.log('📧 Email would be sent:');
       console.log('To:', mailOptions.to);
       console.log('Subject:', mailOptions.subject);
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Failed to send email',
-        details: process.env.NODE_ENV === 'development' ? (transportError as any).message : undefined
+        details: ENV_CONFIG.isDevelopment ? (transportError as Error).message : undefined
       }, { status: 500 });
     }
 
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to process email request',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details: ENV_CONFIG.isDevelopment ? errorMessage : undefined
       },
       { status: 500 }
     );

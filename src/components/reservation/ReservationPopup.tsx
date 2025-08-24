@@ -47,9 +47,6 @@ export function ReservationPopup() {
     setLookupEmail('');
   };
 
-  const handleShowLookup = () => {
-    setCurrentView('lookup');
-  };
 
   const renderContent = () => {
     switch (currentView) {

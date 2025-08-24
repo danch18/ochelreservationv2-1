@@ -79,7 +79,7 @@ export function SettingsTab() {
       <div className="bg-[#191919] rounded-lg p-6 border border-white/10">
         <h2 className="text-xl font-semibold text-white mb-4">Restaurant Availability</h2>
         <p className="text-white/70 mb-6">
-          Mark specific dates when the restaurant will be closed. Customers won't be able to make reservations on these dates.
+          Mark specific dates when the restaurant will be closed. Customers won&apos;t be able to make reservations on these dates.
         </p>
 
         {error && (

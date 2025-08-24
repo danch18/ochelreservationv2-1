@@ -9,7 +9,7 @@ interface AdminFiltersProps {
     date: string;
     search: string;
   };
-  onFiltersChange: (filters: any) => void;
+  onFiltersChange: (filters: { status: string; date: string; search: string; }) => void;
   reservations: Reservation[];
 }
 

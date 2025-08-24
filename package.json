@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup-db": "node scripts/setup-database.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

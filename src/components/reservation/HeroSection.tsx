@@ -29,7 +29,7 @@ export function HeroSection({ onLookupReservations, children }: HeroSectionProps
               <div>🕒 {RESTAURANT_CONFIG.hours}</div>
             </div>
 
-            <ReservationLookup onReservationsFound={onLookupReservations} />
+            <ReservationLookup onLookup={onLookupReservations} />
           </div>
 
           <div className="lg:pl-8">

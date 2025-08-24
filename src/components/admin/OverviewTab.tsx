@@ -19,6 +19,19 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     search: ''
   });
 
+  // Calculate stats from reservations
+  const stats = {
+    total: reservations.length,
+    confirmed: reservations.filter(r => r.status === 'confirmed').length,
+    cancelled: reservations.filter(r => r.status === 'cancelled').length,
+    completed: reservations.filter(r => r.status === 'completed').length,
+  };
+
+  // Calculate total guests
+  const totalGuests = reservations
+    .filter(r => r.status === 'confirmed')
+    .reduce((sum, reservation) => sum + reservation.guests, 0);
+
   // Filter reservations based on current filters
   const filteredReservations = reservations.filter(reservation => {
     const matchesStatus = !filters.status || reservation.status === filters.status;
@@ -33,7 +46,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
   return (
     <div className="space-y-6">
-      <StatsCards reservations={reservations} />
+      <StatsCards stats={stats} totalGuests={totalGuests} />
       
       <AdminFilters 
         filters={filters}
