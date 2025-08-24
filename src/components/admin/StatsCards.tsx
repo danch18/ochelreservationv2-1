@@ -11,31 +11,31 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
     {
       title: 'Total',
       value: stats.total,
-      subtitle: 'reservations',
+      subtitle: 'réservations',
       color: 'text-white'
     },
     {
-      title: 'Confirmed',
+      title: 'Confirmées',
       value: stats.confirmed,
-      subtitle: 'active bookings',
+      subtitle: 'réservations actives',
       color: 'text-green-200'
     },
     {
-      title: 'Completed',
+      title: 'Terminées',
       value: stats.completed,
-      subtitle: 'finished meals',
+      subtitle: 'repas terminés',
       color: 'text-blue-200'
     },
     {
-      title: 'Cancelled',
+      title: 'Annulées',
       value: stats.cancelled,
-      subtitle: 'cancelled bookings',
+      subtitle: 'réservations annulées',
       color: 'text-red-200'
     },
     {
-      title: 'Total Guests',
+      title: 'Total Invités',
       value: totalGuests,
-      subtitle: 'expected today',
+      subtitle: 'attendus aujourd\'hui',
       color: 'text-amber-200'
     }
   ];

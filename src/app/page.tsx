@@ -14,24 +14,24 @@ export default function Home() {
               ochel Restaurant
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-              Experience exceptional dining - Book your table for an unforgettable culinary journey
+              Vivez une expérience culinaire exceptionnelle - Réservez votre table pour un voyage culinaire inoubliable
             </p>
             
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div className="p-6">
                 <div className="text-4xl mb-4">🍽️</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Fine Dining</h3>
-                <p className="text-gray-400">Exceptional cuisine crafted with the finest ingredients</p>
+                <h3 className="text-xl font-semibold text-white mb-2">Gastronomie</h3>
+                <p className="text-gray-400">Cuisine exceptionnelle préparée avec les meilleurs ingrédients</p>
               </div>
               <div className="p-6">
                 <div className="text-4xl mb-4">📅</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Easy Reservations</h3>
-                <p className="text-gray-400">Book your table instantly with our simple reservation system</p>
+                <h3 className="text-xl font-semibold text-white mb-2">Réservations faciles</h3>
+                <p className="text-gray-400">Réservez votre table instantanément avec notre système de réservation simple</p>
               </div>
               <div className="p-6">
                 <div className="text-4xl mb-4">⭐</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Unforgettable Experience</h3>
-                <p className="text-gray-400">Create lasting memories with our exceptional service</p>
+                <h3 className="text-xl font-semibold text-white mb-2">Expérience inoubliable</h3>
+                <p className="text-gray-400">Créez des souvenirs durables avec notre service exceptionnel</p>
               </div>
             </div>
           </div>

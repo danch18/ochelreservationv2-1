@@ -30,7 +30,7 @@ export function ReservationList({
       await reservationService.cancelReservation(id);
       onReservationsUpdate?.();
     } catch {
-      setError('Failed to cancel reservation. Please try again.');
+      setError('Échec de l\'annulation de la réservation. Veuillez réessayer.');
     } finally {
       setCancellingId(null);
     }
@@ -41,9 +41,9 @@ export function ReservationList({
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">My Reservations</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Mes réservations</h2>
             <Button onClick={onBack} variant="secondary">
-              Back to Booking
+              Retour à la réservation
             </Button>
           </div>
 
@@ -55,7 +55,7 @@ export function ReservationList({
 
           {reservations.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600">No reservations found for {email}</p>
+              <p className="text-gray-600">Aucune réservation trouvée pour {email}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -96,18 +96,18 @@ function ReservationCard({ reservation, onCancel, isCancelling }: ReservationCar
 
       <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600 mb-4">
         <div>
-          <p><strong>Guests:</strong> {reservation.guests}</p>
-          <p><strong>Phone:</strong> {reservation.phone}</p>
+          <p><strong>Invités :</strong> {reservation.guests}</p>
+          <p><strong>Téléphone :</strong> {reservation.phone}</p>
         </div>
         <div>
-          <p><strong>Email:</strong> {reservation.email}</p>
-          <p><strong>Created:</strong> {new Date(reservation.created_at || '').toLocaleDateString()}</p>
+          <p><strong>Email :</strong> {reservation.email}</p>
+          <p><strong>Créée :</strong> {new Date(reservation.created_at || '').toLocaleDateString()}</p>
         </div>
       </div>
 
       {reservation.special_requests && (
         <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700">Special Requests:</p>
+          <p className="text-sm font-medium text-gray-700">Demandes spéciales :</p>
           <p className="text-sm text-gray-600">{reservation.special_requests}</p>
         </div>
       )}
@@ -121,7 +121,7 @@ function ReservationCard({ reservation, onCancel, isCancelling }: ReservationCar
             loading={isCancelling}
             disabled={isCancelling}
           >
-            {isCancelling ? 'Cancelling...' : 'Cancel Reservation'}
+            {isCancelling ? 'Annulation...' : 'Annuler la réservation'}
           </Button>
         </div>
       )}

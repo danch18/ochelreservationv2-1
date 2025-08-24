@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 
 interface FloatingActionButtonProps {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { language, setLanguage, t } = useLanguage();
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -59,7 +57,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           )}
         >
           <span className="mr-2">🍽️</span>
-          {isOpen ? t('close') : t('reserveTable')}
+          {isOpen ? 'Fermer' : 'Réserver une table'}
         </button>
       </div>
 
@@ -85,24 +83,14 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
             <span className="text-lg">🍽️</span>
             <span className="font-semibold">ochel</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <select 
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as 'fr' | 'en')}
-              className="bg-transparent border border-primary/20 rounded px-2 py-1 text-xs text-primary-foreground"
-            >
-              <option value="fr" style={{ backgroundColor: '#191919', color: '#ffffff' }}>FR</option>
-              <option value="en" style={{ backgroundColor: '#191919', color: '#ffffff' }}>EN</option>
-            </select>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="w-6 h-6 rounded-full hover:bg-primary/90 
-                         flex items-center justify-center text-primary-foreground
-                         transition-colors duration-200"
-            >
-              ×
-            </button>
-          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="w-6 h-6 rounded-full hover:bg-primary/90 
+                       flex items-center justify-center text-primary-foreground
+                       transition-colors duration-200"
+          >
+            ×
+          </button>
         </div>
 
         {/* Content */}
@@ -119,10 +107,8 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
 
 export function FloatingActionButton({ children, className }: FloatingActionButtonProps) {
   return (
-    <LanguageProvider>
-      <FloatingActionButtonContent className={className}>
-        {children}
-      </FloatingActionButtonContent>
-    </LanguageProvider>
+    <FloatingActionButtonContent className={className}>
+      {children}
+    </FloatingActionButtonContent>
   );
 }

@@ -27,13 +27,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           id={selectId}
           className={cn(
-            'w-full px-4 py-3 border rounded-lg transition-colors',
-            'bg-input text-foreground',
-            'focus:ring-2 focus:ring-ring focus:border-transparent',
+            'w-full px-4 py-3 border rounded-lg',
+            'bg-input text-foreground placeholder-muted-foreground',
+            'focus:outline-none',
+            'transition-colors duration-200',
             'disabled:bg-muted disabled:text-muted-foreground',
             error
-              ? 'border-destructive focus:ring-destructive'
-              : 'border-input',
+              ? 'border-destructive focus:!border-white/50'
+              : 'border-input focus:!border-white/50',
             className
           )}
           ref={ref}

@@ -8,9 +8,9 @@ interface AdminTabsProps {
 }
 
 const tabs = [
-  { id: 'overview', label: 'Overview', icon: '📊' },
-  { id: 'reservations', label: 'Reservations', icon: '📅' },
-  { id: 'settings', label: 'Settings', icon: '⚙️' },
+  { id: 'overview', label: 'Vue d\'ensemble', icon: '📊' },
+  { id: 'reservations', label: 'Réservations', icon: '📅' },
+  { id: 'settings', label: 'Paramètres', icon: '⚙️' },
 ];
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {

@@ -77,9 +77,9 @@ export function SettingsTab() {
   return (
     <div className="space-y-6">
       <div className="bg-[#191919] rounded-lg p-6 border border-white/10">
-        <h2 className="text-xl font-semibold text-white mb-4">Restaurant Availability</h2>
+        <h2 className="text-xl font-semibold text-white mb-4">Disponibilité du restaurant</h2>
         <p className="text-white/70 mb-6">
-          Mark specific dates when the restaurant will be closed. Customers won&apos;t be able to make reservations on these dates.
+          Marquez des dates spécifiques où le restaurant sera fermé. Les clients ne pourront pas faire de réservations à ces dates.
         </p>
 
         {error && (
@@ -96,7 +96,7 @@ export function SettingsTab() {
 
         {/* Add Closed Date Form */}
         <form onSubmit={handleAddClosedDate} className="mb-8">
-          <h3 className="text-lg font-medium text-white mb-4">Mark Date as Closed</h3>
+          <h3 className="text-lg font-medium text-white mb-4">Marquer la date comme fermée</h3>
           <div className="flex gap-4">
             <div className="flex-1">
               <Input
@@ -104,7 +104,7 @@ export function SettingsTab() {
                 value={newClosedDate}
                 onChange={(e) => setNewClosedDate(e.target.value)}
                 min={getTodayDate()}
-                placeholder="Select date to close"
+                placeholder="Sélectionner la date à fermer"
                 className="bg-black border-white/20 text-white"
                 required
               />
@@ -115,7 +115,7 @@ export function SettingsTab() {
               disabled={isLoading || !newClosedDate}
               className="!text-black"
             >
-              Mark as Closed
+              Marquer comme fermé
             </Button>
           </div>
         </form>
@@ -123,12 +123,12 @@ export function SettingsTab() {
         {/* List of Closed Dates */}
         <div>
           <h3 className="text-lg font-medium text-white mb-4">
-            Closed Dates ({closedDates.length})
+            Dates de fermeture ({closedDates.length})
           </h3>
           
           {closedDates.length === 0 ? (
             <p className="text-white/70 text-center py-8 bg-black/20 rounded-lg">
-              No closed dates set. The restaurant is open every day.
+              Aucune date de fermeture définie. Le restaurant est ouvert tous les jours.
             </p>
           ) : (
             <div className="space-y-2">
@@ -141,14 +141,14 @@ export function SettingsTab() {
                     <span className="text-red-400">🚫</span>
                     <div>
                       <p className="text-white font-medium">
-                        {new Date(date).toLocaleDateString('en-US', {
+                        {new Date(date).toLocaleDateString('fr-FR', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
                         })}
                       </p>
-                      <p className="text-white/70 text-sm">Restaurant closed</p>
+                      <p className="text-white/70 text-sm">Restaurant fermé</p>
                     </div>
                   </div>
                   <Button
@@ -158,7 +158,7 @@ export function SettingsTab() {
                     disabled={isLoading}
                     className="border-white/20 text-white hover:bg-white/10"
                   >
-                    Reopen
+                    Rouvrir
                   </Button>
                 </div>
               ))}

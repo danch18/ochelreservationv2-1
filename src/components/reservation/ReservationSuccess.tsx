@@ -23,7 +23,7 @@ export function ReservationSuccess({
             onClick={onBack}
             className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
           >
-            ← Back
+            ← Retour
           </button>
         </div>
       )}
@@ -31,27 +31,27 @@ export function ReservationSuccess({
       <div className="text-primary text-4xl mb-4">✓</div>
       
       <h3 className="text-lg font-bold text-card-foreground mb-3">
-        Reservation Confirmed!
+        Réservation confirmée !
       </h3>
       
       <p className="text-sm text-muted-foreground mb-3">
-        Thank you, {reservation.name}! Your table for {reservation.guests} has been reserved 
-        for {formatDate(reservation.reservation_date)} at {reservation.reservation_time}.
+        Merci, {reservation.name} ! Votre table pour {reservation.guests} a été réservée 
+        pour le {formatDate(reservation.reservation_date)} à {reservation.reservation_time}.
       </p>
       
       {reservation.id && (
         <p className="text-xs text-muted-foreground mb-4">
-          Reservation ID: {getShortId(reservation.id)}
+          ID de réservation : {getShortId(reservation.id)}
         </p>
       )}
       
       <div className="space-y-2">
         <Button onClick={onMakeAnother} className="w-full" size="sm">
-          Make Another Reservation
+          Faire une autre réservation
         </Button>
         
         <Button onClick={onViewReservations} variant="secondary" className="w-full" size="sm">
-          View My Reservations
+          Voir mes réservations
         </Button>
       </div>
     </div>

@@ -28,12 +28,12 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
 
   return (
     <div className="bg-[#191919] rounded-lg p-4 border border-white/10">
-      <h3 className="text-lg font-semibold mb-4 text-white">Filters</h3>
+      <h3 className="text-lg font-semibold mb-4 text-white">Filtres</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Input
-            placeholder="Search by name, email, or phone..."
+            placeholder="Rechercher par nom, email, ou téléphone..."
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
             className="w-full"
@@ -45,9 +45,9 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
           >
-            <option value="">All Status</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="">Tous les statuts</option>
+            <option value="confirmed">Confirmé</option>
+            <option value="cancelled">Annulé</option>
           </Select>
         </div>
         
@@ -56,7 +56,7 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
             value={filters.date}
             onChange={(e) => handleFilterChange('date', e.target.value)}
           >
-            <option value="">All Dates</option>
+            <option value="">Toutes les dates</option>
             {availableDates.map(date => (
               <option key={date} value={date}>
                 {new Date(date).toLocaleDateString()}
@@ -69,13 +69,13 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
       {(filters.status || filters.date || filters.search) && (
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-white/70">
-            Filters applied
+            Filtres appliqués
           </p>
           <button
             onClick={() => onFiltersChange({ status: '', date: '', search: '' })}
             className="text-sm text-[#644a40] hover:underline"
           >
-            Clear all filters
+            Effacer tous les filtres
           </button>
         </div>
       )}

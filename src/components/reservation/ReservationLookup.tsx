@@ -46,12 +46,12 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
             onClick={onBack}
             className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
           >
-            ← Back
+            ← Retour
           </button>
         </div>
       )}
       <h3 className="text-lg font-semibold text-card-foreground mb-3">
-        Check Your Reservations
+        Vérifiez vos réservations
       </h3>
 
       {searchError && (
@@ -63,7 +63,7 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
       <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2">
         <Input
           type="email"
-          placeholder="Enter your email"
+          placeholder="Entrez votre email"
           error={errors.email?.message}
           className="flex-1"
           {...register('email')}
@@ -74,7 +74,7 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
           loading={isSearching}
           disabled={isSearching}
         >
-          {isSearching ? 'Loading...' : 'View'}
+          {isSearching ? 'Chargement...' : 'Voir'}
         </Button>
       </form>
     </div>

@@ -19,7 +19,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   const handleCancelReservation = async (reservation: Reservation) => {
     if (!reservation.id) return;
     
-    const confirmed = confirm(`Are you sure you want to cancel the reservation for ${reservation.name}?`);
+    const confirmed = confirm(`Êtes-vous sûr de vouloir annuler la réservation pour ${reservation.name} ?`);
     if (!confirmed) return;
 
     setCancellingId(reservation.id);
@@ -28,7 +28,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
       onReservationsUpdate();
     } catch (error) {
       console.error('Failed to cancel reservation:', error);
-      alert('Failed to cancel reservation. Please try again.');
+      alert('Échec de l\'annulation de la réservation. Veuillez réessayer.');
     } finally {
       setCancellingId(null);
     }
@@ -43,7 +43,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
       onReservationsUpdate();
     } catch (error) {
       console.error('Failed to confirm reservation:', error);
-      alert('Failed to confirm reservation. Please try again.');
+      alert('Échec de la confirmation de la réservation. Veuillez réessayer.');
     } finally {
       setConfirmingId(null);
     }
@@ -60,7 +60,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   if (reservations.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-white/70">No reservations found.</p>
+        <p className="text-white/70">Aucune réservation trouvée.</p>
       </div>
     );
   }
@@ -72,19 +72,19 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
           <thead className="bg-black/30">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                Customer
+                Client
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                Date & Time
+                Date et heure
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                Guests
+                Invités
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                Status
+                Statut
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                Special Requests
+                Demandes spéciales
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">
                 Actions
@@ -137,7 +137,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       loading={confirmingId === reservation.id}
                       disabled={confirmingId === reservation.id}
                     >
-                      Confirm
+                      Confirmer
                     </Button>
                   )}
                   {reservation.status !== 'cancelled' && (
@@ -148,7 +148,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       loading={cancellingId === reservation.id}
                       disabled={cancellingId === reservation.id}
                     >
-                      Cancel
+                      Annuler
                     </Button>
                   )}
                 </td>

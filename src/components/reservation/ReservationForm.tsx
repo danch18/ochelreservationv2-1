@@ -37,13 +37,13 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             onClick={onBack}
             className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
           >
-            ← Back
+            ← Retour
           </button>
         ) : (
           <div />
         )}
         <h3 className="text-2xl font-bold text-popover-foreground text-end w-full" suppressHydrationWarning>
-          Reserve Your Table
+          Réservez votre table
         </h3>
         <div className="w-16" />
       </div>
@@ -58,8 +58,8 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
         <div className="flex-1 overflow-y-auto space-y-2 pb-4">
           <div className="grid md:grid-cols-1 gap-4">
             <Input
-              label="Full Name"
-              placeholder="John Doe"
+              label="Nom complet"
+              placeholder="Jean Dupont"
               error={errors.name?.message}
               {...register('name')}
             />
@@ -67,7 +67,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             <Input
               type="email"
               label="Email"
-              placeholder="john@example.com"
+              placeholder="jean@exemple.com"
               error={errors.email?.message}
               {...register('email')}
             />
@@ -75,7 +75,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
 
           <Input
             type="tel"
-            label="Phone Number"
+            label="Numéro de téléphone"
             placeholder="+1 (555) 123-4567"
             error={errors.phone?.message}
             {...register('phone')}
@@ -91,8 +91,8 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             />
             
             <Select
-              label="Time"
-              placeholder="Select Time"
+              label="Heure"
+              placeholder="Sélectionnez l'heure"
               error={errors.time?.message}
               {...register('time')}
             >
@@ -105,20 +105,20 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
           </div>
 
           <Select
-            label="Number of Guests"
+            label="Nombre d'invités"
             error={errors.guests?.message}
             {...register('guests')}
           >
             {GUEST_OPTIONS.map(num => (
               <option key={num} value={num}>
-                {num} {num === 1 ? 'Guest' : 'Guests'}
+                {num} {num === 1 ? 'Invité' : 'Invités'}
               </option>
             ))}
           </Select>
 
           <Textarea
-            label="Special Requests (Optional)"
-            placeholder="Allergies, celebration, seating preferences..."
+            label="Demandes spéciales (Optionnel)"
+            placeholder="Allergies, célébration, préférences de siège..."
             rows={3}
             error={errors.specialRequests?.message}
             {...register('specialRequests')}
@@ -134,10 +134,10 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             className="w-full mb-2"
             size="md"
           >
-            {isSubmitting ? 'Creating Reservation...' : 'Reserve Table'}
+            {isSubmitting ? 'Création de la réservation...' : 'Réserver une table'}
           </Button>
           <p className="text-xs text-muted-foreground text-center">
-            powered by Ochel
+            propulsé par Ochel
           </p>
         </div>
       </form>
