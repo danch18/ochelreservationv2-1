@@ -1,136 +1,161 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardHeader, CardContent, Button, StatusBadge } from '@/components/ui';
-import { formatDate, formatTime, getShortId } from '@/lib/utils';
+import { Button, Badge, LoadingSpinner } from '@/components/ui';
+import { formatDate } from '@/lib/utils';
 import { reservationService } from '@/services';
-import type { Reservation, ReservationStatus } from '@/types';
+import type { Reservation } from '@/types';
 
 interface ReservationTableProps {
   reservations: Reservation[];
-  selectedDate: string;
-  onReservationUpdate: () => void;
+  isLoading: boolean;
+  onReservationsUpdate: () => void;
 }
 
-export function ReservationTable({ 
-  reservations, 
-  selectedDate,
-  onReservationUpdate 
-}: ReservationTableProps) {
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
+export function ReservationTable({ reservations, isLoading, onReservationsUpdate }: ReservationTableProps) {
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
-  const handleStatusUpdate = async (id: string, status: ReservationStatus) => {
-    setUpdatingId(id);
+  const handleCancelReservation = async (reservation: Reservation) => {
+    if (!reservation.id) return;
     
+    const confirmed = confirm(`Are you sure you want to cancel the reservation for ${reservation.name}?`);
+    if (!confirmed) return;
+
+    setCancellingId(reservation.id);
     try {
-      await reservationService.updateReservationStatus(id, status);
-      onReservationUpdate();
+      await reservationService.updateReservationStatus(reservation.id, 'cancelled');
+      onReservationsUpdate();
     } catch (error) {
-      console.error('Error updating reservation:', error);
+      console.error('Failed to cancel reservation:', error);
+      alert('Failed to cancel reservation. Please try again.');
     } finally {
-      setUpdatingId(null);
+      setCancellingId(null);
     }
   };
 
-  return (
-    <Card className="bg-[#191919] backdrop-blur-sm border-border/50">
-      <CardHeader>
-        <h3 className="text-lg font-semibold text-popover-foreground">
-          Reservations for {formatDate(selectedDate)}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {reservations.length} reservation(s) found
-        </p>
-      </CardHeader>
+  const handleConfirmReservation = async (reservation: Reservation) => {
+    if (!reservation.id) return;
+    
+    setConfirmingId(reservation.id);
+    try {
+      await reservationService.updateReservationStatus(reservation.id, 'confirmed');
+      onReservationsUpdate();
+    } catch (error) {
+      console.error('Failed to confirm reservation:', error);
+      alert('Failed to confirm reservation. Please try again.');
+    } finally {
+      setConfirmingId(null);
+    }
+  };
 
-      <CardContent className="p-0">
-        {reservations.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            <p>No reservations found for the selected criteria.</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {reservations.map((reservation) => (
-              <ReservationRow
-                key={reservation.id}
-                reservation={reservation}
-                onStatusUpdate={handleStatusUpdate}
-                isUpdating={updatingId === reservation.id}
-              />
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-interface ReservationRowProps {
-  reservation: Reservation;
-  onStatusUpdate: (id: string, status: ReservationStatus) => void;
-  isUpdating: boolean;
-}
-
-function ReservationRow({ reservation, onStatusUpdate, isUpdating }: ReservationRowProps) {
-  const canModify = (reservation.status || 'confirmed') === 'confirmed';
-
-  return (
-    <div className="p-6 hover:bg-muted/30 transition-colors">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          <div>
-            <h4 className="text-lg font-semibold text-popover-foreground">
-              {reservation.name}
-            </h4>
-            <p className="text-muted-foreground">
-              <strong>{formatDate(reservation.reservation_date)}</strong> at {formatTime(reservation.reservation_time)} • {reservation.guests} guests
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <StatusBadge status={reservation.status} />
-          
-          {canModify && (
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => onStatusUpdate(reservation.id!, 'completed')}
-                loading={isUpdating}
-                disabled={isUpdating}
-                size="sm"
-                variant="secondary"
-              >
-                Complete
-              </Button>
-              <Button
-                onClick={() => onStatusUpdate(reservation.id!, 'cancelled')}
-                loading={isUpdating}
-                disabled={isUpdating}
-                size="sm"
-                variant="destructive"
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
-        </div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner />
       </div>
+    );
+  }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-muted-foreground">
-        <div>
-          <p><strong>Email:</strong> {reservation.email}</p>
-          <p><strong>Phone:</strong> {reservation.phone}</p>
-        </div>
-        <div>
-          <p><strong>Booking Date:</strong> {formatDate(reservation.reservation_date)}</p>
-          <p><strong>Created:</strong> {new Date(reservation.created_at || '').toLocaleDateString()}</p>
-        </div>
-        {reservation.special_requests && (
-          <div>
-            <p><strong>Special Requests:</strong></p>
-            <p className="italic">{reservation.special_requests}</p>
-          </div>
-        )}
+  if (reservations.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-white/70">No reservations found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-[#191919] rounded-lg border border-white/10 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-black/30">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                Customer
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                Date & Time
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                Guests
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                Special Requests
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/10">
+            {reservations.map((reservation) => (
+              <tr key={reservation.id} className="hover:bg-white/5">
+                <td className="px-6 py-4">
+                  <div>
+                    <div className="text-sm font-medium text-white">
+                      {reservation.name}
+                    </div>
+                    <div className="text-sm text-white/70">
+                      {reservation.email}
+                    </div>
+                    <div className="text-sm text-white/70">
+                      {reservation.phone}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-white">
+                    {formatDate(reservation.reservation_date)}
+                  </div>
+                  <div className="text-sm text-white/70">
+                    {reservation.reservation_time}
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-white">
+                  {reservation.guests}
+                </td>
+                <td className="px-6 py-4">
+                  <Badge variant={reservation.status === 'confirmed' ? 'default' : 'destructive'}>
+                    {reservation.status}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-white max-w-xs truncate">
+                    {reservation.special_requests || '-'}
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-right space-x-2">
+                  {reservation.status !== 'confirmed' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleConfirmReservation(reservation)}
+                      loading={confirmingId === reservation.id}
+                      disabled={confirmingId === reservation.id}
+                    >
+                      Confirm
+                    </Button>
+                  )}
+                  {reservation.status !== 'cancelled' && (
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleCancelReservation(reservation)}
+                      loading={cancellingId === reservation.id}
+                      disabled={cancellingId === reservation.id}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -9,4 +9,9 @@ export * from './layout';
 
 // Feature components
 export * from './reservation';
+
+// Admin components
 export * from './admin';
+
+// Providers
+export * from './providers';

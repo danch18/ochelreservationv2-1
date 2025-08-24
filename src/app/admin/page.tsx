@@ -1,62 +1,58 @@
 'use client';
 
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { PageLoadingSpinner, Alert } from '@/components/ui';
-import { AdminHeader, AdminTabs, TabPanel, OverviewTab, SettingsTab } from '@/components/admin';
-import { useAdminDashboard } from '@/hooks';
+import { useState } from 'react';
+import { useReservations } from '@/hooks';
+import { PageLayout } from '@/components/layout';
+import { AdminTabs, AdminHeader, OverviewTab, SettingsTab } from '@/components/admin';
 
 export default function AdminPage() {
-  const {
-    reservations,
-    stats,
-    totalGuests,
-    filters,
-    loading,
-    error,
-    onFiltersChange,
-    refetch
-  } = useAdminDashboard();
+  const [activeTab, setActiveTab] = useState('overview');
+  const { reservations, isLoading, error, refetch } = useReservations();
 
-  if (loading && reservations.length === 0) {
-    return <PageLoadingSpinner />;
+  if (error) {
+    return (
+      <PageLayout showHeader={false} showFooter={false}>
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-destructive mb-4">Error Loading Admin Panel</h1>
+            <p className="text-muted-foreground">{error}</p>
+            <button 
+              onClick={() => refetch()}
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </PageLayout>
+    );
   }
 
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-[#021b09] to-black text-popover-foreground">
+    <PageLayout showHeader={false} showFooter={false}>
+      <div className="min-h-screen bg-black">
         <AdminHeader />
-
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {error && (
-            <Alert 
-              variant="destructive" 
-              className="mb-6"
-              onClose={() => window.location.reload()}
-            >
-              {error}
-            </Alert>
-          )}
-
-          <AdminTabs defaultTab="overview">
-            <TabPanel id="overview">
-              <OverviewTab
-                stats={stats}
-                totalGuests={totalGuests}
+          <AdminTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          
+          <div className="mt-8">
+            {activeTab === 'overview' && (
+              <OverviewTab 
                 reservations={reservations}
-                filters={filters}
-                loading={loading}
-                onFiltersChange={onFiltersChange}
-                onRefresh={refetch}
+                isLoading={isLoading}
+                onReservationsUpdate={refetch}
               />
-            </TabPanel>
-            
-            <TabPanel id="settings">
+            )}
+
+            {activeTab === 'settings' && (
               <SettingsTab />
-            </TabPanel>
-          </AdminTabs>
+            )}
+            
+            {/* Add other tab content here as needed */}
+          </div>
         </div>
       </div>
-    </ErrorBoundary>
+    </PageLayout>
   );
 }
-

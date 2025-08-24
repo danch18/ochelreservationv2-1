@@ -9,7 +9,16 @@ export function cn(...inputs: ClassValue[]) {
 
 // Date formatting utilities
 export function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  if (!dateString || dateString.trim() === '') {
+    return 'Invalid Date';
+  }
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return 'Invalid Date';
+  }
+  
+  return date.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',

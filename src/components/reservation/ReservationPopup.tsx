@@ -7,11 +7,13 @@ import { ReservationSuccess } from './ReservationSuccess';
 import { ReservationList } from './ReservationList';
 import { ReservationLookup } from './ReservationLookup';
 import { useReservationsByEmail } from '@/hooks';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Reservation } from '@/types';
 
 type PopupView = 'form' | 'success' | 'reservations' | 'lookup';
 
 export function ReservationPopup() {
+  const { t } = useLanguage();
   const [currentView, setCurrentView] = useState<PopupView>('form');
   const [submittedReservation, setSubmittedReservation] = useState<Reservation | null>(null);
   const [lookupEmail, setLookupEmail] = useState('');
@@ -81,8 +83,8 @@ export function ReservationPopup() {
         return (
           <div>
             <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold text-popover-foreground mb-1">Find Your Reservations</h3>
-              <p className="text-sm text-muted-foreground">Enter your email to view existing reservations</p>
+              <h3 className="text-lg font-semibold text-popover-foreground mb-1">{t('findYourReservations')}</h3>
+              <p className="text-sm text-muted-foreground">{t('enterEmailToView')}</p>
             </div>
             <ReservationLookup
               onLookup={handleLookupReservations}

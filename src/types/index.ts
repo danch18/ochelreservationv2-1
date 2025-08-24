@@ -42,8 +42,6 @@ export interface FilterOptions {
   searchTerm?: string;
 }
 
-
-
 // API Response types
 export interface ApiResponse<T> {
   data?: T;

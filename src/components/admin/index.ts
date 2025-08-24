@@ -1,9 +1,7 @@
-// Admin component exports
 export { AdminHeader } from './AdminHeader';
-export { StatsCards } from './StatsCards';
+export { AdminTabs } from './AdminTabs';
 export { AdminFilters } from './AdminFilters';
-export { ReservationTable } from './ReservationTable';
-export { AdminTabs, TabPanel } from './AdminTabs';
 export { OverviewTab } from './OverviewTab';
+export { ReservationTable } from './ReservationTable';
+export { StatsCards } from './StatsCards';
 export { SettingsTab } from './SettingsTab';
-export { DateAvailabilityManager } from './DateAvailabilityManager';

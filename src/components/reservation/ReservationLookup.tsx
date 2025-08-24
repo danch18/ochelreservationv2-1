@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { emailLookupSchema, type EmailLookupInput } from '@/lib/validations';
 import { Input, Button, Alert } from '@/components/ui';
 import { getErrorMessage } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ReservationLookupProps {
   onLookup: (email: string) => void;
@@ -13,6 +14,7 @@ interface ReservationLookupProps {
 }
 
 export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) {
+  const { t } = useLanguage();
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -46,12 +48,12 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
             onClick={onBack}
             className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
           >
-            ← Back
+            ← {t('back')}
           </button>
         </div>
       )}
       <h3 className="text-lg font-semibold text-card-foreground mb-3">
-        Check Your Reservations
+        {t('yourReservations')}
       </h3>
 
       {searchError && (
@@ -63,7 +65,7 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
       <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2">
         <Input
           type="email"
-          placeholder="Enter your email"
+          placeholder={t('enterYourEmail')}
           error={errors.email?.message}
           className="flex-1"
           {...register('email')}
@@ -74,7 +76,7 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
           loading={isSearching}
           disabled={isSearching}
         >
-          {isSearching ? 'Loading...' : 'View'}
+          {isSearching ? 'Loading...' : t('lookupReservations')}
         </Button>
       </form>
     </div>

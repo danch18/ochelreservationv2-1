@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useReservationForm } from '@/hooks';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
-import { TIME_SLOTS, GUEST_OPTIONS } from '@/lib/constants';
+import { TIME_SLOTS } from '@/lib/constants';
 import { getTodayDate } from '@/lib/utils';
 import { dateAvailabilityService } from '@/services';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Reservation } from '@/types';
-
 
 interface ReservationFormProps {
   onSuccess?: (reservation: Reservation) => void;
@@ -15,6 +15,7 @@ interface ReservationFormProps {
 }
 
 export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
+  const { t } = useLanguage();
   const {
     form: { register, handleSubmit, watch, formState: { errors } },
     isSubmitting,
@@ -24,8 +25,10 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
 
   const [dateAvailable, setDateAvailable] = useState(true);
   const [checkingDate, setCheckingDate] = useState(false);
+  const [selectedQuickGuests, setSelectedQuickGuests] = useState<number | null>(null);
   
   const selectedDate = watch('date');
+  const guestsValue = watch('guests');
 
   // Check date availability when date changes
   useEffect(() => {
@@ -47,6 +50,17 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
     }
   }, [selectedDate]);
 
+  // Track guests value changes to highlight selected quick button
+  useEffect(() => {
+    const quickOptions = [5, 10, 15, 20];
+    const currentGuests = parseInt(guestsValue);
+    if (quickOptions.includes(currentGuests)) {
+      setSelectedQuickGuests(currentGuests);
+    } else {
+      setSelectedQuickGuests(null);
+    }
+  }, [guestsValue]);
+
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
       const reservation = await onSubmit(data);
@@ -64,7 +78,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             onClick={onBack}
             className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
           >
-            ← Back
+            ← {t('back')}
           </button>
         ) : (
           <div />
@@ -85,7 +99,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
         <div className="flex-1 overflow-y-auto space-y-2 pb-4">
           <div className="grid md:grid-cols-1 gap-4">
             <Input
-              label="Full Name"
+              label={t('name')}
               placeholder="John Doe"
               error={errors.name?.message}
               {...register('name')}
@@ -93,7 +107,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             
             <Input
               type="email"
-              label="Email"
+              label={t('email')}
               placeholder="john@example.com"
               error={errors.email?.message}
               {...register('email')}
@@ -102,7 +116,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
 
           <Input
             type="tel"
-            label="Phone Number"
+            label={t('phone')}
             placeholder="+1 (555) 123-4567"
             error={errors.phone?.message}
             {...register('phone')}
@@ -112,7 +126,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             <div className="space-y-2">
               <Input
                 type="date"
-                label="Date"
+                label={t('date')}
                 min={getTodayDate()}
                 error={errors.date?.message || (!dateAvailable && selectedDate ? 'This date is not available for reservations' : undefined)}
                 {...register('date')}
@@ -131,7 +145,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             </div>
             
             <Select
-              label="Time"
+              label={t('time')}
               placeholder="Select Time"
               error={errors.time?.message}
               {...register('time')}
@@ -144,21 +158,44 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             </Select>
           </div>
 
-          <Select
-            label="Number of Guests"
-            error={errors.guests?.message}
-            {...register('guests')}
-          >
-            {GUEST_OPTIONS.map(num => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? 'Guest' : 'Guests'}
-              </option>
-            ))}
-          </Select>
+          <div className="space-y-3">
+            <Input
+              type="number"
+              label={t('guests')}
+              placeholder="Enter number of guests"
+              min="1"
+              max="50"
+              error={errors.guests?.message}
+              {...register('guests')}
+            />
+            <div className="flex gap-2">
+              {[5, 10, 15, 20].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => {
+                    const guestInput = document.querySelector('input[name="guests"]') as HTMLInputElement;
+                    if (guestInput) {
+                      guestInput.value = num.toString();
+                      guestInput.dispatchEvent(new Event('input', { bubbles: true }));
+                      setSelectedQuickGuests(num);
+                    }
+                  }}
+                  className={`px-3 py-1 text-xs bg-muted/20 rounded-md transition-all duration-200 text-popover-foreground border ${
+                    selectedQuickGuests === num
+                      ? '!border-white/70'
+                      : 'border-border/30 hover:!border-white/70'
+                  }`}
+                >
+                  {num} {num === 1 ? t('guest') : t('guests')}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <Textarea
-            label="Special Requests (Optional)"
-            placeholder="Allergies, celebration, seating preferences..."
+            label={t('specialRequests')}
+            placeholder={t('specialRequestsPlaceholder')}
             rows={3}
             error={errors.specialRequests?.message}
             {...register('specialRequests')}
@@ -174,10 +211,10 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
             className="w-full mb-2 !text-black"
             size="md"
           >
-            {isSubmitting ? 'Creating Reservation...' : (!dateAvailable && selectedDate ? 'Date Not Available' : 'Reserve Table')}
+            {isSubmitting ? 'Creating Reservation...' : (!dateAvailable && selectedDate ? 'Date Not Available' : t('submitReservation'))}
           </Button>
           <p className="text-xs text-muted-foreground text-center">
-            powered by Ochel
+            powered by <a href="https://www.ochel.fr/" target="_blank" rel="noopener noreferrer" className="underline hover:text-popover-foreground transition-colors">Ochel</a>
           </p>
         </div>
       </form>

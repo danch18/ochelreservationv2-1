@@ -1,80 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui';
+import { cn } from '@/lib/utils';
 
 interface AdminTabsProps {
-  defaultTab?: string;
-  children: React.ReactNode;
-}
-
-interface TabContextType {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
+  onTabChange: (tab: string) => void;
 }
 
-export const TabContext = React.createContext<TabContextType | undefined>(undefined);
+const tabs = [
+  { id: 'overview', label: 'Overview', icon: '📊' },
+  { id: 'reservations', label: 'Reservations', icon: '📅' },
+  { id: 'settings', label: 'Settings', icon: '⚙️' },
+];
 
-export function AdminTabs({ defaultTab = 'overview', children }: AdminTabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab);
-
+export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <TabContext.Provider value={{ activeTab, setActiveTab }}>
-      <div className="bg-card/80 backdrop-blur-sm border-border/50 rounded-lg border">
-        <div className="border-b border-border/50 p-4">
-          <div className="flex space-x-2">
-            <TabButton id="overview">Overview</TabButton>
-            <TabButton id="settings">Settings</TabButton>
-          </div>
-        </div>
-        <div className="p-6">
-          {children}
-        </div>
-      </div>
-    </TabContext.Provider>
+    <div className="border-b border-white/10">
+      <nav className="-mb-px flex space-x-8">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => onTabChange(tab.id)}
+            className={cn(
+              'flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors',
+              activeTab === tab.id
+                ? 'border-[#644a40] text-[#644a40]'
+                : 'border-transparent text-white/70 hover:text-white hover:border-white/20'
+            )}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
   );
-}
-
-interface TabButtonProps {
-  id: string;
-  children: React.ReactNode;
-}
-
-function TabButton({ id, children }: TabButtonProps) {
-  const context = React.useContext(TabContext);
-  if (!context) {
-    throw new Error('TabButton must be used within AdminTabs');
-  }
-
-  const { activeTab, setActiveTab } = context;
-  const isActive = activeTab === id;
-
-  return (
-    <Button
-      onClick={() => setActiveTab(id)}
-      variant={isActive ? 'primary' : 'secondary'}
-      size="sm"
-    >
-      {children}
-    </Button>
-  );
-}
-
-interface TabPanelProps {
-  id: string;
-  children: React.ReactNode;
-}
-
-export function TabPanel({ id, children }: TabPanelProps) {
-  const context = React.useContext(TabContext);
-  if (!context) {
-    throw new Error('TabPanel must be used within AdminTabs');
-  }
-
-  const { activeTab } = context;
-  if (activeTab !== id) {
-    return null;
-  }
-
-  return <div>{children}</div>;
 }

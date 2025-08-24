@@ -1,116 +1,84 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { adminFilterSchema, type AdminFilterInput } from '@/lib/validations';
-import { Input, Select, Button, Card, CardContent } from '@/components/ui';
-import { getTodayDate } from '@/lib/utils';
-import type { FilterOptions } from '@/types';
+import { Input, Select } from '@/components/ui';
+import type { Reservation } from '@/types';
 
 interface AdminFiltersProps {
-  filters: FilterOptions;
-  onFiltersChange: (filters: FilterOptions) => void;
-  onRefresh: () => void;
-  isLoading?: boolean;
+  filters: {
+    status: string;
+    date: string;
+    search: string;
+  };
+  onFiltersChange: (filters: any) => void;
+  reservations: Reservation[];
 }
 
-export function AdminFilters({ 
-  filters, 
-  onFiltersChange, 
-  onRefresh, 
-  isLoading = false 
-}: AdminFiltersProps) {
-  const {
-    watch,
-    setValue
-  } = useForm<AdminFilterInput>({
-    resolver: zodResolver(adminFilterSchema),
-    defaultValues: {
-      date: filters.date || '',
-      dateFilter: filters.dateFilter || 'all',
-      status: (filters.status as 'all' | 'confirmed' | 'cancelled' | 'completed') || 'all',
-      searchTerm: filters.searchTerm || ''
-    }
-  });
-
-  // Watch form values and update parent component
-  const watchedValues = watch();
-  
-  const handleFilterChange = (key: keyof FilterOptions, value: string) => {
-    setValue(key as keyof AdminFilterInput, value);
+export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFiltersProps) {
+  const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
       ...filters,
       [key]: value
     });
   };
 
+  // Get unique dates from reservations for date filter
+  const availableDates = [...new Set(reservations.map(r => r.reservation_date))]
+    .sort()
+    .reverse();
+
   return (
-    <Card className="mb-8 bg-[#191919] backdrop-blur-sm border-border/50">
-      <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-popover-foreground mb-4">Filters</h3>
-        
-        {/* Date Filter Buttons */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-foreground mb-2">Date Filter</label>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { key: 'all', label: 'All' },
-              { key: 'today', label: 'Today' },
-              { key: 'tomorrow', label: 'Tomorrow' },
-              { key: 'next7days', label: 'Next 7 Days' },
-              { key: 'next30days', label: 'Next 30 Days' }
-            ].map(({ key, label }) => (
-              <Button
-                key={key}
-                onClick={() => handleFilterChange('dateFilter', key)}
-                variant={filters.dateFilter === key ? 'primary' : 'secondary'}
-                size="sm"
-                className="text-xs"
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
+    <div className="bg-[#191919] rounded-lg p-4 border border-white/10">
+      <h3 className="text-lg font-semibold mb-4 text-white">Filters</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Input
+            placeholder="Search by name, email, or phone..."
+            value={filters.search}
+            onChange={(e) => handleFilterChange('search', e.target.value)}
+            className="w-full"
+          />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Input
-            type="date"
-            label="Date"
-            value={watchedValues.date || ''}
-            onChange={(e) => handleFilterChange('date', e.target.value)}
-          />
-          
+        <div>
           <Select
-            label="Status"
-            value={watchedValues.status || 'all'}
+            value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
           >
-            <option value="all">All Statuses</option>
+            <option value="">All Status</option>
             <option value="confirmed">Confirmed</option>
-            <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </Select>
-          
-          <Input
-            label="Search"
-            placeholder="Name, email, or phone"
-            value={watchedValues.searchTerm || ''}
-            onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-          />
-
-          <div className="flex items-end">
-            <Button
-              onClick={onRefresh}
-              loading={isLoading}
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? 'Loading...' : 'Refresh'}
-            </Button>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+        
+        <div>
+          <Select
+            value={filters.date}
+            onChange={(e) => handleFilterChange('date', e.target.value)}
+          >
+            <option value="">All Dates</option>
+            {availableDates.map(date => (
+              <option key={date} value={date}>
+                {new Date(date).toLocaleDateString()}
+              </option>
+            ))}
+          </Select>
+        </div>
+      </div>
+      
+      {(filters.status || filters.date || filters.search) && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-white/70">
+            Filters applied
+          </p>
+          <button
+            onClick={() => onFiltersChange({ status: '', date: '', search: '' })}
+            className="text-sm text-[#644a40] hover:underline"
+          >
+            Clear all filters
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

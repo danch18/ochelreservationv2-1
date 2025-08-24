@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { API_ERRORS, ENV_CONFIG } from '@/lib/constants';
+import { emailService } from './emailService';
 import type { 
   Reservation, 
   CreateReservationData, 
@@ -11,23 +12,58 @@ class ReservationServiceClass {
 
   // Error handling wrapper
   private handleError(error: unknown, context: string): never {
+    // Enhanced logging for development
     if (ENV_CONFIG.isDevelopment) {
       console.error(`${context}:`, error);
+      
+      // Log additional error details to help with debugging
+      if (error && typeof error === 'object') {
+        console.error('Error details:', {
+          message: (error as any).message,
+          code: (error as any).code,
+          details: (error as any).details,
+          hint: (error as any).hint,
+          stack: (error as any).stack
+        });
+      }
     }
     
-    // Map specific errors to user-friendly messages
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'PGRST116') {
-      throw new Error(API_ERRORS.NOT_FOUND);
+    // Map specific Supabase errors to user-friendly messages
+    if (error && typeof error === 'object') {
+      const err = error as any;
+      
+      // Supabase specific error codes
+      if (err.code === 'PGRST116') {
+        throw new Error(API_ERRORS.NOT_FOUND);
+      }
+      
+      if (err.code === '23505') {
+        throw new Error('A reservation with these details already exists.');
+      }
+      
+      if (err.code === '23503') {
+        throw new Error('Invalid data provided for reservation.');
+      }
+      
+      // Network-related errors
+      if (err.message && typeof err.message === 'string') {
+        if (err.message.includes('network') || err.message.includes('fetch')) {
+          throw new Error(API_ERRORS.NETWORK);
+        }
+        
+        if (err.message.includes('timeout')) {
+          throw new Error('Request timed out. Please try again.');
+        }
+      }
+      
+      // Return the actual error message if it's user-friendly
+      if (err.message && typeof err.message === 'string' && err.message.length < 200) {
+        throw new Error(err.message);
+      }
     }
     
-    if (error && typeof error === 'object' && 'message' in error && 
-        typeof error.message === 'string' && error.message.includes('network')) {
-      throw new Error(API_ERRORS.NETWORK);
-    }
-    
-    const message = error && typeof error === 'object' && 'message' in error && 
-                    typeof error.message === 'string' ? error.message : API_ERRORS.GENERIC;
-    throw new Error(message);
+    // Fallback to generic error
+    throw new Error(API_ERRORS.GENERIC);
   }
 
   // Create a new reservation
@@ -46,13 +82,24 @@ class ReservationServiceClass {
         this.handleError(error, 'Error creating reservation');
       }
 
+      // Send confirmation email
+      try {
+        await emailService.sendReservationConfirmation(data);
+      } catch (emailError) {
+        // Log email error but don't fail the reservation
+        if (ENV_CONFIG.isDevelopment) {
+          console.error('Failed to send confirmation email:', emailError);
+        }
+        // Note: We could add this to a retry queue in production
+      }
+
       return data;
     } catch (error) {
       this.handleError(error, 'Error creating reservation');
     }
   }
 
-  // Get all reservations (for admin view)
+  // Get all reservations
   async getAllReservations(): Promise<Reservation[]> {
     try {
       const { data, error } = await supabase
@@ -114,6 +161,18 @@ class ReservationServiceClass {
 
       if (error) {
         this.handleError(error, 'Error updating reservation status');
+      }
+
+      // Send cancellation email if status is cancelled
+      if (status === 'cancelled') {
+        try {
+          await emailService.sendReservationCancellation(data);
+        } catch (emailError) {
+          // Log email error but don't fail the status update
+          if (ENV_CONFIG.isDevelopment) {
+            console.error('Failed to send cancellation email:', emailError);
+          }
+        }
       }
 
       return data;
@@ -231,6 +290,48 @@ class ReservationServiceClass {
       return stats;
     } catch (error) {
       this.handleError(error, 'Error fetching reservation stats');
+    }
+  }
+
+  // Get available time slots for a date
+  async getAvailableTimeSlots(date: string): Promise<string[]> {
+    try {
+      const defaultSlots = [
+        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+        '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+        '21:00', '21:30'
+      ];
+
+      // Get existing reservations for this date
+      const existingReservations = await this.getReservationsByDate(date);
+      const bookedSlots = existingReservations.map(r => r.reservation_time);
+
+      // Filter out booked slots
+      return defaultSlots.filter(slot => !bookedSlots.includes(slot));
+    } catch (error) {
+      this.handleError(error, 'Error fetching available time slots');
+    }
+  }
+
+  // Check if a specific time slot is available
+  async isTimeSlotAvailable(date: string, time: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('id')
+        .eq('reservation_date', date)
+        .eq('reservation_time', time)
+        .neq('status', 'cancelled'); // Don't count cancelled reservations
+
+      if (error) {
+        this.handleError(error, 'Error checking time slot availability');
+      }
+
+      return data?.length === 0;
+    } catch (error) {
+      this.handleError(error, 'Error checking time slot availability');
     }
   }
 }
