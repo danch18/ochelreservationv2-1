@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { reservationService } from '@/services';
-import { getErrorMessage } from '@/lib/utils';
+import { getErrorMessage, getTodayDate, getTomorrowDate, getDateRange } from '@/lib/utils';
 import type { Reservation, AsyncState, FilterOptions } from '@/types';
 
 export function useReservations() {
@@ -74,7 +74,33 @@ export function useFilteredReservations(reservations: Reservation[], filters: Fi
     let filtered = [...reservations];
 
     // Filter by date
-    if (filters.date) {
+    if (filters.dateFilter && filters.dateFilter !== 'all') {
+      switch (filters.dateFilter) {
+        case 'today':
+          filtered = filtered.filter(r => r.reservation_date === getTodayDate());
+          break;
+        case 'tomorrow':
+          filtered = filtered.filter(r => r.reservation_date === getTomorrowDate());
+          break;
+        case 'next7days':
+          const next7Days = getDateRange(7);
+          filtered = filtered.filter(r => 
+            r.reservation_date >= next7Days.start && r.reservation_date <= next7Days.end
+          );
+          break;
+        case 'next30days':
+          const next30Days = getDateRange(30);
+          filtered = filtered.filter(r => 
+            r.reservation_date >= next30Days.start && r.reservation_date <= next30Days.end
+          );
+          break;
+        case 'custom':
+          if (filters.date) {
+            filtered = filtered.filter(r => r.reservation_date === filters.date);
+          }
+          break;
+      }
+    } else if (filters.date) {
       filtered = filtered.filter(r => r.reservation_date === filters.date);
     }
 

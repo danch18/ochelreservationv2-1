@@ -33,9 +33,9 @@ export function ReservationTable({
   };
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+    <Card className="bg-[#191919] backdrop-blur-sm border-border/50">
       <CardHeader>
-        <h3 className="text-lg font-semibold text-card-foreground">
+        <h3 className="text-lg font-semibold text-popover-foreground">
           Reservations for {formatDate(selectedDate)}
         </h3>
         <p className="text-sm text-muted-foreground">
@@ -79,11 +79,11 @@ function ReservationRow({ reservation, onStatusUpdate, isUpdating }: Reservation
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <div>
-            <h4 className="text-lg font-semibold text-card-foreground">
+            <h4 className="text-lg font-semibold text-popover-foreground">
               {reservation.name}
             </h4>
             <p className="text-muted-foreground">
-              {formatTime(reservation.reservation_time)} • {reservation.guests} guests
+              <strong>{formatDate(reservation.reservation_date)}</strong> at {formatTime(reservation.reservation_time)} • {reservation.guests} guests
             </p>
           </div>
         </div>
@@ -122,8 +122,8 @@ function ReservationRow({ reservation, onStatusUpdate, isUpdating }: Reservation
           <p><strong>Phone:</strong> {reservation.phone}</p>
         </div>
         <div>
+          <p><strong>Booking Date:</strong> {formatDate(reservation.reservation_date)}</p>
           <p><strong>Created:</strong> {new Date(reservation.created_at || '').toLocaleDateString()}</p>
-          <p><strong>ID:</strong> {getShortId(reservation.id || '')}</p>
         </div>
         {reservation.special_requests && (
           <div>

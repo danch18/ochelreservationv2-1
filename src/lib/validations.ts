@@ -54,6 +54,7 @@ export const emailLookupSchema = z.object({
 
 export const adminFilterSchema = z.object({
   date: z.string().optional(),
+  dateFilter: z.enum(['all', 'today', 'tomorrow', 'next7days', 'next30days', 'custom']).optional(),
   status: z.enum(['all', 'confirmed', 'cancelled', 'completed']).optional(),
   searchTerm: z.string().max(100).optional()
 });

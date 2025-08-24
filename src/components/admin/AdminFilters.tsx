@@ -26,7 +26,8 @@ export function AdminFilters({
   } = useForm<AdminFilterInput>({
     resolver: zodResolver(adminFilterSchema),
     defaultValues: {
-      date: filters.date || getTodayDate(),
+      date: filters.date || '',
+      dateFilter: filters.dateFilter || 'all',
       status: (filters.status as 'all' | 'confirmed' | 'cancelled' | 'completed') || 'all',
       searchTerm: filters.searchTerm || ''
     }
@@ -44,9 +45,33 @@ export function AdminFilters({
   };
 
   return (
-    <Card className="mb-8 bg-card/80 backdrop-blur-sm border-border/50">
+    <Card className="mb-8 bg-[#191919] backdrop-blur-sm border-border/50">
       <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-card-foreground mb-4">Filters</h3>
+        <h3 className="text-lg font-semibold text-popover-foreground mb-4">Filters</h3>
+        
+        {/* Date Filter Buttons */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-foreground mb-2">Date Filter</label>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'today', label: 'Today' },
+              { key: 'tomorrow', label: 'Tomorrow' },
+              { key: 'next7days', label: 'Next 7 Days' },
+              { key: 'next30days', label: 'Next 30 Days' }
+            ].map(({ key, label }) => (
+              <Button
+                key={key}
+                onClick={() => handleFilterChange('dateFilter', key)}
+                variant={filters.dateFilter === key ? 'primary' : 'secondary'}
+                size="sm"
+                className="text-xs"
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Input

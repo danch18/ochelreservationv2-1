@@ -5,7 +5,8 @@ import type { FilterOptions, ReservationStats } from '@/types';
 
 export function useAdminDashboard() {
   const [filters, setFilters] = useState<FilterOptions>({
-    date: getTodayDate(),
+    date: '',
+    dateFilter: 'all',
     status: 'all',
     searchTerm: ''
   });

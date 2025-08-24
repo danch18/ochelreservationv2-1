@@ -37,9 +37,12 @@ export interface ReservationStats {
 
 export interface FilterOptions {
   date?: string;
+  dateFilter?: 'all' | 'today' | 'tomorrow' | 'next7days' | 'next30days' | 'custom';
   status?: string;
   searchTerm?: string;
 }
+
+
 
 // API Response types
 export interface ApiResponse<T> {

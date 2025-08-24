@@ -14,11 +14,13 @@ interface ReservationFormProps {
 
 export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
   const {
-    form: { register, handleSubmit, formState: { errors } },
+    form: { register, handleSubmit, watch, formState: { errors } },
     isSubmitting,
     submitError,
     onSubmit
   } = useReservationForm();
+
+
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {

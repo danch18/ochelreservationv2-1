@@ -33,6 +33,22 @@ export function getTodayDate(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+export function getTomorrowDate(): string {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().split('T')[0];
+}
+
+export function getDateRange(days: number): { start: string; end: string } {
+  const start = new Date();
+  const end = new Date();
+  end.setDate(end.getDate() + days);
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0]
+  };
+}
+
 export function isDateInPast(dateString: string): boolean {
   const selectedDate = new Date(dateString);
   const today = new Date();

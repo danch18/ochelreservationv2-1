@@ -23,7 +23,7 @@ export default function AdminPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen bg-gradient-to-br from-[#021b09] to-black text-popover-foreground">
         <AdminHeader />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
