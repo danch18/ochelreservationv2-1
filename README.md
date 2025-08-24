@@ -1,4 +1,4 @@
-# Bella Vista Restaurant Reservation System
+# Ochel Reservation System
 
 A beautiful, full-stack restaurant reservation system built with Next.js and Supabase.
 
