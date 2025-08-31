@@ -5,13 +5,13 @@
     iframe.id = 'ochel-widget';
     iframe.src = 'https://ochelreservationv2.vercel.app';
     
-    // Start with button size
+    // Start with button size (with margins)
     iframe.style.cssText = `
         position: fixed;
         bottom: 24px;
         right: 24px;
-        width: 200px;
-        height: 60px;
+        width: 220px;
+        height: 80px;
         border: none;
         z-index: 9999;
         background: transparent;
@@ -30,15 +30,15 @@
             const { width, height, isOpen } = event.data;
             
             if (isOpen) {
-                // Expanded: show full popup
-                iframe.style.width = width + 'px';
-                iframe.style.height = height + 'px';
+                // Expanded: show full popup with margins to prevent clipping
+                iframe.style.width = (width + 50) + 'px';  // Add 50px margin
+                iframe.style.height = (height + 50) + 'px'; // Add 50px margin
                 iframe.style.bottom = '24px';
                 iframe.style.right = '24px';
             } else {
                 // Collapsed: show only button
-                iframe.style.width = '200px';
-                iframe.style.height = '60px';
+                iframe.style.width = '220px';  // Slightly wider for right alignment
+                iframe.style.height = '80px';  // Slightly taller for margins
                 iframe.style.bottom = '24px';
                 iframe.style.right = '24px';
             }

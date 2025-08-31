@@ -22,8 +22,8 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       window.parent.postMessage({
         type: 'popupResize',
         isOpen: newIsOpen,
-        width: newIsOpen ? 414 : 200,
-        height: newIsOpen ? 688 : 60  // 600 popup + 88 for positioning
+        width: newIsOpen ? 414 : 220,  // Base width (widget adds margins)
+        height: newIsOpen ? 688 : 80   // Base height (widget adds margins)
       }, '*');
     }
   };
@@ -45,8 +45,8 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           window.parent.postMessage({
             type: 'popupResize',
             isOpen: false,
-            width: 200,
-            height: 60
+            width: 220,
+            height: 80
           }, '*');
         }
       }
