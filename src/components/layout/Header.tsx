@@ -3,12 +3,12 @@ import { RESTAURANT_CONFIG } from '@/lib/constants';
 
 export function Header() {
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-[#EFE7D2] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">🍽️</span>
+              <span className="text-[#3F2E24] font-bold text-xl">🍽️</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-800">{RESTAURANT_CONFIG.name}</h1>
           </Link>

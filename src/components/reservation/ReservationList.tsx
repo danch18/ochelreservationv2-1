@@ -39,7 +39,7 @@ export function ReservationList({
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-[#EFE7D2] rounded-2xl shadow-2xl p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Mes réservations</h2>
             <Button onClick={onBack} variant="secondary">

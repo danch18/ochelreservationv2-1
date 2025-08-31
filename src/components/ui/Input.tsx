@@ -35,8 +35,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               '[&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert',
               'disabled:bg-muted disabled:text-muted-foreground',
               error
-                ? 'border-destructive focus:!border-white/50'
-                : 'border-input focus:!border-white/50',
+                ? 'border-destructive focus:!border-[#EFE7D2]/50'
+                : 'border-input focus:!border-[#EFE7D2]/50',
               icon && 'pr-10',
               className
             )}

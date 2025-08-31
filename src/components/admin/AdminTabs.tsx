@@ -15,7 +15,7 @@ const tabs = [
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <div className="border-b border-white/10">
+    <div className="border-b border-[#EFE7D2]/10">
       <nav className="-mb-px flex space-x-8">
         {tabs.map((tab) => (
           <button
@@ -25,7 +25,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
               'flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors',
               activeTab === tab.id
                 ? 'border-[#644a40] text-[#644a40]'
-                : 'border-transparent text-white/70 hover:text-white hover:border-white/20'
+                : 'border-transparent text-[#EFE7D2]/70 hover:text-[#EFE7D2] hover:border-[#EFE7D2]/20'
             )}
           >
             <span>{tab.icon}</span>

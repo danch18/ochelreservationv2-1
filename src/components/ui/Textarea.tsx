@@ -32,8 +32,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             'transition-colors duration-200',
             'disabled:bg-muted disabled:text-muted-foreground',
             error
-              ? 'border-destructive focus:!border-white/50'
-              : 'border-input focus:!border-white/50',
+              ? 'border-destructive focus:!border-[#EFE7D2]/50'
+              : 'border-input focus:!border-[#EFE7D2]/50',
             className
           )}
           ref={ref}

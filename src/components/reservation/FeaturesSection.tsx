@@ -18,7 +18,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#EFE7D2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">
           Why Choose Bella Vista?

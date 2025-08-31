@@ -60,62 +60,62 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   if (reservations.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-white/70">Aucune réservation trouvée.</p>
+        <p className="text-[#EFE7D2]/70">Aucune réservation trouvée.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#191919] rounded-lg border border-white/10 overflow-hidden">
+    <div className="bg-[#191919] rounded-lg border border-[#EFE7D2]/10 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-black/30">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Client
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Date et heure
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Invités
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Statut
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Demandes spéciales
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-[#EFE7D2]/70 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/10">
+          <tbody className="divide-y divide-[#EFE7D2]/10">
             {reservations.map((reservation) => (
-              <tr key={reservation.id} className="hover:bg-white/5">
+              <tr key={reservation.id} className="hover:bg-[#EFE7D2]/5">
                 <td className="px-6 py-4">
                   <div>
-                    <div className="text-sm font-medium text-white">
+                    <div className="text-sm font-medium text-[#EFE7D2]">
                       {reservation.name}
                     </div>
-                    <div className="text-sm text-white/70">
+                    <div className="text-sm text-[#EFE7D2]/70">
                       {reservation.email}
                     </div>
-                    <div className="text-sm text-white/70">
+                    <div className="text-sm text-[#EFE7D2]/70">
                       {reservation.phone}
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-white">
+                  <div className="text-sm text-[#EFE7D2]">
                     {formatDate(reservation.reservation_date)}
                   </div>
-                  <div className="text-sm text-white/70">
+                  <div className="text-sm text-[#EFE7D2]/70">
                     {reservation.reservation_time}
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-white">
+                <td className="px-6 py-4 text-sm text-[#EFE7D2]">
                   {reservation.guests}
                 </td>
                 <td className="px-6 py-4">
@@ -124,7 +124,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   </Badge>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-white max-w-xs truncate">
+                  <div className="text-sm text-[#EFE7D2] max-w-xs truncate">
                     {reservation.special_requests || '-'}
                   </div>
                 </td>

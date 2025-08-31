@@ -47,7 +47,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           onClick={handleToggle}
           className={cn(
             'w-auto px-4 py-3 rounded-full shadow-lg hover:shadow-xl',
-            'flex items-center justify-center text-white text-base font-medium',
+            'flex items-center justify-center text-[#EFE7D2] text-base font-medium',
             'transform hover:scale-105 active:scale-95 transition-all duration-300',
             'whitespace-nowrap',
             isOpen 
@@ -95,7 +95,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
 
         {/* Content */}
         <div 
-          className="overflow-y-auto p-4 bg-black text-white scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500" 
+          className="overflow-y-auto p-4 bg-black text-[#EFE7D2] scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500" 
           style={{ maxHeight: 'calc(70vh - 4rem)' }}
         >
           {children}

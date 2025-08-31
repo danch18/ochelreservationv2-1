@@ -2,7 +2,7 @@ import { RESTAURANT_CONFIG } from '@/lib/constants';
 
 export function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-8">
+    <footer className="bg-gray-800 text-[#EFE7D2] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
@@ -23,21 +23,21 @@ export function Footer() {
             <div className="flex space-x-4">
               <a 
                 href="#" 
-                className="text-gray-300 hover:text-white cursor-pointer transition-colors"
+                className="text-gray-300 hover:text-[#EFE7D2] cursor-pointer transition-colors"
                 aria-label="Facebook"
               >
                 Facebook
               </a>
               <a 
                 href="#" 
-                className="text-gray-300 hover:text-white cursor-pointer transition-colors"
+                className="text-gray-300 hover:text-[#EFE7D2] cursor-pointer transition-colors"
                 aria-label="Instagram"
               >
                 Instagram
               </a>
               <a 
                 href="#" 
-                className="text-gray-300 hover:text-white cursor-pointer transition-colors"
+                className="text-gray-300 hover:text-[#EFE7D2] cursor-pointer transition-colors"
                 aria-label="Twitter"
               >
                 Twitter

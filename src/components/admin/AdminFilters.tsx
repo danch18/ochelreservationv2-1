@@ -27,8 +27,8 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
     .reverse();
 
   return (
-    <div className="bg-[#191919] rounded-lg p-4 border border-white/10">
-      <h3 className="text-lg font-semibold mb-4 text-white">Filtres</h3>
+    <div className="bg-[#191919] rounded-lg p-4 border border-[#EFE7D2]/10">
+      <h3 className="text-lg font-semibold mb-4 text-[#EFE7D2]">Filtres</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
@@ -68,7 +68,7 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
       
       {(filters.status || filters.date || filters.search) && (
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-white/70">
+          <p className="text-sm text-[#EFE7D2]/70">
             Filtres appliqués
           </p>
           <button

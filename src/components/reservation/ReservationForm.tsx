@@ -75,15 +75,16 @@ function GuestsInput({ value, onChange, error }: GuestsInputProps) {
             onClick={() => handleShortcutClick(num)}
             className={`
               px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-              border bg-input text-foreground min-w-[50px]
-              hover:border-white/70 hover:bg-white/5
+              border bg-input text-foreground min-w-[70px]
+              hover:border-[#EFE7D2]/70 hover:bg-[#EFE7D2]/5
               ${selectedShortcut === num 
-                ? 'border-white/70 bg-white/10 text-white' 
+                ? 'border-[#EFE7D2]/70 bg-[#EFE7D2]/10 text-[#EFE7D2]' 
                 : 'border-input'
               }
             `}
           >
-            {num}
+            <span>{num}</span>
+            <span className="text-xs"> invités</span>
           </button>
         ))}
       </div>
