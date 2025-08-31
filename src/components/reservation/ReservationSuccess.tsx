@@ -5,14 +5,12 @@ import type { Reservation } from '@/types';
 interface ReservationSuccessProps {
   reservation: Reservation;
   onMakeAnother: () => void;
-  onViewReservations: () => void;
   onBack?: () => void;
 }
 
 export function ReservationSuccess({
   reservation,
   onMakeAnother,
-  onViewReservations,
   onBack
 }: ReservationSuccessProps) {
   return (
@@ -42,10 +40,6 @@ export function ReservationSuccess({
       <div className="space-y-2">
         <Button onClick={onMakeAnother} className="w-full" size="sm">
           Faire une autre réservation
-        </Button>
-        
-        <Button onClick={onViewReservations} variant="secondary" className="w-full" size="sm">
-          Voir mes réservations
         </Button>
       </div>
     </div>
