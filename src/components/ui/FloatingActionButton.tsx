@@ -64,8 +64,8 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       
       {/* FAB Button Zone */}
       <div 
-        className="fixed bottom-6 right-6 z-[9999] pointer-events-auto"
-        style={{ width: '200px', height: '60px' }}
+        className="fixed bottom-2 right-2 z-[9999] pointer-events-auto flex items-end justify-end"
+        style={{ width: '216px', height: '76px' }}
       >
         <button
           ref={buttonRef}
@@ -89,7 +89,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       {/* Popup Zone - only visible when open */}
       {isOpen && (
         <div 
-          className="fixed bottom-28 right-6 z-[9998] pointer-events-auto"
+          className="fixed bottom-20 right-2 z-[9998] pointer-events-auto"
           style={{ width: '414px', height: '600px' }}
         />
       )}
@@ -98,7 +98,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
+          'fixed bottom-20 right-2 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out pointer-events-auto',
           'overflow-hidden border border-border',
           isOpen
