@@ -71,13 +71,10 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           ref={buttonRef}
           onClick={handleToggle}
           className={cn(
-            'w-auto px-4 py-3 rounded-full shadow-lg hover:shadow-xl',
+            'w-auto px-4 py-3 rounded-full',
             'flex items-center justify-center text-[#EFE7D2] text-base font-medium',
             'transform hover:scale-105 active:scale-95 transition-all duration-300',
-            'whitespace-nowrap',
-            isOpen 
-              ? 'bg-destructive hover:bg-destructive/90' 
-              : 'bg-[#191919] hover:bg-[#191919]/90',
+            'whitespace-nowrap bg-[#191919] hover:bg-[#191919]/90',
             className
           )}
         >
