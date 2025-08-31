@@ -101,8 +101,8 @@
   border-color: var(--border);
 }
 
-body {
-  background-color: var(--background);
+html, body {
+  background-color: transparent !important;
   color: var(--foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
