@@ -14,7 +14,18 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+    
+    // Send message to parent window about popup state change
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'popupResize',
+        isOpen: newIsOpen,
+        width: newIsOpen ? 414 : 200,
+        height: newIsOpen ? 688 : 60  // 600 popup + 88 for positioning
+      }, '*');
+    }
   };
 
   // Close popup when clicking outside
@@ -28,6 +39,16 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         !buttonRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        
+        // Send message to parent window about popup closing
+        if (window.parent !== window) {
+          window.parent.postMessage({
+            type: 'popupResize',
+            isOpen: false,
+            width: 200,
+            height: 60
+          }, '*');
+        }
       }
     };
 
