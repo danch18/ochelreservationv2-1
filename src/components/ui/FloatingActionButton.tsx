@@ -65,7 +65,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-28 right-6 w-[414px] max-w-[calc(100vw-3rem)] bg-black rounded-lg shadow-2xl z-[9999]',
+          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out',
           'overflow-hidden border border-border',
           isOpen
@@ -74,7 +74,6 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         )}
         style={{
           transformOrigin: 'bottom right',
-          maxHeight: '70vh',
         }}
       >
         {/* Header */}
@@ -96,7 +95,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         {/* Content */}
         <div 
           className="overflow-y-auto p-4 bg-black text-[#EFE7D2] scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500" 
-          style={{ maxHeight: 'calc(70vh - 4rem)' }}
+          style={{ height: '536px' }}
         >
           {children}
         </div>
