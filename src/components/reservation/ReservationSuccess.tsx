@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui';
-import { formatDate, getShortId } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import type { Reservation } from '@/types';
 
 interface ReservationSuccessProps {
@@ -34,16 +34,10 @@ export function ReservationSuccess({
         Réservation confirmée !
       </h3>
       
-      <p className="text-sm text-muted-foreground mb-3">
+      <p className="text-sm text-muted-foreground mb-4">
         Merci, {reservation.name} ! Votre table pour {reservation.guests} a été réservée 
         pour le {formatDate(reservation.reservation_date)} à {reservation.reservation_time}.
       </p>
-      
-      {reservation.id && (
-        <p className="text-xs text-muted-foreground mb-4">
-          ID de réservation : {getShortId(reservation.id)}
-        </p>
-      )}
       
       <div className="space-y-2">
         <Button onClick={onMakeAnother} className="w-full" size="sm">
