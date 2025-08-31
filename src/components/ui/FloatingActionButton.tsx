@@ -39,9 +39,13 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
 
   return (
     <>
-      {/* Fixed Reserve Table Button Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-auto">
-        {/* Reserve Table Button */}
+      {/* Clickable zones - only these areas capture pointer events */}
+      
+      {/* FAB Button Zone */}
+      <div 
+        className="fixed bottom-6 right-6 z-[9999] pointer-events-auto"
+        style={{ width: '200px', height: '60px' }}
+      >
         <button
           ref={buttonRef}
           onClick={handleToggle}
@@ -61,16 +65,24 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         </button>
       </div>
 
+      {/* Popup Zone - only visible when open */}
+      {isOpen && (
+        <div 
+          className="fixed bottom-28 right-6 z-[9998] pointer-events-auto"
+          style={{ width: '414px', height: '600px' }}
+        />
+      )}
+
       {/* Popup Container - Zoom from FAB Animation */}
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999] pointer-events-auto',
-          'transform transition-all duration-300 ease-out',
+          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
+          'transform transition-all duration-300 ease-out pointer-events-auto',
           'overflow-hidden border border-border',
           isOpen
             ? 'scale-100 opacity-100'
-            : 'scale-0 opacity-0',
+            : 'scale-0 opacity-0 pointer-events-none',
         )}
         style={{
           transformOrigin: 'bottom right',
