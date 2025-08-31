@@ -40,7 +40,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
   return (
     <>
       {/* Fixed Reserve Table Button Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end">
+      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-auto">
         {/* Reserve Table Button */}
         <button
           ref={buttonRef}
@@ -65,7 +65,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
+          'fixed bottom-28 right-6 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999] pointer-events-auto',
           'transform transition-all duration-300 ease-out',
           'overflow-hidden border border-border',
           isOpen

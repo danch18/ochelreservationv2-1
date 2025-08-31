@@ -6,7 +6,7 @@ import { ReservationPopup } from '@/components/reservation';
 export default function Home() {
   return (
     <ErrorBoundary>
-      <div className="w-full h-full bg-transparent relative">
+      <div className="w-full h-full bg-transparent relative pointer-events-none">
         {/* Reservation Popup */}
         <ReservationPopup />
       </div>
