@@ -22,7 +22,7 @@
             font-size: 24px;
         ">🍽️</div>
         
-        <iframe id="ochel-popup" src="https://ochelreservationv2-e795sue0b-sahid013s-projects.vercel.app" style="
+        <iframe id="ochel-popup" src="https://ochelreservationv2.vercel.app" style="
             position: fixed;
             bottom: 100px;
             right: 24px;
