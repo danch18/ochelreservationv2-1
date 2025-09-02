@@ -16,11 +16,12 @@ export function useAdminDashboard() {
   // Calculate statistics
   const stats: ReservationStats = useMemo(() => {
     const total = filteredReservations.length;
-    const confirmed = filteredReservations.filter(r => (r.status || 'confirmed') === 'confirmed').length;
+    const pending = filteredReservations.filter(r => r.status === 'pending').length;
+    const confirmed = filteredReservations.filter(r => r.status === 'confirmed').length;
     const cancelled = filteredReservations.filter(r => r.status === 'cancelled').length;
     const completed = filteredReservations.filter(r => r.status === 'completed').length;
 
-    return { total, confirmed, cancelled, completed };
+    return { total, pending, confirmed, cancelled, completed };
   }, [filteredReservations]);
 
   // Calculate total guests for confirmed reservations

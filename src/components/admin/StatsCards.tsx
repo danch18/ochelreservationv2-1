@@ -15,6 +15,12 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
       color: 'text-white'
     },
     {
+      title: 'En attente',
+      value: stats.pending,
+      subtitle: 'à confirmer',
+      color: 'text-yellow-200'
+    },
+    {
       title: 'Confirmées',
       value: stats.confirmed,
       subtitle: 'réservations actives',
@@ -41,7 +47,7 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
       {statItems.map((item, index) => (
         <Card key={index}>
           <CardContent className="p-6">

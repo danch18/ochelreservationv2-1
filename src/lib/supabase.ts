@@ -25,7 +25,9 @@ let supabase: ReturnType<typeof createClient>;
 try {
   supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      persistSession: false // Since this is a public reservation system
+      persistSession: true, // Enable session persistence for admin authentication
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
   });
 } catch (error) {

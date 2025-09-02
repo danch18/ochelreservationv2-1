@@ -22,6 +22,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   // Calculate stats from reservations
   const stats = {
     total: reservations.length,
+    pending: reservations.filter(r => r.status === 'pending').length,
     confirmed: reservations.filter(r => r.status === 'confirmed').length,
     cancelled: reservations.filter(r => r.status === 'cancelled').length,
     completed: reservations.filter(r => r.status === 'completed').length,

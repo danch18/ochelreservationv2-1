@@ -12,9 +12,11 @@ export interface Reservation {
   status?: ReservationStatus;
   created_at?: string;
   updated_at?: string;
+  confirmed_at?: string | null;
+  confirmed_by?: string | null;
 }
 
-export type ReservationStatus = 'confirmed' | 'cancelled' | 'completed';
+export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 
 export type CreateReservationData = Omit<Reservation, 'id' | 'created_at' | 'updated_at' | 'status'>;
 
@@ -30,6 +32,7 @@ export interface ReservationFormData {
 
 export interface ReservationStats {
   total: number;
+  pending: number;
   confirmed: number;
   cancelled: number;
   completed: number;

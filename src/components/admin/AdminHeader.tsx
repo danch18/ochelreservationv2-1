@@ -1,6 +1,15 @@
 'use client';
 
+import { useAuth } from '@/hooks';
+import { Button } from '@/components/ui/Button';
+
 export function AdminHeader() {
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = '/admin/login';
+  };
 
   return (
     <header className="bg-[#191919] border-b border-border">
@@ -15,9 +24,22 @@ export function AdminHeader() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-white/70">
-              Restaurant Management
-            </span>
+            {user && (
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <p className="text-sm text-white font-medium">{user.username}</p>
+                  <p className="text-xs text-white/70">{user.email}</p>
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  size="sm"
+                  className="text-white/70 hover:text-white hover:bg-white/10"
+                >
+                  Déconnexion
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

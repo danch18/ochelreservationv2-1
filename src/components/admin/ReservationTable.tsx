@@ -37,9 +37,30 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   const handleConfirmReservation = async (reservation: Reservation) => {
     if (!reservation.id) return;
     
+    const confirmed = confirm(`Confirmer la réservation pour ${reservation.name} le ${formatDate(reservation.reservation_date)} à ${reservation.reservation_time} ?`);
+    if (!confirmed) return;
+
     setConfirmingId(reservation.id);
     try {
-      await reservationService.updateReservationStatus(reservation.id, 'confirmed');
+      const response = await fetch('/api/reservations/confirm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reservationId: reservation.id,
+          adminUserId: null // TODO: Get from auth context
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to confirm reservation');
+      }
+
+      // Show success message
+      alert('Réservation confirmée avec succès ! Le client recevra un email de confirmation.');
       onReservationsUpdate();
     } catch (error) {
       console.error('Failed to confirm reservation:', error);
@@ -119,8 +140,19 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   {reservation.guests}
                 </td>
                 <td className="px-6 py-4">
-                  <Badge variant={reservation.status === 'confirmed' ? 'default' : 'destructive'}>
-                    {reservation.status}
+                  <Badge 
+                    variant={
+                      reservation.status === 'confirmed' ? 'default' :
+                      reservation.status === 'pending' ? 'secondary' :
+                      reservation.status === 'completed' ? 'outline' :
+                      'destructive'
+                    }
+                  >
+                    {reservation.status === 'pending' ? 'En attente' :
+                     reservation.status === 'confirmed' ? 'Confirmée' :
+                     reservation.status === 'cancelled' ? 'Annulée' :
+                     reservation.status === 'completed' ? 'Terminée' :
+                     reservation.status}
                   </Badge>
                 </td>
                 <td className="px-6 py-4">
@@ -129,18 +161,19 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right space-x-2">
-                  {reservation.status !== 'confirmed' && (
+                  {reservation.status === 'pending' && (
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleConfirmReservation(reservation)}
                       loading={confirmingId === reservation.id}
                       disabled={confirmingId === reservation.id}
+                      className="bg-green-600 hover:bg-green-700 text-white border-green-600"
                     >
                       Confirmer
                     </Button>
                   )}
-                  {reservation.status !== 'cancelled' && (
+                  {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
                     <Button
                       size="sm"
                       variant="destructive"

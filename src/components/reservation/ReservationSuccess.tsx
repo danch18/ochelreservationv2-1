@@ -26,16 +26,24 @@ export function ReservationSuccess({
         </div>
       )}
       
-      <div className="text-primary text-4xl mb-4">✓</div>
+      <div className="text-primary text-4xl mb-4">📋</div>
       
       <h3 className="text-lg font-bold text-card-foreground mb-3">
-        Réservation confirmée !
+        Demande de réservation envoyée !
       </h3>
       
       <p className="text-sm text-muted-foreground mb-4">
-        Merci, {reservation.name} ! Votre table pour {reservation.guests} a été réservée 
-        pour le {formatDate(reservation.reservation_date)} à {reservation.reservation_time}.
+        Merci, {reservation.name} ! Votre demande de réservation pour {reservation.guests} personne{reservation.guests > 1 ? 's' : ''} 
+        le {formatDate(reservation.reservation_date)} à {reservation.reservation_time} a été transmise.
       </p>
+      
+      <div className="bg-secondary/20 border border-secondary/30 rounded-lg p-3 mb-4">
+        <p className="text-xs text-secondary-foreground">
+          <strong>📧 Prochaines étapes :</strong><br/>
+          Vous recevrez un email de confirmation dès que notre équipe aura validé votre réservation. 
+          Cela prend généralement quelques minutes pendant nos heures d'ouverture.
+        </p>
+      </div>
       
       <div className="space-y-2">
         <Button onClick={onMakeAnother} className="w-full" size="sm">

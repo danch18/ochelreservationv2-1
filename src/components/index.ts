@@ -13,5 +13,8 @@ export * from './reservation';
 // Admin components
 export * from './admin';
 
+// Auth components
+export * from './auth';
+
 // Providers
 export * from './providers';
