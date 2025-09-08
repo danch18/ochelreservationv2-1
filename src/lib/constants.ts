@@ -40,12 +40,14 @@ export const GUEST_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 export const RESERVATION_STATUS = {
   CONFIRMED: 'confirmed',
+  PENDING: 'pending',
   CANCELLED: 'cancelled',
   COMPLETED: 'completed'
 } as const;
 
 export const STATUS_COLORS = {
   confirmed: 'bg-green-100 text-green-800 border-green-200',
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   cancelled: 'bg-red-100 text-red-800 border-red-200',
   completed: 'bg-blue-100 text-blue-800 border-blue-200'
 } as const;
@@ -58,7 +60,7 @@ export const FORM_VALIDATION = {
   PHONE_MAX_LENGTH: 20,
   SPECIAL_REQUESTS_MAX_LENGTH: 500,
   MIN_GUESTS: 1,
-  MAX_GUESTS: 12
+  MAX_GUESTS: 50
 } as const;
 
 export const API_ERRORS = {

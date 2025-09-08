@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
             reason: null,
             opening_time: '10:00',
             closing_time: '20:00',
-            created_at: null,
-            updated_at: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           });
         }
       }

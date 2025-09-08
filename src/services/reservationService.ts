@@ -8,7 +8,7 @@ import type {
 } from '@/types';
 
 class ReservationServiceClass {
-  private tableName = 'reservations';
+  private tableName = 'reservations' as const;
 
   // Error handling wrapper
   private handleError(error: unknown, context: string): never {

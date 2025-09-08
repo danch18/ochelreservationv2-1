@@ -7,11 +7,14 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
 
 interface DateStatus {
+  id?: string;
   date: string; // YYYY-MM-DD format
   is_closed: boolean;
-  reason?: string;
-  opening_time?: string; // HH:MM format
-  closing_time?: string; // HH:MM format
+  reason?: string | null;
+  opening_time: string; // HH:MM format
+  closing_time: string; // HH:MM format
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface OpeningHoursModalProps {
@@ -179,20 +182,53 @@ export function SettingsTab() {
       const { supabase } = await import('@/lib/supabase');
 
       if (newStatus) {
-        // Setting to closed - create or update record
-        const { data, error } = await supabase
+        // Setting to closed - check if record exists and update accordingly
+        const { data: existingRecord } = await supabase
           .from('closed_dates')
-          .upsert({
-            date: dateStr,
-            is_closed: true,
-            reason: 'Fermé manuellement',
-            opening_time: currentStatus?.opening_time || '10:00',
-            closing_time: currentStatus?.closing_time || '20:00',
-          })
-          .select()
+          .select('*')
+          .eq('date', dateStr)
           .single();
 
-        if (error) throw error;
+        let data, error;
+
+        if (existingRecord) {
+          // Update existing record to closed
+          const result = await supabase
+            .from('closed_dates')
+            .update({
+              is_closed: true,
+              reason: 'Fermé manuellement',
+              opening_time: currentStatus?.opening_time || '10:00',
+              closing_time: currentStatus?.closing_time || '20:00',
+              updated_at: new Date().toISOString(),
+            })
+            .eq('date', dateStr)
+            .select()
+            .single();
+          
+          data = result.data;
+          error = result.error;
+        } else {
+          // Create new record
+          const result = await supabase
+            .from('closed_dates')
+            .insert({
+              date: dateStr,
+              is_closed: true,
+              reason: 'Fermé manuellement',
+              opening_time: currentStatus?.opening_time || '10:00',
+              closing_time: currentStatus?.closing_time || '20:00',
+            })
+            .select()
+            .single();
+          
+          data = result.data;
+          error = result.error;
+        }
+
+        if (error) {
+          throw new Error(`Erreur Supabase lors de la fermeture: ${error.message} (code: ${error.code})`);
+        }
 
         setDateStatuses(prev => ({
           ...prev,
@@ -216,7 +252,9 @@ export function SettingsTab() {
             .select()
             .single();
 
-          if (error) throw error;
+          if (error) {
+            throw new Error(`Erreur Supabase lors de l'ouverture: ${error.message} (code: ${error.code})`);
+          }
 
           setDateStatuses(prev => ({
             ...prev,
@@ -229,7 +267,9 @@ export function SettingsTab() {
             .delete()
             .eq('date', dateStr);
 
-          if (error) throw error;
+          if (error) {
+            throw new Error(`Erreur Supabase lors de la suppression: ${error.message} (code: ${error.code})`);
+          }
 
           setDateStatuses(prev => {
             const newState = { ...prev };
@@ -240,8 +280,21 @@ export function SettingsTab() {
       }
 
     } catch (err) {
-      console.error('Error updating date status:', err);
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour du statut');
+      // Enhanced error logging to capture all error details
+      console.error('Error updating date status:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined,
+        type: typeof err,
+        dateStr,
+        newStatus,
+        currentStatus,
+        hasCustomHours: currentStatus ? (
+          (currentStatus?.opening_time && currentStatus.opening_time !== '10:00') ||
+          (currentStatus?.closing_time && currentStatus.closing_time !== '20:00')
+        ) : false
+      });
+      setError(err instanceof Error ? err.message : `Erreur lors de la mise à jour du statut: ${JSON.stringify(err)}`);
     } finally {
       setUpdating(null);
     }

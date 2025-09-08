@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database';
 
 // Validate and get Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://jhugrvpaizlzeemazuna.supabase.co';
@@ -19,11 +20,11 @@ if (!supabaseAnonKey || typeof supabaseAnonKey !== 'string' || supabaseAnonKey.l
   throw new Error(`Invalid Supabase anon key: "${supabaseAnonKey?.substring(0, 10)}...". Please check your NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable.`);
 }
 
-// Create Supabase client with error handling
-let supabase: ReturnType<typeof createClient>;
+// Create Supabase client with error handling and proper typing
+let supabase: ReturnType<typeof createClient<Database>>;
 
 try {
-  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true, // Enable session persistence for admin authentication
       autoRefreshToken: true,

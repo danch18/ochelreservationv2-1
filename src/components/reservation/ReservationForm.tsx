@@ -261,7 +261,7 @@ interface TimeSelectorProps {
   value?: string;
   onChange: (value: string) => void;
   error?: string;
-  timeSlots: string[];
+  timeSlots: readonly string[] | string[];
   disabled?: boolean;
   icon?: string;
 }

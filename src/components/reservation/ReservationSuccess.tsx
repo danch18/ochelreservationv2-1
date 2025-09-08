@@ -5,12 +5,14 @@ import type { Reservation } from '@/types';
 interface ReservationSuccessProps {
   reservation: Reservation;
   onMakeAnother: () => void;
+  onViewReservations?: () => void;
   onBack?: () => void;
 }
 
 export function ReservationSuccess({
   reservation,
   onMakeAnother,
+  onViewReservations,
   onBack
 }: ReservationSuccessProps) {
   return (
