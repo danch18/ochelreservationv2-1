@@ -204,43 +204,45 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled }
               </div>
 
               {/* Calendar Grid */}
-              <div className="grid grid-cols-7 gap-1 mb-4 text-center">
-                <div className="text-xs font-medium text-gray-500 py-2">Dim</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Lun</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Mar</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Mer</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Jeu</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Ven</div>
-                <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
-                
-                {days.map((day, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    disabled={day.isPast || day.isClosed}
-                    onClick={() => {
-                      if (!day.isPast && !day.isClosed) {
-                        onChange(day.date);
-                      }
-                    }}
-                    className={`
-                      aspect-square p-2 text-sm rounded transition-all duration-200
-                      ${!day.isCurrentMonth 
-                        ? 'text-gray-300 cursor-default' 
-                        : day.isPast 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : day.isClosed
-                        ? 'text-gray-400 cursor-not-allowed line-through' 
-                        : day.isSelected
-                        ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium' 
-                        : 'text-black hover:bg-[#FF7043]/5 hover:border hover:border-[#FF7043] cursor-pointer'
-                      }
-                    `}
-                    title={day.isClosed ? 'Restaurant fermé' : ''}
-                  >
-                    {day.day}
-                  </button>
-                ))}
+              <div className="px-4">
+                <div className="grid grid-cols-7 gap-1 mb-4 text-center">
+                  <div className="text-xs font-medium text-gray-500 py-2">Dim</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Lun</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Mar</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Mer</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Jeu</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Ven</div>
+                  <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
+                  
+                  {days.map((day, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      disabled={day.isPast || day.isClosed}
+                      onClick={() => {
+                        if (!day.isPast && !day.isClosed) {
+                          onChange(day.date);
+                        }
+                      }}
+                      className={`
+                        aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200
+                        ${!day.isCurrentMonth 
+                          ? 'text-gray-300 cursor-default' 
+                          : day.isPast 
+                          ? 'text-gray-300 cursor-not-allowed' 
+                          : day.isClosed
+                          ? 'text-gray-400 cursor-not-allowed line-through' 
+                          : day.isSelected
+                          ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium' 
+                          : 'text-black hover:bg-[#FF7043]/5 hover:border hover:border-[#FF7043] cursor-pointer'
+                        }
+                      `}
+                      title={day.isClosed ? 'Restaurant fermé' : ''}
+                    >
+                      {day.day}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -364,7 +366,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon }: Tim
           <div className="bg-white">
             <div className="py-4">
               {/* Time slots in tag layout */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 px-4">
                 {timeSlots.map(time => (
                   <button
                     key={time}
@@ -372,8 +374,8 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon }: Tim
                     onClick={() => !disabled && onChange(time)}
                     disabled={disabled}
                     className={`
-                      px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                      border-2 whitespace-nowrap
+                      px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
+                      border-2 whitespace-nowrap flex-shrink-0
                       ${value === time
                         ? '!border-[#FF7043] bg-[#FF7043] text-white' 
                         : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
@@ -451,15 +453,15 @@ function GuestsInput({ value, onChange, error }: GuestsInputProps) {
         error={error}
       />
       
-      <div className="flex gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 mt-3">
         {shortcuts.map(num => (
           <button
             key={num}
             type="button"
             onClick={() => handleShortcutClick(num)}
             className={`
-              px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-              border-2 min-w-[70px]
+              px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
+              border-2 min-w-[65px] flex-shrink-0
               ${selectedShortcut === num 
                 ? '!border-[#FF7043] bg-[#FF7043] text-white' 
                 : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
