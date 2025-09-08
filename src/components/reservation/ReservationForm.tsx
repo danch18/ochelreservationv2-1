@@ -511,7 +511,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
         ) : (
           <div />
         )}
-        <h3 className="text-2xl font-bold text-black text-left w-full" suppressHydrationWarning>
+        <h3 className="text-lg sm:text-2xl font-bold text-black text-left w-full" suppressHydrationWarning>
           Réservez votre table
         </h3>
         <div className="w-16" />
