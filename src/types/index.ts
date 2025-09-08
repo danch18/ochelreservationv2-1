@@ -33,7 +33,7 @@ export interface ReservationFormData {
 
 export interface ReservationStats {
   total: number;
-  pending: number;
+  pending?: number;
   confirmed: number;
   cancelled: number;
   completed: number;

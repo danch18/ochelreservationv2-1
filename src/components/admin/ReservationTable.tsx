@@ -138,7 +138,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   {reservation.guests}
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 w-fit">
                     <Badge variant={reservation.status === 'confirmed' ? 'success' : reservation.status === 'pending' ? 'warning' : 'destructive'}>
                       {reservation.status}
                     </Badge>

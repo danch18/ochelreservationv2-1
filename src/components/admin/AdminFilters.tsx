@@ -47,7 +47,9 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
           >
             <option value="">Tous les statuts</option>
             <option value="confirmed">Confirmé</option>
+            <option value="pending">En attente</option>
             <option value="cancelled">Annulé</option>
+            <option value="completed">Terminé</option>
           </Select>
         </div>
         

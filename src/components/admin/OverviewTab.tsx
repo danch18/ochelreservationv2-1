@@ -18,17 +18,39 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     date: '',
     search: ''
   });
+  const [statsFilter, setStatsFilter] = useState<'today' | 'next7days' | 'all'>('today');
 
-  // Calculate stats from reservations
+  // Get date ranges for stats filtering
+  const getStatsReservations = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const next7Days = new Date();
+    next7Days.setDate(next7Days.getDate() + 7);
+    const next7DaysStr = next7Days.toISOString().split('T')[0];
+
+    switch (statsFilter) {
+      case 'today':
+        return reservations.filter(r => r.reservation_date === today);
+      case 'next7days':
+        return reservations.filter(r => r.reservation_date >= today && r.reservation_date <= next7DaysStr);
+      case 'all':
+      default:
+        return reservations;
+    }
+  };
+
+  const statsReservations = getStatsReservations();
+
+  // Calculate stats from filtered reservations
   const stats = {
-    total: reservations.length,
-    confirmed: reservations.filter(r => r.status === 'confirmed').length,
-    cancelled: reservations.filter(r => r.status === 'cancelled').length,
-    completed: reservations.filter(r => r.status === 'completed').length,
+    total: statsReservations.length,
+    confirmed: statsReservations.filter(r => r.status === 'confirmed').length,
+    cancelled: statsReservations.filter(r => r.status === 'cancelled').length,
+    completed: statsReservations.filter(r => r.status === 'completed').length,
+    pending: statsReservations.filter(r => r.status === 'pending').length,
   };
 
   // Calculate total guests
-  const totalGuests = reservations
+  const totalGuests = statsReservations
     .filter(r => r.status === 'confirmed')
     .reduce((sum, reservation) => sum + reservation.guests, 0);
 
@@ -46,6 +68,29 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
   return (
     <div className="space-y-6">
+      {/* Stats Filter Buttons */}
+      <div className="flex justify-end mb-4">
+        <div className="flex bg-gray-100 rounded-lg p-1">
+          {[
+            { key: 'today' as const, label: "Aujourd'hui" },
+            { key: 'next7days' as const, label: '7 prochains jours' },
+            { key: 'all' as const, label: 'Tout' }
+          ].map(option => (
+            <button
+              key={option.key}
+              onClick={() => setStatsFilter(option.key)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                statsFilter === option.key
+                  ? 'bg-white text-[#F34A23] shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <StatsCards stats={stats} totalGuests={totalGuests} />
       
       <AdminFilters 
