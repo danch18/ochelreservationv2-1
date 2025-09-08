@@ -119,178 +119,335 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
         body {
           font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
           line-height: 1.6;
-          color: #000000;
+          color: #2c3e50;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          background-color: #f9f9f9;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
         }
         .email-container {
           background: #ffffff;
-          border-radius: 16px;
+          border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-          border: 1px solid #F6F1F0;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
         }
         .header {
-          background: #ffffff;
-          color: #000000;
-          padding: 24px;
+          background: linear-gradient(135deg, #F34A23 0%, #e63946 100%);
+          color: #ffffff;
+          padding: 40px 24px;
           text-align: center;
-          border-bottom: 1px solid #F6F1F0;
+          position: relative;
+          overflow: hidden;
+        }
+        .header::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
         }
         .logo {
-          font-size: 2.5em;
-          font-weight: bold;
-          color: #000000;
-          margin-bottom: 8px;
+          font-size: 2.8em;
+          font-weight: 800;
+          color: #ffffff;
+          margin-bottom: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 12px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          position: relative;
+          z-index: 1;
+        }
+        .logo::before {
+          content: '';
+          font-size: 0.8em;
+          margin-right: 8px;
         }
         .tagline {
-          color: #666666;
-          font-size: 0.9em;
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 1.1em;
+          font-weight: 300;
+          position: relative;
+          z-index: 1;
+          text-align: left;
+        }
+        .success-icon {
+          font-size: 4em;
+          color: #27ae60;
+          margin: 20px 0;
+          animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-10px); }
+          60% { transform: translateY(-5px); }
         }
         .content {
-          padding: 32px 24px;
+          padding: 40px 32px;
           background: #ffffff;
-          color: #000000;
+          color: #2c3e50;
         }
         .greeting {
+          font-size: 1.3em;
+          margin-bottom: 24px;
+          color: #2c3e50;
+          font-weight: 600;
+        }
+        .confirmation-message {
+          background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+          border-left: 4px solid #27ae60;
+          padding: 20px;
+          margin: 24px 0;
+          border-radius: 8px;
           font-size: 1.1em;
-          margin-bottom: 20px;
-          color: #000000;
+          color: #155724;
+          font-weight: 500;
         }
         .reservation-details {
-          background: #F34A23/5;
-          border-radius: 8px;
-          padding: 24px;
-          margin: 24px 0;
-          border: 1px solid #F6F1F0;
+          background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
+          border: 2px solid #F34A23;
+          box-shadow: 0 8px 25px rgba(243, 74, 35, 0.15);
+          position: relative;
+        }
+        .reservation-details::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #F34A23;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(243, 74, 35, 0.3);
         }
         .detail-row {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 12px;
-          padding: 8px 0;
-          border-bottom: 1px solid #F6F1F0;
+          align-items: center;
+          margin-bottom: 16px;
+          padding: 12px 0;
+          border-bottom: 1px solid rgba(243, 74, 35, 0.2);
+          transition: all 0.3s ease;
+        }
+        .detail-row:hover {
+          background: rgba(243, 74, 35, 0.05);
+          border-radius: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
         }
         .detail-row:last-child {
           border-bottom: none;
           margin-bottom: 0;
         }
         .detail-label {
-          font-weight: 600;
+          font-weight: 700;
           color: #F34A23;
+          font-size: 1.05em;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         .detail-value {
-          color: #000000;
+          color: #2c3e50;
           text-align: right;
+          font-weight: 600;
+          font-size: 1.05em;
         }
         .special-requests {
-          background: #F34A23/5;
-          border-radius: 8px;
-          padding: 20px;
-          margin: 24px 0;
-          border: 1px solid #F6F1F0;
+          background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+          border-radius: 16px;
+          padding: 28px;
+          margin: 32px 0;
+          border: 2px solid #17a2b8;
+          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+          position: relative;
+        }
+        .special-requests::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #17a2b8;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
         }
         .special-requests h4 {
           margin-top: 0;
-          color: #F34A23;
-          font-size: 1.1em;
+          color: #17a2b8;
+          font-size: 1.2em;
+          font-weight: 700;
         }
         .important-notes {
-          background: #F6F1F0;
-          border-radius: 8px;
-          padding: 20px;
-          margin: 24px 0;
+          background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+          border-radius: 16px;
+          padding: 28px;
+          margin: 32px 0;
+          border: 2px solid #f39c12;
+          box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15);
+          position: relative;
+        }
+        .important-notes::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #f39c12;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
         }
         .important-notes h4 {
-          color: #000000;
+          color: #f39c12;
           margin-top: 0;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
+          font-size: 1.2em;
+          font-weight: 700;
         }
         .important-notes ul {
           margin: 0;
-          padding-left: 20px;
+          padding-left: 24px;
         }
         .important-notes li {
-          margin-bottom: 8px;
-          color: #666666;
+          margin-bottom: 12px;
+          color: #856404;
+          font-weight: 500;
+          position: relative;
+        }
+        .important-notes li::marker {
+          color: #f39c12;
         }
         .contact-info {
-          background: #F34A23/5;
-          border-radius: 8px;
-          padding: 20px;
-          margin: 24px 0;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
           text-align: center;
-          border: 1px solid #F6F1F0;
+          border: 2px solid #6c757d;
+          box-shadow: 0 8px 25px rgba(108, 117, 125, 0.15);
+          position: relative;
+        }
+        .contact-info::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #6c757d;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
         }
         .contact-info h4 {
-          color: #F34A23;
+          color: #6c757d;
           margin-top: 0;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
+          font-size: 1.2em;
+          font-weight: 700;
         }
         .contact-info p {
-          color: #000000;
-          margin: 8px 0;
-          line-height: 1.5;
+          color: #495057;
+          margin: 12px 0;
+          line-height: 1.6;
+          font-weight: 500;
         }
         .footer {
-          background: #F6F1F0;
-          padding: 24px;
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          padding: 32px 24px;
           text-align: center;
-          color: #666666;
-          font-size: 0.9em;
-          border-top: 1px solid #F6F1F0;
+          color: #ecf0f1;
+          font-size: 0.95em;
         }
         .footer p {
-          margin: 8px 0;
+          margin: 12px 0;
+          font-weight: 500;
         }
         .highlight {
           color: #F34A23;
-          font-weight: 600;
+          font-weight: 700;
         }
         .reservation-button {
           display: inline-block;
-          background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-          color: #000000;
+          background: linear-gradient(135deg, #F34A23 0%, #e63946 100%);
+          color: #ffffff !important;
           text-decoration: none;
-          padding: 16px 32px;
-          border-radius: 8px;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 24px 0;
-          border: 2px solid #d0d0d0;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          padding: 18px 40px;
+          border-radius: 50px;
+          font-weight: 700;
+          font-size: 18px;
+          margin: 32px 0;
+          border: none;
+          box-shadow: 0 8px 25px rgba(243, 74, 35, 0.4);
           transition: all 0.3s ease;
           text-align: center;
-          min-width: 200px;
+          min-width: 250px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
         .reservation-button:hover {
-          background: linear-gradient(135deg, #e8e8e8 0%, #d5d5d5 100%);
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+          background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+          color: #ffffff !important;
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(243, 74, 35, 0.5);
         }
         .button-container {
           text-align: center;
-          margin: 32px 0 24px 0;
-          padding: 24px 0;
+          margin: 40px 0 32px 0;
+          padding: 32px 0;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 16px;
+          border: 2px solid #dee2e6;
+        }
+        .divider {
+          height: 2px;
+          background: linear-gradient(90deg, transparent 0%, #F34A23 50%, transparent 100%);
+          margin: 32px 0;
+          border-radius: 1px;
         }
         @media (max-width: 640px) {
           body {
             padding: 12px;
           }
           .content {
-            padding: 20px 16px;
+            padding: 24px 20px;
           }
           .header {
-            padding: 20px 16px;
+            padding: 32px 20px;
           }
           .logo {
-            font-size: 2em;
+            font-size: 2.2em;
+          }
+          .reservation-details, .special-requests, .important-notes, .contact-info {
+            padding: 24px 20px;
+          }
+          .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .detail-value {
+            text-align: left;
           }
         }
       </style>
@@ -307,10 +464,12 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
             Dear ${reservation.name},
           </div>
           
-          <p>Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! We're delighted to confirm your reservation.</p>
+          <div class="confirmation-message">
+            Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! We're delighted to confirm your reservation and look forward to providing you with an exceptional dining experience.
+          </div>
           
           <div class="reservation-details">
-            <h3 style="margin-top: 0; color: #F34A23; margin-bottom: 20px;">Reservation Details</h3>
+            <h3 style="margin-top: 20px; color: #F34A23; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Reservation Details</h3>
             <div class="detail-row">
               <span class="detail-label">Confirmation ID:</span>
               <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
@@ -336,9 +495,11 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           ${reservation.special_requests ? `
           <div class="special-requests">
             <h4>Special Requests</h4>
-            <p style="margin-bottom: 0; color: #000000;">${reservation.special_requests}</p>
+            <p style="margin-bottom: 0; color: #495057; font-weight: 500; line-height: 1.6;">${reservation.special_requests}</p>
           </div>
           ` : ''}
+          
+          <div class="divider"></div>
           
           <div class="important-notes">
             <h4>Important Notes</h4>
@@ -346,6 +507,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
               <li>Please arrive on time. We hold tables for 15 minutes past your reservation time.</li>
               <li>If you need to modify or cancel your reservation, please contact us at least 2 hours in advance.</li>
               <li>For parties of 6 or more, a service charge may apply.</li>
+              <li>We offer an extensive wine selection and craft cocktails to complement your meal.</li>
             </ul>
           </div>
           
@@ -354,6 +516,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
             <p>(555) 123-4567</p>
             <p>info@ochel.com</p>
             <p>123 Fine Dining Street, Downtown</p>
+            <p>Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
           </div>
           
           <div class="button-container">
@@ -364,8 +527,8 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
         </div>
         
         <div class="footer">
-          <p>We look forward to serving you at <span class="highlight">ochel</span>!</p>
-          <p style="font-size: 0.8em; opacity: 0.7;">
+          <p>We look forward to serving you at <span class="highlight">Magnifiko Réservez</span>!</p>
+          <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
             This is an automated confirmation email. Please do not reply to this email.
           </p>
         </div>
@@ -437,140 +600,258 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
         body {
           font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
           line-height: 1.6;
-          color: #000000;
+          color: #2c3e50;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          background-color: #f9f9f9;
+          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+          min-height: 100vh;
         }
         .email-container {
           background: #ffffff;
-          border-radius: 16px;
+          border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-          border: 1px solid #F6F1F0;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
         }
         .header {
-          background: #ffffff;
-          color: #000000;
-          padding: 24px;
+          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+          color: #ffffff;
+          padding: 40px 24px;
           text-align: center;
-          border-bottom: 1px solid #F6F1F0;
+          position: relative;
+          overflow: hidden;
+        }
+        .header::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
         }
         .logo {
-          font-size: 2.5em;
-          font-weight: bold;
-          color: #000000;
-          margin-bottom: 8px;
+          font-size: 2.8em;
+          font-weight: 800;
+          color: #ffffff;
+          margin-bottom: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 12px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          position: relative;
+          z-index: 1;
+        }
+        .logo::before {
+          content: '';
+          font-size: 0.8em;
+          margin-right: 8px;
+        }
+        .cancellation-icon {
+          font-size: 4em;
+          color: #e74c3c;
+          margin: 20px 0;
+          animation: shake 1s ease-in-out infinite;
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
         }
         .content {
-          padding: 32px 24px;
+          padding: 40px 32px;
           background: #ffffff;
-          color: #000000;
+          color: #2c3e50;
+        }
+        .greeting {
+          font-size: 1.3em;
+          margin-bottom: 24px;
+          color: #2c3e50;
+          font-weight: 600;
+        }
+        .cancellation-message {
+          background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+          border-left: 4px solid #e74c3c;
+          padding: 20px;
+          margin: 24px 0;
+          border-radius: 8px;
+          font-size: 1.1em;
+          color: #721c24;
+          font-weight: 500;
         }
         .cancelled-details {
-          background: rgba(229, 77, 46, 0.1);
-          border-radius: 8px;
-          padding: 24px;
-          margin: 24px 0;
-          border: 1px solid rgba(229, 77, 46, 0.3);
+          background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
+          border: 2px solid #e74c3c;
+          box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
+          position: relative;
+        }
+        .cancelled-details::before {
+          content: '❌';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #e74c3c;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
         }
         .detail-row {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 12px;
-          padding: 8px 0;
-          border-bottom: 1px solid #F6F1F0;
+          align-items: center;
+          margin-bottom: 16px;
+          padding: 12px 0;
+          border-bottom: 1px solid rgba(231, 76, 60, 0.2);
+          transition: all 0.3s ease;
+        }
+        .detail-row:hover {
+          background: rgba(231, 76, 60, 0.05);
+          border-radius: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
         }
         .detail-row:last-child {
           border-bottom: none;
           margin-bottom: 0;
         }
         .detail-label {
-          font-weight: 600;
-          color: #e54d2e;
+          font-weight: 700;
+          color: #e74c3c;
+          font-size: 1.05em;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         .detail-value {
-          color: #000000;
+          color: #2c3e50;
           text-align: right;
+          font-weight: 600;
+          font-size: 1.05em;
         }
         .contact-info {
-          background: #F34A23/5;
-          border-radius: 8px;
-          padding: 20px;
-          margin: 24px 0;
+          background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
           text-align: center;
-          border: 1px solid #F6F1F0;
+          border: 2px solid #17a2b8;
+          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+          position: relative;
+        }
+        .contact-info::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #17a2b8;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
         }
         .contact-info h4 {
-          color: #F34A23;
+          color: #17a2b8;
           margin-top: 0;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
+          font-size: 1.2em;
+          font-weight: 700;
         }
         .contact-info p {
-          color: #000000;
-          margin: 8px 0;
-          line-height: 1.5;
+          color: #495057;
+          margin: 12px 0;
+          line-height: 1.6;
+          font-weight: 500;
         }
         .footer {
-          background: #F6F1F0;
-          padding: 24px;
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          padding: 32px 24px;
           text-align: center;
-          color: #666666;
-          font-size: 0.9em;
-          border-top: 1px solid #F6F1F0;
+          color: #ecf0f1;
+          font-size: 0.95em;
+        }
+        .footer p {
+          margin: 12px 0;
+          font-weight: 500;
         }
         .highlight {
-          color: #F34A23;
-          font-weight: 600;
-        }
-        .cancellation-icon {
-          font-size: 3em;
-          color: #e54d2e;
-          margin-bottom: 16px;
+          color: #e74c3c;
+          font-weight: 700;
         }
         .reservation-button {
           display: inline-block;
-          background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-          color: #000000;
+          background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+          color: #ffffff;
           text-decoration: none;
-          padding: 16px 32px;
-          border-radius: 8px;
-          font-weight: 600;
-          font-size: 16px;
-          margin: 24px 0;
-          border: 2px solid #d0d0d0;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          padding: 18px 40px;
+          border-radius: 50px;
+          font-weight: 700;
+          font-size: 18px;
+          margin: 32px 0;
+          border: none;
+          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
           transition: all 0.3s ease;
           text-align: center;
-          min-width: 200px;
+          min-width: 250px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
         .reservation-button:hover {
-          background: linear-gradient(135deg, #e8e8e8 0%, #d5d5d5 100%);
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+          background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(23, 162, 184, 0.5);
         }
         .button-container {
           text-align: center;
-          margin: 32px 0 24px 0;
-          padding: 24px 0;
+          margin: 40px 0 32px 0;
+          padding: 32px 0;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 16px;
+          border: 2px solid #dee2e6;
+        }
+        .divider {
+          height: 2px;
+          background: linear-gradient(90deg, transparent 0%, #e74c3c 50%, transparent 100%);
+          margin: 32px 0;
+          border-radius: 1px;
         }
         @media (max-width: 640px) {
           body {
             padding: 12px;
           }
           .content {
-            padding: 20px 16px;
+            padding: 24px 20px;
           }
           .header {
-            padding: 20px 16px;
+            padding: 32px 20px;
           }
           .logo {
-            font-size: 2em;
+            font-size: 2.2em;
+          }
+          .cancelled-details, .contact-info {
+            padding: 24px 20px;
+          }
+          .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .detail-value {
+            text-align: left;
           }
         }
       </style>
@@ -586,37 +867,46 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
             <div class="cancellation-icon">❌</div>
           </div>
           
-          <p>Dear ${reservation.name},</p>
+          <div class="greeting">
+            Dear ${reservation.name},
+          </div>
           
-          <p>This email confirms that your reservation has been <strong style="color: #e54d2e;">cancelled</strong>.</p>
+          <div class="cancellation-message">
+            This email confirms that your reservation has been <strong style="color: #e74c3c;">cancelled</strong>. We're sorry to see you won't be joining us.
+          </div>
           
           <div class="cancelled-details">
-            <h3 style="margin-top: 0; color: #e54d2e; margin-bottom: 20px;">Cancelled Reservation</h3>
+            <h3 style="margin-top: 20px; color: #e74c3c; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Cancelled Reservation</h3>
             <div class="detail-row">
               <span class="detail-label">Confirmation ID:</span>
               <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">Date:</span>
+              <span class="detail-label">📅 Date:</span>
               <span class="detail-value">${formattedDate}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">Time:</span>
+              <span class="detail-label">🕐 Time:</span>
               <span class="detail-value">${reservation.reservation_time}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">Party Size:</span>
+              <span class="detail-label">👥 Party Size:</span>
               <span class="detail-value">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</span>
             </div>
           </div>
           
-          <p>We're sorry to see you won't be joining us. If you'd like to make a new reservation, please visit our website or contact us directly.</p>
+          <div class="divider"></div>
+          
+          <p style="font-size: 1.1em; color: #495057; text-align: center; margin: 24px 0;">
+            We hope you'll consider dining with us in the future. If you'd like to make a new reservation, please visit our website or contact us directly.
+          </p>
           
           <div class="contact-info">
             <h4>Ready to Book Again?</h4>
             <p>(555) 123-4567</p>
             <p>info@ochel.com</p>
             <p>123 Fine Dining Street, Downtown</p>
+            <p>Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
           </div>
           
           <div class="button-container">
@@ -627,7 +917,10 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
         </div>
         
         <div class="footer">
-          <p>We hope to see you at <span class="highlight">ochel</span> soon!</p>
+          <p>We hope to see you at <span class="highlight">Magnifiko Réservez</span> soon!</p>
+          <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
+            This is an automated cancellation email. Please do not reply to this email.
+          </p>
         </div>
       </div>
     </body>
