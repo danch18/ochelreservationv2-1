@@ -90,9 +90,9 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h3 className="text-lg font-semibold mb-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h3 className="text-base md:text-lg font-semibold mb-4">
           Modifier les horaires - {new Date(date).toLocaleDateString('fr-FR')}
         </h3>
         
@@ -121,14 +121,14 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
                 <label className="block text-sm font-medium text-gray-700">
                   Service Matin
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     type="time"
                     value={morningOpening}
                     onChange={(e) => setMorningOpening(e.target.value)}
                     className="flex-1"
                   />
-                  <span className="flex items-center text-gray-500">à</span>
+                  <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
                   <Input
                     type="time"
                     value={morningClosing}
@@ -142,14 +142,14 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
                 <label className="block text-sm font-medium text-gray-700">
                   Service Soir
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     type="time"
                     value={afternoonOpening}
                     onChange={(e) => setAfternoonOpening(e.target.value)}
                     className="flex-1"
                   />
-                  <span className="flex items-center text-gray-500">à</span>
+                  <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
                   <Input
                     type="time"
                     value={afternoonClosing}
@@ -187,11 +187,11 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
           )}
         </div>
         
-        <div className="flex gap-2 mt-6">
-          <Button onClick={handleSave} className="flex-1">
+        <div className="flex flex-col sm:flex-row gap-2 mt-6">
+          <Button onClick={handleSave} className="flex-1 order-2 sm:order-1">
             Enregistrer
           </Button>
-          <Button variant="outline" onClick={onClose} className="flex-1">
+          <Button variant="outline" onClick={onClose} className="flex-1 order-1 sm:order-2">
             Annuler
           </Button>
         </div>
@@ -231,13 +231,14 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <button
             key={dayIndex}
             onClick={() => setActiveTab(dayIndex)}
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+            className={`px-2 md:px-3 py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
               activeTab === dayIndex
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
             }`}
           >
-            {dayName}
+            <span className="hidden sm:inline">{dayName}</span>
+            <span className="sm:hidden">{dayName.slice(0, 3)}</span>
           </button>
         ))}
       </div>
@@ -299,7 +300,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                       <label className="block text-sm font-medium text-gray-700">
                         Service Matin
                       </label>
-                      <div className="flex gap-3 items-center">
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                         <Input
                           type="time"
                           value={daySchedule.morning_opening || '10:00'}
@@ -307,9 +308,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             morning_opening: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-32 flex-1"
+                          className="w-full sm:w-32 sm:flex-1"
                         />
-                        <span className="text-gray-500 font-medium">à</span>
+                        <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
                           type="time"
                           value={daySchedule.morning_closing || '14:00'}
@@ -317,7 +318,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             morning_closing: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-32 flex-1"
+                          className="w-full sm:w-32 sm:flex-1"
                         />
                       </div>
                     </div>
@@ -326,7 +327,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                       <label className="block text-sm font-medium text-gray-700">
                         Service Soir
                       </label>
-                      <div className="flex gap-3 items-center">
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                         <Input
                           type="time"
                           value={daySchedule.afternoon_opening || '19:00'}
@@ -334,9 +335,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             afternoon_opening: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-32 flex-1"
+                          className="w-full sm:w-32 sm:flex-1"
                         />
-                        <span className="text-gray-500 font-medium">à</span>
+                        <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
                           type="time"
                           value={daySchedule.afternoon_closing || '22:00'}
@@ -344,7 +345,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             afternoon_closing: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-32 flex-1"
+                          className="w-full sm:w-32 sm:flex-1"
                         />
                       </div>
                     </div>
@@ -356,7 +357,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                   <label className="block text-sm font-medium text-gray-700">
                     Horaires d'ouverture
                   </label>
-                  <div className="flex gap-3 items-center">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                     <Input
                       type="time"
                       value={daySchedule.single_opening || '10:00'}
@@ -364,9 +365,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         single_opening: e.target.value 
                       })}
                       disabled={isUpdating}
-                      className="w-32"
+                      className="w-full sm:w-32"
                     />
-                    <span className="text-gray-500 font-medium">à</span>
+                    <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                     <Input
                       type="time"
                       value={daySchedule.single_closing || '20:00'}
@@ -374,7 +375,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         single_closing: e.target.value 
                       })}
                       disabled={isUpdating}
-                      className="w-32"
+                      className="w-full sm:w-32"
                     />
                   </div>
                 </div>
@@ -1069,14 +1070,14 @@ export function SettingsTab() {
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Weekly Schedule Management Section */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">
+          <h2 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-0">
             Horaires Hebdomadaires par Défaut
           </h2>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs md:text-sm text-gray-600">
             Configuration appliquée à tout le système
           </div>
         </div>
@@ -1119,17 +1120,18 @@ export function SettingsTab() {
       </div>
 
       {/* Calendar Section */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-bold text-gray-900">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900">
               Calendrier & Horaires du Restaurant
             </h2>
             <Button
               onClick={goToToday}
               variant="outline"
               size="sm"
+              className="w-fit"
             >
               Aujourd'hui
             </Button>
@@ -1145,8 +1147,8 @@ export function SettingsTab() {
               ←
             </Button>
             
-            <div className="min-w-[200px] text-center">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="min-w-[150px] md:min-w-[200px] text-center">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">
                 {MONTHS[currentMonth]} {currentYear}
               </h3>
             </div>
@@ -1163,7 +1165,7 @@ export function SettingsTab() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-6 mb-4 text-sm flex-wrap">
+        <div className="flex items-center gap-3 md:gap-6 mb-4 text-xs md:text-sm flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"></div>
             <span className="text-gray-700">Ouvert</span>
@@ -1205,9 +1207,10 @@ export function SettingsTab() {
                 {DAYS.map(day => (
                   <div
                     key={day}
-                    className="p-3 text-center text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
+                    className="p-1 md:p-3 text-center text-xs md:text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
                   >
-                    {day}
+                    <span className="hidden sm:inline">{day}</span>
+                    <span className="sm:hidden">{day.charAt(0)}</span>
                   </div>
                 ))}
               </div>
@@ -1219,7 +1222,7 @@ export function SettingsTab() {
                     return (
                       <div
                         key={`empty-${index}`}
-                        className="h-28 border-r border-b border-gray-200 last:border-r-0"
+                        className="h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0"
                       />
                     );
                   }
@@ -1242,14 +1245,14 @@ export function SettingsTab() {
                   return (
                     <div
                       key={day}
-                      className={`h-28 border-r border-b border-gray-200 last:border-r-0 relative ${
+                      className={`h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0 relative ${
                         isPast ? 'bg-gray-50' : 'bg-white hover:bg-gray-50'
                       } transition-colors`}
                     >
-                      <div className="w-full h-full p-2">
+                      <div className="w-full h-full p-1 md:p-2">
                         {/* Date number */}
                         <div
-                          className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                          className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-medium ${
                             isCurrentDay
                               ? 'bg-blue-500 text-white'
                               : isPast
@@ -1262,12 +1265,12 @@ export function SettingsTab() {
 
                         {/* Status and controls */}
                         {!isPast && (
-                          <div className="mt-1 space-y-1">
+                          <div className="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
                             {/* Open/Close toggle */}
                             <button
                               onClick={() => toggleDateStatus(day)}
                               disabled={isUpdatingThisDate}
-                              className={`w-full text-xs px-2 py-1 rounded transition-colors ${
+                              className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors ${
                                 isClosed
                                   ? isClosedByWeeklySchedule
                                     ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
@@ -1275,30 +1278,45 @@ export function SettingsTab() {
                                   : 'bg-green-100 text-green-700 hover:bg-green-200'
                               }`}
                             >
-                              {isClosed 
-                                ? isClosedByWeeklySchedule 
-                                  ? 'Fermé (hebdo)' 
-                                  : 'Fermé'
-                                : 'Ouvert'
-                              }
+                              <span className="hidden sm:inline">
+                                {isClosed 
+                                  ? isClosedByWeeklySchedule 
+                                    ? 'Fermé (hebdo)' 
+                                    : 'Fermé'
+                                  : 'Ouvert'
+                                }
+                              </span>
+                              <span className="sm:hidden">
+                                {isClosed ? 'F' : 'O'}
+                              </span>
                             </button>
 
                             {/* Hours button */}
                             <button
                               onClick={() => setShowHoursModal(dateStr)}
                               disabled={isUpdatingThisDate}
-                              className={`w-full text-xs px-2 py-1 rounded transition-colors ${
+                              className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight ${
                                 hasCustomHours || status?.use_split_hours
                                   ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                               }`}
                             >
-                              {status?.use_split_hours 
-                                ? `${status.morning_opening || '10:00'}-${status.morning_closing || '14:00'} • ${status.afternoon_opening || '19:00'}-${status.afternoon_closing || '22:00'}`
-                                : hasCustomHours 
-                                  ? `${status.opening_time}-${status.closing_time}`
-                                  : '10:00-20:00'
-                              }
+                              <span className="hidden sm:inline">
+                                {status?.use_split_hours 
+                                  ? `${status.morning_opening || '10:00'}-${status.morning_closing || '14:00'} • ${status.afternoon_opening || '19:00'}-${status.afternoon_closing || '22:00'}`
+                                  : hasCustomHours 
+                                    ? `${status.opening_time}-${status.closing_time}`
+                                    : '10:00-20:00'
+                                }
+                              </span>
+                              <span className="sm:hidden">
+                                {status?.use_split_hours 
+                                  ? `${status.morning_opening || '10:00'}-${status.afternoon_closing || '22:00'}`
+                                  : hasCustomHours 
+                                    ? `${status.opening_time}-${status.closing_time}`
+                                    : '10-20'
+                                }
+                              </span>
                             </button>
                           </div>
                         )}
@@ -1339,16 +1357,16 @@ export function SettingsTab() {
       )}
 
       {/* Additional Settings Section */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md">
-        <h2 className="text-xl font-semibold text-black mb-4">Paramètres par défaut</h2>
-        <div className="space-y-4">
+      <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-200 shadow-md">
+        <h2 className="text-lg md:text-xl font-semibold text-black mb-4">Paramètres par défaut</h2>
+        <div className="space-y-3 md:space-y-4">
           {/* Guest Limit Setting - Controls automatic vs manual confirmation */}
           <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="font-medium text-gray-900">Limite de confirmation automatique</h3>
-                <p className="text-sm text-gray-600">Nombre maximum d'invités pour confirmation automatique</p>
-                  </div>
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-3 gap-3">
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 text-sm md:text-base">Limite de confirmation automatique</h3>
+                <p className="text-xs md:text-sm text-gray-600">Nombre maximum d'invités pour confirmation automatique</p>
+              </div>
               <div className="flex items-center gap-2">
                 {/* Guest Limit Input - Range 1-20 guests */}
                 <Input
@@ -1357,36 +1375,36 @@ export function SettingsTab() {
                   max="20"
                   value={guestLimit}
                   onChange={(e) => setGuestLimit(parseInt(e.target.value) || 4)}
-                  className="w-20 text-center"
+                  className="w-16 md:w-20 text-center text-sm"
                 />
                 {/* Save Button - Updates system-wide setting */}
-                  <Button
+                <Button
                   onClick={updateGuestLimit}
                   disabled={updatingGuestLimit}
-                    size="sm"
-                  className="ml-2"
-                  >
+                  size="sm"
+                  className="text-xs md:text-sm"
+                >
                   {updatingGuestLimit ? '...' : 'Sauvegarder'}
-                  </Button>
-                </div>
+                </Button>
+              </div>
             </div>
             {/* Explanation Panel - Shows current behavior */}
-            <div className="text-xs text-gray-500 bg-white p-3 rounded border">
+            <div className="text-[10px] md:text-xs text-gray-500 bg-white p-2 md:p-3 rounded border">
               <p className="font-medium mb-1">Comment ça marche :</p>
               <p>• 1-{guestLimit} invités : Confirmation automatique + email immédiat</p>
               <p>• {guestLimit + 1}+ invités : Statut "En attente" + validation manuelle requise</p>
               <p>• L'email de confirmation est envoyé uniquement après validation admin</p>
-        </div>
+            </div>
       </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg gap-2">
             <div>
-              <h3 className="font-medium text-gray-900">Horaires par défaut</h3>
-              <p className="text-sm text-gray-600">Horaires appliqués aux nouvelles dates</p>
+              <h3 className="font-medium text-gray-900 text-sm md:text-base">Horaires par défaut</h3>
+              <p className="text-xs md:text-sm text-gray-600">Horaires appliqués aux nouvelles dates</p>
             </div>
-            <div className="text-right">
-              <p className="font-medium text-gray-900">10:00 - 20:00</p>
-              <p className="text-sm text-gray-600">Lundi à Dimanche</p>
+            <div className="text-left md:text-right">
+              <p className="font-medium text-gray-900 text-sm md:text-base">10:00 - 20:00</p>
+              <p className="text-xs md:text-sm text-gray-600">Lundi à Dimanche</p>
             </div>
           </div>
         </div>
