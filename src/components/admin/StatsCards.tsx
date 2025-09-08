@@ -51,21 +51,21 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
   ];
 
   return (
-    /* Statistics Cards Grid - Responsive layout with 6 columns on desktop */
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
+    /* Statistics Cards Grid - Responsive layout: 2 columns mobile, 6 columns desktop */
+    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-6 mb-8">
       {statItems.map((item, index) => (
         <Card key={index}>
-          <CardContent className="p-6">
+          <CardContent className="p-3 md:p-6">
             {/* Card Title */}
-            <h3 className="text-lg font-semibold text-black mb-2">
+            <h3 className="text-sm md:text-lg font-semibold text-black mb-1 md:mb-2">
               {item.title}
             </h3>
             {/* Main Statistic Value - Large, bold, and colored */}
-            <p className={`text-3xl font-bold ${item.color}`}>
+            <p className={`text-xl md:text-3xl font-bold ${item.color}`}>
               {item.value}
             </p>
             {/* Subtitle/Description */}
-            <p className="text-sm text-gray-600">{item.subtitle}</p>
+            <p className="text-xs md:text-sm text-gray-600">{item.subtitle}</p>
           </CardContent>
         </Card>
       ))}
