@@ -95,7 +95,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-20 right-2 w-[414px] h-[600px] bg-white rounded-2xl shadow-2xl z-[9999]',
+          'fixed bottom-20 right-2 w-[414px] max-w-[320px] sm:max-w-[414px] h-[600px] bg-white rounded-2xl shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out pointer-events-auto',
           'overflow-hidden border border-[#D1D5DC]',
           isOpen
