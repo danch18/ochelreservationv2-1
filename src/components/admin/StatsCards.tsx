@@ -12,52 +12,46 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
       title: 'Total',
       value: stats.total,
       subtitle: 'réservations',
-      color: 'text-white'
-    },
-    {
-      title: 'En attente',
-      value: stats.pending,
-      subtitle: 'à confirmer',
-      color: 'text-yellow-200'
+      color: 'text-black'
     },
     {
       title: 'Confirmées',
       value: stats.confirmed,
       subtitle: 'réservations actives',
-      color: 'text-green-200'
+      color: 'text-green-600'
     },
     {
       title: 'Terminées',
       value: stats.completed,
       subtitle: 'repas terminés',
-      color: 'text-blue-200'
+      color: 'text-blue-600'
     },
     {
       title: 'Annulées',
       value: stats.cancelled,
       subtitle: 'réservations annulées',
-      color: 'text-red-200'
+      color: 'text-red-600'
     },
     {
       title: 'Total Invités',
       value: totalGuests,
       subtitle: 'attendus aujourd\'hui',
-      color: 'text-amber-200'
+      color: 'text-[#F34A23]'
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
       {statItems.map((item, index) => (
         <Card key={index}>
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-black mb-2">
               {item.title}
             </h3>
             <p className={`text-3xl font-bold ${item.color}`}>
               {item.value}
             </p>
-            <p className="text-sm text-gray-300">{item.subtitle}</p>
+            <p className="text-sm text-gray-600">{item.subtitle}</p>
           </CardContent>
         </Card>
       ))}

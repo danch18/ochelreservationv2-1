@@ -66,14 +66,44 @@ class ReservationServiceClass {
     throw new Error(API_ERRORS.GENERIC);
   }
 
+  // Get guest limit setting
+  async getGuestLimit(): Promise<number> {
+    try {
+      const { data, error } = await supabase
+        .from('restaurant_settings')
+        .select('setting_value')
+        .eq('setting_key', 'auto_confirm_guest_limit')
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading guest limit:', error);
+        return 4; // Default fallback
+      }
+
+      return data ? parseInt(data.setting_value) || 4 : 4;
+    } catch (err) {
+      console.error('Error loading guest limit:', err);
+      return 4; // Default fallback
+    }
+  }
+
   // Create a new reservation
   async createReservation(reservation: CreateReservationData): Promise<Reservation> {
     try {
+      // Get the current guest limit setting
+      const guestLimit = await this.getGuestLimit();
+      const guestCount = parseInt(reservation.guests.toString()) || 1;
+      
+      // Determine if this reservation requires admin confirmation
+      const requiresConfirmation = guestCount > guestLimit;
+      const initialStatus = requiresConfirmation ? 'pending' : 'confirmed';
+
       const { data, error } = await supabase
         .from(this.tableName)
         .insert([{
           ...reservation,
-          status: 'confirmed' // Default status
+          status: initialStatus,
+          requires_confirmation: requiresConfirmation
         }])
         .select()
         .single();
@@ -82,15 +112,16 @@ class ReservationServiceClass {
         this.handleError(error, 'Error creating reservation');
       }
 
-      // Send confirmation email
-      try {
-        await emailService.sendReservationConfirmation(data);
-      } catch (emailError) {
-        // Log email error but don't fail the reservation
-        if (ENV_CONFIG.isDevelopment) {
-          console.error('Failed to send confirmation email:', emailError);
+      // Send confirmation email only if reservation is automatically confirmed
+      if (!requiresConfirmation) {
+        try {
+          await emailService.sendReservationConfirmation(data);
+        } catch (emailError) {
+          // Log email error but don't fail the reservation
+          if (ENV_CONFIG.isDevelopment) {
+            console.error('Failed to send confirmation email:', emailError);
+          }
         }
-        // Note: We could add this to a retry queue in production
       }
 
       return data;
@@ -163,14 +194,22 @@ class ReservationServiceClass {
         this.handleError(error, 'Error updating reservation status');
       }
 
-      // Send cancellation email if status is cancelled
+      // Send appropriate emails based on status change
       if (status === 'cancelled') {
         try {
           await emailService.sendReservationCancellation(data);
         } catch (emailError) {
-          // Log email error but don't fail the status update
           if (ENV_CONFIG.isDevelopment) {
             console.error('Failed to send cancellation email:', emailError);
+          }
+        }
+      } else if (status === 'confirmed' && data.requires_confirmation) {
+        // Send confirmation email when admin confirms a pending reservation
+        try {
+          await emailService.sendReservationConfirmation(data);
+        } catch (emailError) {
+          if (ENV_CONFIG.isDevelopment) {
+            console.error('Failed to send confirmation email:', emailError);
           }
         }
       }

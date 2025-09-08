@@ -72,9 +72,9 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           onClick={handleToggle}
           className={cn(
             'w-auto px-4 py-3 rounded-full',
-            'flex items-center justify-center text-[#EFE7D2] text-base font-medium',
+            'flex items-center justify-center text-white text-base font-medium',
             'transform hover:scale-105 active:scale-95 transition-all duration-300',
-            'whitespace-nowrap bg-[#191919] hover:bg-[#191919]/90',
+            'whitespace-nowrap bg-[#F34A23] hover:bg-[#F34A23]/90',
             className
           )}
         >
@@ -95,9 +95,9 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-20 right-2 w-[414px] h-[600px] bg-black rounded-lg shadow-2xl z-[9999]',
+          'fixed bottom-20 right-2 w-[414px] h-[600px] bg-white rounded-2xl shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out pointer-events-auto',
-          'overflow-hidden border border-border',
+          'overflow-hidden border border-[#D1D5DC]',
           isOpen
             ? 'scale-100 opacity-100'
             : 'scale-0 opacity-0 pointer-events-none',
@@ -107,15 +107,14 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         }}
       >
         {/* Header */}
-        <div className="bg-[#191919] text-primary-foreground p-4 flex items-center justify-between">
+        <div className="bg-[#F34A23] text-white p-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-lg">🍽️</span>
-            <span className="font-semibold">ochel</span>
+            <span className="font-semibold">Magnifiko Réservez</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="w-6 h-6 rounded-full hover:bg-primary/90 
-                       flex items-center justify-center text-primary-foreground
+            className="w-6 h-6 rounded-full hover:bg-white/20 
+                       flex items-center justify-center text-white
                        transition-colors duration-200"
           >
             ×
@@ -124,7 +123,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
 
         {/* Content */}
         <div 
-          className="overflow-y-auto p-4 bg-black text-[#EFE7D2] scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500" 
+          className="overflow-y-auto p-4 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" 
           style={{ height: '536px' }}
         >
           {children}

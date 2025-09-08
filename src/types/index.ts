@@ -10,6 +10,7 @@ export interface Reservation {
   guests: number;
   special_requests?: string | null;
   status?: ReservationStatus;
+  requires_confirmation?: boolean;
   created_at?: string;
   updated_at?: string;
   confirmed_at?: string | null;

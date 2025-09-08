@@ -22,7 +22,6 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   // Calculate stats from reservations
   const stats = {
     total: reservations.length,
-    pending: reservations.filter(r => r.status === 'pending').length,
     confirmed: reservations.filter(r => r.status === 'confirmed').length,
     cancelled: reservations.filter(r => r.status === 'cancelled').length,
     completed: reservations.filter(r => r.status === 'completed').length,
@@ -54,6 +53,15 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         onFiltersChange={setFilters}
         reservations={reservations}
       />
+      
+      {/* Show filtered results summary */}
+      {(filters.status || filters.date || filters.search) && (
+        <div className="bg-blue-50 border !border-blue-200 rounded-2xl p-4">
+          <p className="text-sm text-blue-800">
+            <strong>{filteredReservations.length}</strong> réservation{filteredReservations.length !== 1 ? 's' : ''} trouvée{filteredReservations.length !== 1 ? 's' : ''} sur {reservations.length} au total
+          </p>
+        </div>
+      )}
       
       <ReservationTable 
         reservations={filteredReservations}

@@ -15,11 +15,11 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variants = {
-    default: 'bg-muted text-muted-foreground border-border',
-    secondary: 'bg-secondary text-secondary-foreground border-border',
-    destructive: 'bg-destructive/10 text-destructive border-destructive/20',
-    success: 'bg-primary/10 text-primary border-primary/20',
-    warning: 'bg-accent text-accent-foreground border-border'
+    default: 'bg-gray-100 text-gray-700 !border-[#F6F1F0]',
+    secondary: 'bg-blue-100 text-blue-700 !border-blue-200',
+    destructive: 'bg-red-100 text-red-700 !border-red-200',
+    success: 'bg-[#E8FFEB] text-[#05C81E] !border-[#E8FFEB]',
+    warning: 'bg-orange-100 text-orange-700 !border-orange-200'
   };
 
   const sizes = {
@@ -30,7 +30,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border font-medium',
+        'inline-flex items-center rounded-2xl border font-medium',
         variants[variant],
         sizes[size],
         className
@@ -54,6 +54,8 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     switch (status) {
       case 'confirmed':
         return 'success';
+      case 'pending':
+        return 'warning';
       case 'cancelled':
         return 'destructive';
       case 'completed':

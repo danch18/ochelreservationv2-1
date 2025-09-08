@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useReservationForm } from '@/hooks';
+import { useRestaurantAvailability } from '@/hooks/useRestaurantAvailability';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { TIME_SLOTS, GUEST_OPTIONS } from '@/lib/constants';
 import { getTodayDate } from '@/lib/utils';
@@ -74,12 +76,11 @@ function GuestsInput({ value, onChange, error }: GuestsInputProps) {
             type="button"
             onClick={() => handleShortcutClick(num)}
             className={`
-              px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-              border bg-input text-foreground min-w-[70px]
-              hover:border-[#EFE7D2]/70 hover:bg-[#EFE7D2]/5
+              px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-200
+              border-2 min-w-[70px]
               ${selectedShortcut === num 
-                ? 'border-[#EFE7D2]/70 bg-[#EFE7D2]/10 text-[#EFE7D2]' 
-                : 'border-input'
+                ? '!border-[#FF7043] bg-[#FF7043] text-white' 
+                : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
               }
             `}
           >
@@ -100,7 +101,14 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
     onSubmit
   } = useReservationForm();
 
+  const { isDateClosed, getTimeSlots, loading: availabilityLoading, error: availabilityError } = useRestaurantAvailability();
+  
   const guestsValue = watch('guests');
+  const selectedDate = watch('date');
+  
+  // Get available time slots - fallback to default if service fails
+  const availableTimeSlots = selectedDate && !availabilityError ? getTimeSlots(selectedDate) : TIME_SLOTS;
+  const isSelectedDateClosed = selectedDate && !availabilityError ? isDateClosed(selectedDate) : false;
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
@@ -124,7 +132,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
         ) : (
           <div />
         )}
-        <h3 className="text-2xl font-bold text-popover-foreground text-end w-full" suppressHydrationWarning>
+        <h3 className="text-2xl font-bold text-black text-left w-full" suppressHydrationWarning>
           Réservez votre table
         </h3>
         <div className="w-16" />
@@ -164,21 +172,37 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
           />
 
           <div className="grid md:grid-cols-1 gap-4">
-            <Input
-              type="date"
-              label="Date"
-              min={getTodayDate()}
-              error={errors.date?.message}
-              {...register('date')}
-            />
+            <div>
+              <Input
+                type="date"
+                label="Date"
+                min={getTodayDate()}
+                error={errors.date?.message || (isSelectedDateClosed ? 'Le restaurant est fermé à cette date' : undefined)}
+                {...register('date')}
+                className={isSelectedDateClosed ? '!border-red-500' : ''}
+              />
+              {isSelectedDateClosed && (
+                <div className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <span>🚫</span>
+                  <span>Restaurant fermé - Veuillez choisir une autre date</span>
+                </div>
+              )}
+            </div>
             
             <Select
               label="Heure"
-              placeholder="Sélectionnez l'heure"
+              placeholder={
+                isSelectedDateClosed 
+                  ? "Date fermée" 
+                  : availableTimeSlots.length === 0 
+                    ? "Aucun créneau disponible"
+                    : "Sélectionnez l'heure"
+              }
               error={errors.time?.message}
+              disabled={isSelectedDateClosed || availableTimeSlots.length === 0}
               {...register('time')}
             >
-              {TIME_SLOTS.map(time => (
+              {availableTimeSlots.map(time => (
                 <option key={time} value={time}>
                   {time}
                 </option>
@@ -206,15 +230,35 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
           <Button
             type="submit"
             loading={isSubmitting}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSelectedDateClosed}
             className="w-full mb-2"
             size="md"
           >
-            {isSubmitting ? 'Création de la réservation...' : 'Réserver une table'}
+            {isSubmitting 
+              ? 'Création de la réservation...' 
+              : isSelectedDateClosed 
+                ? 'Restaurant fermé'
+                : 'Réserver une table'
+            }
           </Button>
-          <p className="text-xs text-muted-foreground text-center">
-            propulsé par Ochel
-          </p>
+          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+            <span>propulsé par</span>
+            <a 
+              href="https://www.ochel.fr/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-75 transition-opacity"
+            >
+              <Image 
+                src="/logo.png" 
+                alt="Logo" 
+                width={30}
+                height={12}
+                className="h-3 w-auto"
+                style={{ objectFit: 'contain' }}
+              />
+            </a>
+          </div>
         </div>
       </form>
     </div>

@@ -174,15 +174,24 @@
             width: 100%;
             padding: 12px;
             background: #2a2a2a;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 2px solid #666666;
             border-radius: 8px;
             color: #EFE7D2;
             font-size: 14px;
+            transition: border-color 0.2s ease;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #644a40;
+            border-color: #FF7043;
+        }
+
+        .form-input.error {
+            border-color: #e54d2e;
+        }
+
+        .form-input.error:focus {
+            border-color: #e54d2e;
         }
 
         .form-button {

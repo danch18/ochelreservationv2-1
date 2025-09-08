@@ -25,15 +25,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           id={textareaId}
           className={cn(
-            'w-full px-4 py-3 border rounded-lg resize-y',
-            'bg-input text-foreground placeholder-muted-foreground',
-            'focus:outline-none',
-            'autofill:!bg-input autofill:!text-foreground',
-            'transition-colors duration-200',
-            'disabled:bg-muted disabled:text-muted-foreground',
+            'w-full px-4 py-3 rounded-2xl border-2 resize-y',
+            'bg-white text-black placeholder-[#0A0A0A]/50',
+            'outline-none transition-all duration-200',
+            'autofill:!bg-white autofill:!text-black',
+            'disabled:bg-gray-100 disabled:text-gray-400',
             error
-              ? 'border-destructive focus:!border-[#EFE7D2]/50'
-              : 'border-input focus:!border-[#EFE7D2]/50',
+              ? '!border-[#e54d2e] focus:!border-[#e54d2e]'
+              : '!border-[#F6F1F0] focus:!border-[#FF7043]',
             className
           )}
           ref={ref}

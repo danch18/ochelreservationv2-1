@@ -14,13 +14,13 @@ export default function AdminPage() {
     return (
       <ProtectedRoute>
         <PageLayout showHeader={false} showFooter={false}>
-          <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="min-h-screen bg-white flex items-center justify-center">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-destructive mb-4">Error Loading Admin Panel</h1>
-              <p className="text-muted-foreground">{error}</p>
+              <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Admin Panel</h1>
+              <p className="text-gray-600">{error}</p>
               <button 
                 onClick={() => refetch()}
-                className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                className="mt-4 px-6 py-3 bg-[#F34A23] text-white rounded-2xl hover:bg-[#F34A23]/90 transition-all duration-200 font-medium"
               >
                 Try Again
               </button>
@@ -34,7 +34,7 @@ export default function AdminPage() {
   return (
     <ProtectedRoute>
       <PageLayout showHeader={false} showFooter={false}>
-        <div className="min-h-screen bg-black">
+        <div className="min-h-screen bg-white">
           <AdminHeader />
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -52,8 +52,6 @@ export default function AdminPage() {
               {activeTab === 'settings' && (
                 <SettingsTab />
               )}
-              
-              {/* Add other tab content here as needed */}
             </div>
           </div>
         </div>

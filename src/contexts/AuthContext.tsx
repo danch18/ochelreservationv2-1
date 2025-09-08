@@ -41,7 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         timeoutId = setTimeout(() => {
           console.log('Session check timed out, setting loading to false');
           setIsLoading(false);
-        }, 10000); // 10 second timeout
+        }, 3000); // 3 second timeout
 
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -101,14 +101,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       console.log('Checking admin role for user:', supabaseUser.id);
       
-      // Check if user has admin role - simplified without timeout for now
+      // First, check if this is the default admin user
+      if (supabaseUser.email === 'admin@restaurant.com') {
+        console.log('Default admin user detected, setting admin role');
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          username: 'admin',
+          role: 'super_admin'
+        });
+        return;
+      }
+      
+      // Check if user has admin role
       const { data: adminRole, error } = await supabase
         .from('admin_roles')
         .select('role')
         .eq('user_id', supabaseUser.id)
         .single();
 
-      console.log('Admin role query result:', { data: adminRole, error });
+      console.log('Admin role query result:', { data: adminRole, error: error || null });
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -118,32 +130,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
           await supabase.auth.signOut();
           return;
         } else {
-          // Other error occurred
-          console.error('Error checking admin role:', {
-            message: error.message,
-            code: error.code,
-            details: error.details,
-            hint: error.hint,
-            fullError: error
-          });
-          // For now, let's allow login for admin@restaurant.com even if role check fails
-          if (supabaseUser.email === 'admin@restaurant.com') {
-            console.log('Allowing admin@restaurant.com to login despite role check error');
-            setUser({
-              id: supabaseUser.id,
-              email: supabaseUser.email || '',
-              username: supabaseUser.user_metadata?.username || supabaseUser.email?.split('@')[0] || 'Admin',
-              role: 'super_admin'
-            });
-            return;
-          }
+          // Other error occurred - log it properly
+          console.error('Database error checking admin role:', error);
           setUser(null);
           return;
         }
       }
 
       // Only set user if they have an admin role
-      if (adminRole) {
+      if (adminRole?.role) {
         console.log('Setting admin user with role:', adminRole.role);
         setUser({
           id: supabaseUser.id,
@@ -153,30 +148,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
       } else {
         // This shouldn't happen if query succeeds, but just in case
-        console.log('Admin role query succeeded but no role found');
+        console.log('Admin role query succeeded but no valid role found');
         setUser(null);
         await supabase.auth.signOut();
       }
     } catch (error) {
-      console.error('Error setting user from session:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        name: error instanceof Error ? error.name : 'Unknown',
-        stack: error instanceof Error ? error.stack : undefined,
-        error: error
-      });
-      
-      // As a fallback, if this is admin@restaurant.com, allow login
-      if (supabaseUser.email === 'admin@restaurant.com') {
-        console.log('Fallback: Allowing admin@restaurant.com to login despite catch error');
-        setUser({
-          id: supabaseUser.id,
-          email: supabaseUser.email || '',
-          username: 'admin',
-          role: 'super_admin'
-        });
-      } else {
-        setUser(null);
-      }
+      console.error('Unexpected error in setUserFromSession:', error);
+      setUser(null);
     }
   };
 

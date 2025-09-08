@@ -6,6 +6,7 @@ import { ReservationForm } from './ReservationForm';
 import { ReservationSuccess } from './ReservationSuccess';
 import { ReservationList } from './ReservationList';
 import { ReservationLookup } from './ReservationLookup';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useReservationsByEmail } from '@/hooks';
 import type { Reservation } from '@/types';
 
@@ -91,9 +92,28 @@ export function ReservationPopup() {
       case 'form':
       default:
         return (
-          <div className="w-full">
-            <ReservationForm onSuccess={handleReservationSuccess} />
-          </div>
+          <ErrorBoundary
+            fallback={
+              <div className="w-full p-4 text-center">
+                <div className="text-4xl mb-2">⚠️</div>
+                <h3 className="text-lg font-semibold mb-2">Erreur du formulaire</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Une erreur s'est produite lors du chargement du formulaire. 
+                  Veuillez fermer et rouvrir le popup.
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Recharger
+                </button>
+              </div>
+            }
+          >
+            <div className="w-full">
+              <ReservationForm onSuccess={handleReservationSuccess} key="reservation-form" />
+            </div>
+          </ErrorBoundary>
         );
     }
   };

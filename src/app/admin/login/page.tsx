@@ -79,32 +79,32 @@ export default function AdminLoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#EFE7D2] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Main Container - styled like the popup */}
-        <div className="bg-black rounded-lg shadow-2xl border border-border overflow-hidden">
-          {/* Header - same style as popup header */}
-          <div className="bg-[#191919] text-primary-foreground p-4 flex items-center justify-center">
-            <div className="flex items-center space-x-2">
-              <span className="text-lg">🍽️</span>
-              <span className="font-semibold">Admin - ochel</span>
+        {/* Main Container */}
+        <div className="bg-white rounded-2xl shadow-xl border border-[#F6F1F0] overflow-hidden">
+          {/* Header */}
+          <div className="bg-[#F34A23] text-white p-6 text-center">
+            <div className="mb-2">
+              <span className="text-xl font-bold">Magnifiko</span>
             </div>
+            <p className="text-white/90 text-sm">Administration</p>
           </div>
 
           {/* Content */}
-          <div className="p-6 bg-black text-[#EFE7D2]">
-            <div className="text-center mb-6">
-              <h1 className="text-xl font-semibold text-popover-foreground mb-2">
+          <div className="p-8">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 Connexion Administrateur
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-gray-600">
                 Connectez-vous pour accéder au panneau d'administration
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-popover-foreground mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email ou nom d'utilisateur
                 </label>
                 <Input
@@ -114,13 +114,13 @@ export default function AdminLoginPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="admin@restaurant.com"
-                  className="w-full bg-input border-border text-popover-foreground placeholder:text-muted-foreground"
+                  className="w-full px-4 py-3 border border-[#F6F1F0] rounded-2xl bg-white text-gray-900 placeholder:text-gray-500 focus:border-[#F34A23] focus:ring-2 focus:ring-[#F34A23]/20 transition-all"
                   disabled={isLoading}
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-popover-foreground mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Mot de passe
                 </label>
                 <Input
@@ -130,38 +130,51 @@ export default function AdminLoginPage() {
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder="••••••••"
-                  className="w-full bg-input border-border text-popover-foreground placeholder:text-muted-foreground"
+                  className="w-full px-4 py-3 border border-[#F6F1F0] rounded-2xl bg-white text-gray-900 placeholder:text-gray-500 focus:border-[#F34A23] focus:ring-2 focus:ring-[#F34A23]/20 transition-all"
                   disabled={isLoading}
                 />
               </div>
 
               {error && (
-                <Alert variant="destructive" className="bg-destructive/10 border-destructive text-destructive">
-                  {error}
+                <Alert variant="destructive" className="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-red-500">⚠️</span>
+                    <span>{error}</span>
+                  </div>
                 </Alert>
               )}
 
               {successMessage && (
-                <Alert className="bg-primary/10 border-primary text-primary">
-                  {successMessage}
+                <Alert className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-green-500">✅</span>
+                    <span>{successMessage}</span>
+                  </div>
                 </Alert>
               )}
 
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5"
+                className="w-full bg-[#F34A23] hover:bg-[#F34A23]/90 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <LoadingSpinner size="sm" className="mr-2" />
-                    Connexion...
+                  <div className="flex items-center justify-center space-x-2">
+                    <LoadingSpinner size="sm" />
+                    <span>Connexion...</span>
                   </div>
                 ) : (
                   'Se connecter'
                 )}
               </Button>
             </form>
+
+            {/* Footer */}
+            <div className="mt-8 pt-6 border-t border-[#F6F1F0] text-center">
+              <p className="text-sm text-gray-500">
+                © 2024 Magnifiko - Panneau d'administration
+              </p>
+            </div>
           </div>
         </div>
       </div>

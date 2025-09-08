@@ -8,27 +8,25 @@ interface AdminTabsProps {
 }
 
 const tabs = [
-  { id: 'overview', label: 'Vue d\'ensemble', icon: '📊' },
-  { id: 'reservations', label: 'Réservations', icon: '📅' },
-  { id: 'settings', label: 'Paramètres', icon: '⚙️' },
+  { id: 'overview', label: 'Vue d\'ensemble' },
+  { id: 'settings', label: 'Paramètres' },
 ];
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <div className="border-b border-[#EFE7D2]/10">
+    <div className="!border-b !border-[#F6F1F0]">
       <nav className="-mb-px flex space-x-8">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              'flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors',
+              'flex items-center py-3 px-4 border-b-2 font-medium text-sm transition-colors rounded-t-lg',
               activeTab === tab.id
-                ? 'border-[#644a40] text-[#644a40]'
-                : 'border-transparent text-[#EFE7D2]/70 hover:text-[#EFE7D2] hover:border-[#EFE7D2]/20'
+                ? '!border-[#F34A23] text-[#F34A23] bg-[#F34A23]/5'
+                : 'border-transparent text-black/70 hover:text-black hover:!border-[#F34A23]/30 hover:bg-[#F34A23]/5'
             )}
           >
-            <span>{tab.icon}</span>
             <span>{tab.label}</span>
           </button>
         ))}
