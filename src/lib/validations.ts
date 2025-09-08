@@ -37,8 +37,8 @@ export const reservationSchema = z.object({
     .string()
     .refine((val) => {
       const num = parseInt(val);
-      return !isNaN(num) && num >= 1 && num <= 12;
-    }, 'Number of guests must be between 1 and 12'),
+      return !isNaN(num) && num >= 1 && num <= 50;
+    }, 'Number of guests must be between 1 and 50'),
   
   specialRequests: z
     .string()
@@ -55,7 +55,7 @@ export const emailLookupSchema = z.object({
 export const adminFilterSchema = z.object({
   date: z.string().optional(),
   dateFilter: z.enum(['all', 'today', 'tomorrow', 'next7days', 'next30days', 'custom']).optional(),
-  status: z.enum(['all', 'confirmed', 'cancelled', 'completed']).optional(),
+  status: z.enum(['all', 'confirmed', 'pending', 'cancelled', 'completed']).optional(),
   searchTerm: z.string().max(100).optional()
 });
 

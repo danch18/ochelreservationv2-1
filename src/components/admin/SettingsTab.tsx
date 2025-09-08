@@ -256,18 +256,49 @@ export function SettingsTab() {
       const { supabase } = await import('@/lib/supabase');
       const currentStatus = dateStatuses[date];
 
-      // Always create or update record for custom hours
-      const { data, error } = await supabase
+      // Check if record exists and update accordingly
+      const { data: existingRecord } = await supabase
         .from('closed_dates')
-        .upsert({
-          date,
-          is_closed: currentStatus?.is_closed || false,
-          reason: currentStatus?.reason || null,
-          opening_time: hours.opening_time,
-          closing_time: hours.closing_time,
-        })
-        .select()
+        .select('*')
+        .eq('date', date)
         .single();
+
+      let data, error;
+
+      if (existingRecord) {
+        // Update existing record
+        const result = await supabase
+          .from('closed_dates')
+          .update({
+            is_closed: currentStatus?.is_closed || false,
+            reason: currentStatus?.reason || null,
+            opening_time: hours.opening_time,
+            closing_time: hours.closing_time,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('date', date)
+          .select()
+          .single();
+        
+        data = result.data;
+        error = result.error;
+      } else {
+        // Create new record
+        const result = await supabase
+          .from('closed_dates')
+          .insert({
+            date,
+            is_closed: currentStatus?.is_closed || false,
+            reason: currentStatus?.reason || null,
+            opening_time: hours.opening_time,
+            closing_time: hours.closing_time,
+          })
+          .select()
+          .single();
+        
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         throw new Error(`Erreur base de données: ${error.message}`);
