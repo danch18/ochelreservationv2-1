@@ -66,7 +66,11 @@ class ReservationServiceClass {
     throw new Error(API_ERRORS.GENERIC);
   }
 
-  // Get guest limit setting
+  /**
+   * Get the current guest limit setting for automatic confirmation
+   * This determines when reservations require manual admin approval
+   * @returns The maximum number of guests for automatic confirmation (default: 4)
+   */
   async getGuestLimit(): Promise<number> {
     try {
       const { data, error } = await supabase
@@ -75,6 +79,7 @@ class ReservationServiceClass {
         .eq('setting_key', 'auto_confirm_guest_limit')
         .single();
 
+      // Ignore "no rows" error (PGRST116) - means setting doesn't exist yet
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading guest limit:', error);
         return 4; // Default fallback
@@ -87,17 +92,21 @@ class ReservationServiceClass {
     }
   }
 
-  // Create a new reservation
+  /**
+   * Create a new reservation with automatic confirmation logic
+   * Small groups (≤ guest limit) are auto-confirmed, large groups require admin approval
+   */
   async createReservation(reservation: CreateReservationData): Promise<Reservation> {
     try {
-      // Get the current guest limit setting
+      // Get the current guest limit setting from database
       const guestLimit = await this.getGuestLimit();
       const guestCount = parseInt(reservation.guests.toString()) || 1;
       
-      // Determine if this reservation requires admin confirmation
+      // Determine if this reservation requires admin confirmation based on party size
       const requiresConfirmation = guestCount > guestLimit;
       const initialStatus = requiresConfirmation ? 'pending' : 'confirmed';
 
+      // Insert reservation with appropriate status and confirmation flag
       const { data, error } = await supabase
         .from(this.tableName)
         .insert([{
@@ -113,6 +122,7 @@ class ReservationServiceClass {
       }
 
       // Send confirmation email only if reservation is automatically confirmed
+      // Large groups will receive email after admin approval
       if (!requiresConfirmation) {
         try {
           await emailService.sendReservationConfirmation(data);
@@ -196,6 +206,7 @@ class ReservationServiceClass {
 
       // Send appropriate emails based on status change
       if (status === 'cancelled') {
+        // Send cancellation email for all cancelled reservations
         try {
           await emailService.sendReservationCancellation(data);
         } catch (emailError) {
@@ -205,6 +216,7 @@ class ReservationServiceClass {
         }
       } else if (status === 'confirmed' && data.requires_confirmation) {
         // Send confirmation email when admin confirms a pending reservation
+        // This is for large groups that required manual approval
         try {
           await emailService.sendReservationConfirmation(data);
         } catch (emailError) {

@@ -88,7 +88,8 @@ export function SettingsTab() {
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [showHoursModal, setShowHoursModal] = useState<string | null>(null);
-  const [guestLimit, setGuestLimit] = useState(4);
+  // Guest limit settings for automatic confirmation system
+  const [guestLimit, setGuestLimit] = useState(4);              // Default: 4 guests max for auto-confirmation
   const [updatingGuestLimit, setUpdatingGuestLimit] = useState(false);
 
   // Get current month/year
@@ -307,7 +308,10 @@ export function SettingsTab() {
   };
 
   // Load data when month changes
-  // Load guest limit setting
+  /**
+   * Load the current guest limit setting from database
+   * This setting determines when reservations require manual admin approval
+   */
   const loadGuestLimit = async () => {
     try {
       const { supabase } = await import('@/lib/supabase');
@@ -318,6 +322,7 @@ export function SettingsTab() {
         .eq('setting_key', 'auto_confirm_guest_limit')
         .single();
 
+      // Ignore "no rows" error as this means setting doesn't exist yet
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading guest limit:', error);
         return;
@@ -331,12 +336,16 @@ export function SettingsTab() {
     }
   };
 
-  // Update guest limit setting
+  /**
+   * Update the guest limit setting in database
+   * This affects the entire reservation system's auto-confirmation behavior
+   */
   const updateGuestLimit = async () => {
     try {
       setUpdatingGuestLimit(true);
       const { supabase } = await import('@/lib/supabase');
       
+      // Use upsert to create or update the setting
       const { error } = await supabase
         .from('restaurant_settings')
         .upsert({
@@ -591,7 +600,7 @@ export function SettingsTab() {
       <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-md">
         <h2 className="text-xl font-semibold text-black mb-4">Paramètres par défaut</h2>
         <div className="space-y-4">
-          {/* Guest Limit Setting */}
+          {/* Guest Limit Setting - Controls automatic vs manual confirmation */}
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -599,6 +608,7 @@ export function SettingsTab() {
                 <p className="text-sm text-gray-600">Nombre maximum d'invités pour confirmation automatique</p>
               </div>
               <div className="flex items-center gap-2">
+                {/* Guest Limit Input - Range 1-20 guests */}
                 <Input
                   type="number"
                   min="1"
@@ -607,6 +617,7 @@ export function SettingsTab() {
                   onChange={(e) => setGuestLimit(parseInt(e.target.value) || 4)}
                   className="w-20 text-center"
                 />
+                {/* Save Button - Updates system-wide setting */}
                 <Button
                   onClick={updateGuestLimit}
                   disabled={updatingGuestLimit}
@@ -617,6 +628,7 @@ export function SettingsTab() {
                 </Button>
               </div>
             </div>
+            {/* Explanation Panel - Shows current behavior */}
             <div className="text-xs text-gray-500 bg-white p-3 rounded border">
               <p className="font-medium mb-1">Comment ça marche :</p>
               <p>• 1-{guestLimit} invités : Confirmation automatique + email immédiat</p>

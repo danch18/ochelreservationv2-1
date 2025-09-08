@@ -138,10 +138,13 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   {reservation.guests}
                 </td>
                 <td className="px-6 py-4">
+                  {/* Badge Container - w-fit ensures container only takes necessary width */}
                   <div className="flex flex-col gap-1 w-fit">
+                    {/* Status Badge - Dynamic color based on reservation status */}
                     <Badge variant={reservation.status === 'confirmed' ? 'success' : reservation.status === 'pending' ? 'warning' : 'destructive'}>
                       {reservation.status}
                     </Badge>
+                    {/* Admin Confirmation Indicator - Only shown for admin-confirmed reservations */}
                     {reservation.requires_confirmation && reservation.status === 'confirmed' && (
                       <span className="text-xs text-gray-500">Confirmé par admin</span>
                     )}
@@ -153,6 +156,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right space-x-2">
+                  {/* Confirmation Button - Only for pending reservations that require admin approval */}
                   {reservation.status === 'pending' && reservation.requires_confirmation && (
                     <Button
                       size="sm"
@@ -164,6 +168,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       Confirmer
                     </Button>
                   )}
+                  {/* Auto-confirmation Label - For small groups that were automatically confirmed */}
                   {reservation.status === 'confirmed' && !reservation.requires_confirmation && (
                     <span className="text-xs text-green-600 font-medium">Auto-confirmé</span>
                   )}

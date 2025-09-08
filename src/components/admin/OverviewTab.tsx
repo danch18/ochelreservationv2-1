@@ -13,14 +13,20 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: OverviewTabProps) {
+  // Filter state for reservation table (independent from stats filter)
   const [filters, setFilters] = useState({
     status: '',
     date: '',
     search: ''
   });
+  
+  // Stats filter state - controls time range for top statistics cards
   const [statsFilter, setStatsFilter] = useState<'today' | 'next7days' | 'all'>('today');
 
-  // Get date ranges for stats filtering
+  /**
+   * Filters reservations based on selected stats time range
+   * @returns Filtered array of reservations for statistics calculation
+   */
   const getStatsReservations = () => {
     const today = new Date().toISOString().split('T')[0];
     const next7Days = new Date();
@@ -29,18 +35,25 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
     switch (statsFilter) {
       case 'today':
+        // Only today's reservations
         return reservations.filter(r => r.reservation_date === today);
       case 'next7days':
+        // Reservations from today to next 7 days
         return reservations.filter(r => r.reservation_date >= today && r.reservation_date <= next7DaysStr);
       case 'all':
       default:
+        // All reservations without date filtering
         return reservations;
     }
   };
 
+  // Get reservations for stats calculation based on selected time range
   const statsReservations = getStatsReservations();
 
-  // Calculate stats from filtered reservations
+  /**
+   * Calculate statistics from filtered reservations
+   * Includes all reservation statuses: confirmed, pending, cancelled, completed
+   */
   const stats = {
     total: statsReservations.length,
     confirmed: statsReservations.filter(r => r.status === 'confirmed').length,
@@ -49,15 +62,26 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     pending: statsReservations.filter(r => r.status === 'pending').length,
   };
 
-  // Calculate total guests
+  /**
+   * Calculate total expected guests from confirmed reservations only
+   * Only confirmed reservations count towards guest totals
+   */
   const totalGuests = statsReservations
     .filter(r => r.status === 'confirmed')
     .reduce((sum, reservation) => sum + reservation.guests, 0);
 
-  // Filter reservations based on current filters
+  /**
+   * Filter reservations for table display based on user-applied filters
+   * This is separate from stats filtering and applies to the reservation table
+   */
   const filteredReservations = reservations.filter(reservation => {
+    // Check if reservation matches status filter
     const matchesStatus = !filters.status || reservation.status === filters.status;
+    
+    // Check if reservation matches date filter
     const matchesDate = !filters.date || reservation.reservation_date === filters.date;
+    
+    // Check if reservation matches search filter (name, email, or phone)
     const matchesSearch = !filters.search || 
       reservation.name.toLowerCase().includes(filters.search.toLowerCase()) ||
       reservation.email.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -68,7 +92,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
   return (
     <div className="space-y-6">
-      {/* Stats Filter Buttons */}
+      {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
       <div className="flex justify-end mb-4">
         <div className="flex bg-gray-100 rounded-lg p-1">
           {[
@@ -81,8 +105,8 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
               onClick={() => setStatsFilter(option.key)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 statsFilter === option.key
-                  ? 'bg-white text-[#F34A23] shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-[#F34A23] shadow-sm'  // Active state: white background with restaurant color text
+                  : 'text-gray-600 hover:text-gray-900'   // Inactive state: gray text with hover effect
               }`}
             >
               {option.label}
@@ -91,15 +115,17 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         </div>
       </div>
 
+      {/* Statistics Cards - Display stats based on selected time range */}
       <StatsCards stats={stats} totalGuests={totalGuests} />
       
+      {/* Reservation Table Filters - Independent from stats filtering */}
       <AdminFilters 
         filters={filters}
         onFiltersChange={setFilters}
         reservations={reservations}
       />
       
-      {/* Show filtered results summary */}
+      {/* Show filtered results summary when table filters are applied */}
       {(filters.status || filters.date || filters.search) && (
         <div className="bg-blue-50 border !border-blue-200 rounded-2xl p-4">
           <p className="text-sm text-blue-800">
@@ -108,6 +134,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         </div>
       )}
       
+      {/* Reservation Table - Shows filtered reservations based on table filters */}
       <ReservationTable 
         reservations={filteredReservations}
         isLoading={isLoading}

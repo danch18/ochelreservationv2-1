@@ -14,6 +14,11 @@ interface AdminFiltersProps {
 }
 
 export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFiltersProps) {
+  /**
+   * Handles changes to individual filter values
+   * @param key - The filter key to update (status, date, search)
+   * @param value - The new filter value
+   */
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
       ...filters,
@@ -21,7 +26,10 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
     });
   };
 
-  // Get unique dates from reservations for date filter
+  /**
+   * Extract unique dates from all reservations for date filter dropdown
+   * Sorted in reverse chronological order (newest first)
+   */
   const availableDates = [...new Set(reservations.map(r => r.reservation_date))]
     .sort()
     .reverse();
@@ -30,7 +38,9 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
     <div className="bg-white rounded-2xl p-6 !border !border-[#F6F1F0] shadow-md">
       <h3 className="text-lg font-semibold mb-4 text-black">Filtres</h3>
       
+      {/* Filter Controls Grid - Responsive 3-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Search Filter - Searches across name, email, and phone */}
         <div>
           <Input
             placeholder="Rechercher par nom, email, ou téléphone..."
@@ -40,6 +50,7 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
           />
         </div>
         
+        {/* Status Filter - All reservation statuses including new 'pending' */}
         <div>
           <Select
             value={filters.status}
@@ -47,12 +58,13 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
           >
             <option value="">Tous les statuts</option>
             <option value="confirmed">Confirmé</option>
-            <option value="pending">En attente</option>
+            <option value="pending">En attente</option>      {/* New pending status */}
             <option value="cancelled">Annulé</option>
             <option value="completed">Terminé</option>
           </Select>
         </div>
         
+        {/* Date Filter - Dynamically populated from existing reservations */}
         <div>
           <Select
             value={filters.date}
@@ -68,11 +80,13 @@ export function AdminFilters({ filters, onFiltersChange, reservations }: AdminFi
         </div>
       </div>
       
+      {/* Clear Filters Section - Only shown when filters are active */}
       {(filters.status || filters.date || filters.search) && (
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-gray-600">
             Filtres appliqués
           </p>
+          {/* Reset all filters button */}
           <button
             onClick={() => onFiltersChange({ status: '', date: '', search: '' })}
             className="text-sm text-[#F34A23] hover:underline font-medium"
