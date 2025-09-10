@@ -980,7 +980,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               className="hover:opacity-75 transition-opacity"
             >
               <Image 
-                src="/logo.png" 
+                src="/icons/ochellogofull.png" 
                 alt="Logo" 
                 width={30}
                 height={12}
