@@ -400,6 +400,12 @@ export function SettingsTab() {
   // Guest limit settings for automatic confirmation system
   const [guestLimit, setGuestLimit] = useState(4);              // Default: 4 guests max for auto-confirmation
   const [updatingGuestLimit, setUpdatingGuestLimit] = useState(false);
+
+  // Header text settings for reservation form
+  const [headerText1, setHeaderText1] = useState('NO RESERVATIONS AT LUNCH ON WEEKDAYS');
+  const [headerText2, setHeaderText2] = useState('OPEN ALL MONTH OF AUGUST');
+  const [headerText3, setHeaderText3] = useState('For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.');
+  const [updatingHeaderTexts, setUpdatingHeaderTexts] = useState(false);
   
   // Weekly schedule management state
   const [weeklySchedule, setWeeklySchedule] = useState<Record<number, WeeklySchedule>>({});
@@ -820,6 +826,129 @@ export function SettingsTab() {
   };
 
   /**
+   * Load the header text settings from database
+   * These texts appear at the top of the reservation form
+   */
+  const loadHeaderTexts = async () => {
+    try {
+      console.log('Loading header text settings...');
+      const { supabase } = await import('@/lib/supabase');
+      
+      const { data, error } = await supabase
+        .from('restaurant_settings')
+        .select('setting_key, setting_value')
+        .in('setting_key', ['header_text_1', 'header_text_2', 'header_text_3']);
+
+      if (error) {
+        console.error('Error loading header texts:', error);
+        return;
+      }
+
+      if (data) {
+        data.forEach((setting) => {
+          switch (setting.setting_key) {
+            case 'header_text_1':
+              setHeaderText1(setting.setting_value || 'NO RESERVATIONS AT LUNCH ON WEEKDAYS');
+              break;
+            case 'header_text_2':
+              setHeaderText2(setting.setting_value || 'OPEN ALL MONTH OF AUGUST');
+              break;
+            case 'header_text_3':
+              setHeaderText3(setting.setting_value || 'For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.');
+              break;
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Error loading header texts:', err);
+    }
+  };
+
+  /**
+   * Update the header text settings in database
+   * These texts appear at the top of the reservation form
+   */
+  const updateHeaderTexts = async () => {
+    try {
+      setUpdatingHeaderTexts(true);
+      setError(null);
+      const { supabase } = await import('@/lib/supabase');
+      
+      console.log('Updating header texts...');
+      console.log('Supabase client:', supabase);
+      console.log('Header text values:', { headerText1, headerText2, headerText3 });
+      
+      // Test Supabase connection first
+      const { data: testData, error: testError } = await supabase
+        .from('restaurant_settings')
+        .select('setting_key, setting_value')
+        .limit(1);
+      
+      if (testError) {
+        console.error('Supabase connection test failed:', testError);
+        console.error('Test error details:', JSON.stringify(testError, null, 2));
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+      
+      console.log('Supabase connection test successful:', testData);
+      
+      // Validate header text values
+      if (!headerText1.trim() || !headerText2.trim() || !headerText3.trim()) {
+        throw new Error('All header text fields must be filled');
+      }
+      
+      // Update all three header texts
+      const settings = [
+        { key: 'header_text_1', value: headerText1.trim() },
+        { key: 'header_text_2', value: headerText2.trim() },
+        { key: 'header_text_3', value: headerText3.trim() }
+      ];
+
+      for (const setting of settings) {
+        try {
+           console.log(`Processing setting: ${setting.key} = ${setting.value}`);
+           
+           // Try to upsert (insert or update) the record
+           const { data, error } = await supabase
+             .from('restaurant_settings')
+             .upsert({
+               setting_key: setting.key,
+               setting_value: setting.value,
+               description: `Header text line for reservation form (${setting.key})`,
+               updated_at: new Date().toISOString()
+             }, {
+               onConflict: 'setting_key'
+             })
+             .select();
+
+          if (error) {
+            console.error(`Error upserting header text ${setting.key}:`, error);
+            console.error('Error details:', JSON.stringify(error, null, 2));
+            throw new Error(`Failed to update ${setting.key}: ${error.message || 'Unknown error'}`);
+          }
+
+          console.log(`Successfully processed ${setting.key}:`, data);
+        } catch (settingError) {
+          console.error(`Error processing setting ${setting.key}:`, settingError);
+          throw new Error(`Failed to update ${setting.key}: ${settingError instanceof Error ? settingError.message : 'Unknown error'}`);
+        }
+      }
+
+      console.log('Successfully updated all header texts');
+      setError(null);
+      // Show success message (you could add a success state if needed)
+      alert('Header texts updated successfully!');
+    } catch (err) {
+      console.error('Error updating header texts:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
+      console.error('Full error object:', JSON.stringify(err, null, 2));
+      setError(`Erreur lors de la mise à jour des textes d'en-tête: ${errorMessage}`);
+    } finally {
+      setUpdatingHeaderTexts(false);
+    }
+  };
+
+  /**
    * Load weekly schedule from restaurant_settings table
    * Each day of week (0-6) has its own configuration for open/close and hours
    */
@@ -980,6 +1109,7 @@ export function SettingsTab() {
   useEffect(() => {
     loadDateStatuses();
     loadGuestLimit();
+    loadHeaderTexts();
     loadWeeklySchedule();
   }, [currentMonth, currentYear]);
 
@@ -1395,7 +1525,71 @@ export function SettingsTab() {
               <p>• {guestLimit + 1}+ invités : Statut "En attente" + validation manuelle requise</p>
               <p>• L'email de confirmation est envoyé uniquement après validation admin</p>
             </div>
-      </div>
+          </div>
+
+          {/* Header Text Settings - Controls the three lines at top of reservation form */}
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="mb-4">
+              <h3 className="font-medium text-gray-900 text-sm md:text-base mb-2">Textes d'en-tête du formulaire</h3>
+              <p className="text-xs md:text-sm text-gray-600">Modifiez les trois lignes affichées en haut du formulaire de réservation</p>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Header Text 1 */}
+              <div>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                  Ligne 1 - Texte principal
+                </label>
+                <Input
+                  type="text"
+                  value={headerText1}
+                  onChange={(e) => setHeaderText1(e.target.value)}
+                  className="text-sm"
+                  placeholder="NO RESERVATIONS AT LUNCH ON WEEKDAYS"
+                />
+              </div>
+
+              {/* Header Text 2 */}
+              <div>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                  Ligne 2 - Texte secondaire
+                </label>
+                <Input
+                  type="text"
+                  value={headerText2}
+                  onChange={(e) => setHeaderText2(e.target.value)}
+                  className="text-sm"
+                  placeholder="OPEN ALL MONTH OF AUGUST"
+                />
+              </div>
+
+              {/* Header Text 3 */}
+              <div>
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                  Ligne 3 - Message WhatsApp
+                </label>
+                <Input
+                  type="text"
+                  value={headerText3}
+                  onChange={(e) => setHeaderText3(e.target.value)}
+                  className="text-sm"
+                  placeholder="For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible."
+                />
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <Button
+                  onClick={updateHeaderTexts}
+                  disabled={updatingHeaderTexts}
+                  size="sm"
+                  className="text-xs md:text-sm"
+                >
+                  {updatingHeaderTexts ? 'Sauvegarde...' : 'Sauvegarder les textes'}
+                </Button>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg gap-2">
             <div>

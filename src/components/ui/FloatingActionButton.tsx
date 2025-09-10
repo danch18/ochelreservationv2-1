@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface FloatingActionButtonProps {
@@ -72,13 +73,24 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
           onClick={handleToggle}
           className={cn(
             'w-auto px-4 py-3 rounded-full',
-            'flex items-center justify-center text-white text-base font-medium',
+            'flex items-center justify-center text-[#F5F5DC] text-base font-medium',
             'transform hover:scale-105 active:scale-95 transition-all duration-300',
-            'whitespace-nowrap bg-[#F34A23] hover:bg-[#F34A23]/90',
+            'whitespace-nowrap bg-black hover:bg-black/90',
             className
           )}
         >
-          <span className="mr-2">🍽️</span>
+          {!isOpen && (
+            <>
+              <Image
+                src="/icons/logo.png"
+                alt="Logo"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-contain"
+              />
+              <div className="w-px h-6 bg-white/30 mx-3"></div>
+            </>
+          )}
           {isOpen ? 'Fermer' : 'Réserver une table'}
         </button>
       </div>
