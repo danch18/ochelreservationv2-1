@@ -6,3 +6,4 @@ export { ReservationTable } from './ReservationTable';
 export { RestaurantCalendar } from './RestaurantCalendar';
 export { StatsCards } from './StatsCards';
 export { SettingsTab } from './SettingsTab';
+export { ManageReservationTab } from './ManageReservationTab';

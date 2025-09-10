@@ -414,6 +414,9 @@ export function SettingsTab() {
   
   // Calendar section collapse state
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
+  
+  // Header texts section collapse state
+  const [isHeaderTextsExpanded, setIsHeaderTextsExpanded] = useState(false);
 
   // Get current month/year
   const currentMonth = currentDate.getMonth();
@@ -1322,80 +1325,96 @@ export function SettingsTab() {
             </div>
           </div>
 
-          {/* Header Text Settings - Controls the three lines at top of reservation form */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="mb-4">
-              <h3 className="font-medium text-gray-900 text-sm md:text-base mb-2">Textes d'en-tête du formulaire</h3>
-              <p className="text-xs md:text-sm text-gray-600">Modifiez les trois lignes affichées en haut du formulaire de réservation</p>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Header Text 1 */}
+          {/* Header Text Settings - Collapsible Section */}
+          <div className="bg-gray-50 rounded-lg border border-gray-200">
+            {/* Header - Always visible */}
+            <div 
+              className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-100 transition-colors"
+              onClick={() => setIsHeaderTextsExpanded(!isHeaderTextsExpanded)}
+            >
               <div>
-                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                  Ligne 1 - Texte principal
-                </label>
-                <Input
-                  type="text"
-                  value={headerText1}
-                  onChange={(e) => setHeaderText1(e.target.value)}
-                  className="text-sm"
-                  placeholder="NO RESERVATIONS AT LUNCH ON WEEKDAYS"
-                />
+                <h3 className="font-medium text-gray-900 text-sm md:text-base">Textes d'en-tête du formulaire</h3>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">Modifiez les trois lignes affichées en haut du formulaire de réservation</p>
               </div>
-
-              {/* Header Text 2 */}
-              <div>
-                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                  Ligne 2 - Texte secondaire
-                </label>
-                <Input
-                  type="text"
-                  value={headerText2}
-                  onChange={(e) => setHeaderText2(e.target.value)}
-                  className="text-sm"
-                  placeholder="OPEN ALL MONTH OF AUGUST"
-                />
-              </div>
-
-              {/* Header Text 3 */}
-              <div>
-                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                  Ligne 3 - Message WhatsApp
-                </label>
-                <Input
-                  type="text"
-                  value={headerText3}
-                  onChange={(e) => setHeaderText3(e.target.value)}
-                  className="text-sm"
-                  placeholder="For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible."
-                />
-              </div>
-
-              {/* Save Button */}
-              <div className="flex justify-end">
-                <Button
-                  onClick={updateHeaderTexts}
-                  disabled={updatingHeaderTexts}
-                  size="sm"
-                  className="text-xs md:text-sm"
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">
+                  {isHeaderTextsExpanded ? 'Masquer' : 'Modifier'}
+                </span>
+                <svg 
+                  className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                    isHeaderTextsExpanded ? 'rotate-180' : ''
+                  }`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
                 >
-                  {updatingHeaderTexts ? 'Sauvegarde...' : 'Sauvegarder les textes'}
-                </Button>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
             </div>
+
+            {/* Collapsible Content */}
+            {isHeaderTextsExpanded && (
+              <div className="px-4 pb-4 border-t border-gray-200">
+                <div className="space-y-4 pt-4">
+                  {/* Header Text 1 */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                      Ligne 1 - Texte principal
+                    </label>
+                    <Input
+                      type="text"
+                      value={headerText1}
+                      onChange={(e) => setHeaderText1(e.target.value)}
+                      className="text-sm"
+                      placeholder="NO RESERVATIONS AT LUNCH ON WEEKDAYS"
+                    />
+                  </div>
+
+                  {/* Header Text 2 */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                      Ligne 2 - Texte secondaire
+                    </label>
+                    <Input
+                      type="text"
+                      value={headerText2}
+                      onChange={(e) => setHeaderText2(e.target.value)}
+                      className="text-sm"
+                      placeholder="OPEN ALL MONTH OF AUGUST"
+                    />
+                  </div>
+
+                  {/* Header Text 3 */}
+                  <div>
+                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                      Ligne 3 - Message WhatsApp
+                    </label>
+                    <Input
+                      type="text"
+                      value={headerText3}
+                      onChange={(e) => setHeaderText3(e.target.value)}
+                      className="text-sm"
+                      placeholder="For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible."
+                    />
+                  </div>
+
+                  {/* Save Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={updateHeaderTexts}
+                      disabled={updatingHeaderTexts}
+                      size="sm"
+                      className="text-xs md:text-sm"
+                    >
+                      {updatingHeaderTexts ? 'Sauvegarde...' : 'Sauvegarder les textes'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between p-3 md:p-4 bg-gray-50 rounded-lg gap-2">
-            <div>
-              <h3 className="font-medium text-gray-900 text-sm md:text-base">Horaires par défaut</h3>
-              <p className="text-xs md:text-sm text-gray-600">Horaires appliqués aux nouvelles dates</p>
-            </div>
-            <div className="text-left md:text-right">
-              <p className="font-medium text-gray-900 text-sm md:text-base">10:00 - 20:00</p>
-              <p className="text-xs md:text-sm text-gray-600">Lundi à Dimanche</p>
-            </div>
-          </div>
         </div>
       </div>
 

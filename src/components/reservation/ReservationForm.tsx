@@ -382,7 +382,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
                     disabled={disabled}
                     className={`
                       px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                      border-2 whitespace-nowrap flex-shrink-0
+                      border whitespace-nowrap flex-shrink-0
                       ${value === time
                         ? '!border-[#FF7043] bg-[#FF7043] text-white' 
                         : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
@@ -420,7 +420,7 @@ interface GuestsDropdownProps {
 function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false, onToggle }: GuestsDropdownProps) {
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const shortcuts = [5, 10, 15, 20];
+  const shortcuts = [1, 2, 3, 4, 5];
 
   // Initialize after mount to avoid hydration issues
   useEffect(() => {
@@ -547,7 +547,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
                       disabled={disabled}
                       className={`
                         px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                        border-2 min-w-[65px] flex-shrink-0
+                        border min-w-[65px] flex-shrink-0
                         ${value === num.toString()
                           ? '!border-[#FF7043] bg-[#FF7043] text-white' 
                           : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
@@ -630,14 +630,14 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
       <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh]">
         {/* Header Information Lines */}
         {!headerTextsLoading && (
-          <div className="mb-6 space-y-2">
-            <p className="text-[18px] font-semibold text-black text-left">
+          <div className="mb-6 max-sm:mb-4 space-y-2 max-sm:space-y-1">
+            <p className="text-[18px] max-sm:text-[16px] font-semibold text-black text-left">
               {headerTexts.headerText1}
             </p>
-            <p className="text-[16px] font-medium text-black text-left">
+            <p className="text-[16px] max-sm:text-[14px] font-medium text-black text-left">
               {headerTexts.headerText2}
             </p>
-            <p className="text-[14px] text-gray-700 text-left">
+            <p className="text-[14px] max-sm:text-[12px] text-gray-700 text-left">
               {headerTexts.headerText3}
             </p>
           </div>
@@ -715,7 +715,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
             >
               Réserver
             </Button>
-            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+            <div className="flex items-center justify-center gap-1 text-xs max-sm:text-[10px] text-muted-foreground">
               <span>propulsé par</span>
               <a 
                 href="https://www.ochel.fr/" 
@@ -728,7 +728,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   alt="Logo" 
                   width={30}
                   height={12}
-                  className="h-3 w-auto"
+                  className="h-3 w-auto max-sm:h-2"
                   style={{ objectFit: 'contain' }}
                 />
               </a>
@@ -766,34 +766,34 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
             <div className="flex-1 overflow-y-auto space-y-4 pb-4">
               {/* Title Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Civilité</label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
+                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Civilité</label>
+                <div className="flex gap-4 max-sm:gap-3">
+                  <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
                       type="radio"
                       name="title"
                       value="Madame"
-                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                      className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm">Madame</span>
+                    <span className="text-sm max-sm:text-xs">Madame</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
                       type="radio"
                       name="title"
                       value="Monsieur"
-                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                      className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm">Monsieur</span>
+                    <span className="text-sm max-sm:text-xs">Monsieur</span>
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
                       type="radio"
                       name="title"
                       value="Mx."
-                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                      className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm">Mx.</span>
+                    <span className="text-sm max-sm:text-xs">Mx.</span>
                   </label>
                 </div>
               </div>
@@ -888,8 +888,8 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               <h4 className="text-lg font-semibold text-black mb-4">Votre réservation</h4>
               
               {/* Service Notice */}
-              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-800">Notre premier service commence à 19h30.</p>
+              <div className="mb-4 p-3 bg-[#FF7043]/5 rounded-lg border border-[#FF7043]/20">
+                <p className="text-sm text-[#FF7043]">Notre premier service commence à 19h30.</p>
               </div>
 
               <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -900,27 +900,27 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               </div>
 
               {/* Reservation Details */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3">
+              <div className="space-y-3 mb-6 max-sm:mb-4 max-sm:space-y-2">
+                <div className="flex items-center gap-3 max-sm:gap-2">
                   <Image 
                     src="/icons/guests.svg" 
                     alt="Guests" 
                     width={24} 
                     height={24} 
-                    className="w-6 h-6"
+                    className="w-6 h-6 max-sm:w-5 max-sm:h-5"
                   />
-                  <span className="font-medium text-lg">{guestsValue}</span>
+                  <span className="font-medium text-lg max-sm:text-base">{guestsValue}</span>
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 max-sm:gap-2">
                   <Image 
                     src="/icons/calendar.svg" 
                     alt="Date" 
                     width={24} 
                     height={24} 
-                    className="w-6 h-6"
+                    className="w-6 h-6 max-sm:w-5 max-sm:h-5"
                   />
-                  <span className="font-medium">
+                  <span className="font-medium max-sm:text-sm">
                     {selectedDate ? new Date(selectedDate).toLocaleDateString('fr-FR', { 
                       weekday: 'short', 
                       day: 'numeric', 
@@ -929,21 +929,21 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   </span>
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 max-sm:gap-2">
                   <Image 
                     src="/icons/clock.svg" 
                     alt="Time" 
                     width={24} 
                     height={24} 
-                    className="w-6 h-6"
+                    className="w-6 h-6 max-sm:w-5 max-sm:h-5"
                   />
-                  <span className="font-medium">{selectedTime}</span>
+                  <span className="font-medium max-sm:text-sm">{selectedTime}</span>
                 </div>
               </div>
 
 
               {/* Privacy Notice */}
-              <div className="text-xs text-gray-600 space-y-2">
+              <div className="text-xs max-sm:text-[10px] text-gray-600 space-y-2 max-sm:space-y-1">
                 <p>
                   Le restaurant auprès duquel vous effectuez votre demande de réservation ou de commande collecte traite vos 
                   données à caractère personnel aux fins de gestion et de suivi de votre demande et des réponses à y apporter, y 
@@ -971,7 +971,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
           >
             {isSubmitting ? 'Création de la réservation...' : 'Confirmer la réservation'}
           </Button>
-          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-center gap-1 text-xs max-sm:text-[10px] text-muted-foreground">
             <span>propulsé par</span>
             <a 
               href="https://www.ochel.fr/" 
@@ -984,7 +984,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                 alt="Logo" 
                 width={30}
                 height={12}
-                className="h-3 w-auto"
+                className="h-3 w-auto max-sm:h-2"
                 style={{ objectFit: 'contain' }}
               />
             </a>

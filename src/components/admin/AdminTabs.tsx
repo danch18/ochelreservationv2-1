@@ -10,6 +10,7 @@ interface AdminTabsProps {
 const tabs = [
   { id: 'overview', label: 'Vue d\'ensemble', mobileLabel: 'Aperçu', icon: '📊' },
   { id: 'settings', label: 'Paramètres', mobileLabel: 'Paramètres', icon: '⚙️' },
+  { id: 'manage', label: 'Gestion des Réservations', mobileLabel: 'Gestion', icon: '🍽️' },
 ];
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {

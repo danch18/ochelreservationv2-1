@@ -127,6 +127,8 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
           'fixed bottom-20 right-2 bg-white rounded-2xl shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out pointer-events-auto',
           'overflow-hidden border border-[#D1D5DC]',
+          // Mobile responsive styles
+          'max-sm:!max-w-[320px] max-sm:!w-[320px]',
           isOpen
             ? 'scale-100 opacity-100'
             : 'scale-0 opacity-0 pointer-events-none',
@@ -139,14 +141,14 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
         }}
       >
         {/* Header */}
-        <div className="bg-[#F34A23] text-white p-4 flex items-center justify-between">
+        <div className="bg-[#F34A23] text-white p-4 max-sm:p-3 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold">Magnifiko Réservez</span>
+            <span className="font-semibold max-sm:text-sm">Magnifiko Réservez</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="w-6 h-6 rounded-full hover:bg-white/20 
-                       flex items-center justify-center text-white
+            className="w-6 h-6 max-sm:w-5 max-sm:h-5 rounded-full hover:bg-white/20 
+                       flex items-center justify-center text-white max-sm:text-sm
                        transition-colors duration-200"
           >
             ×
@@ -155,7 +157,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
 
         {/* Content */}
         <div 
-          className="overflow-y-auto p-4 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" 
+          className="overflow-y-auto p-4 max-sm:p-3 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" 
           style={{ height: `${popupHeight - 64}px` }}
         >
           {children}
