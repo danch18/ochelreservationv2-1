@@ -13,6 +13,7 @@ import type { Reservation } from '@/types';
 interface ReservationFormProps {
   onSuccess?: (reservation: Reservation) => void;
   onBack?: () => void;
+  onStepChange?: (step: 1 | 2) => void;
 }
 
 // Custom Date Dropdown Component
@@ -572,7 +573,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
   );
 }
 
-export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
+export function ReservationForm({ onSuccess, onBack, onStepChange }: ReservationFormProps) {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const {
@@ -601,6 +602,7 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
     
     if (hasGuests && hasDate && hasTime) {
       setCurrentStep(2);
+      onStepChange?.(2);
     }
   };
 
@@ -615,7 +617,13 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
 
   const handleBackToStep1 = () => {
     setCurrentStep(1);
+    onStepChange?.(1);
   };
+
+  // Notify parent about initial step
+  useEffect(() => {
+    onStepChange?.(currentStep);
+  }, [onStepChange, currentStep]);
 
   if (currentStep === 1) {
     return (
@@ -731,28 +739,17 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
     );
   }
 
-  // Step 2: Personal Details
+  // Step 2: Personal Details - Two Column Layout
   return (
-    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh]">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl">
+      {/* Header */}
+      <div className="flex items-center mb-6">
         <button
           onClick={handleBackToStep1}
           className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
         >
           ← Retour
         </button>
-        <h3 className="text-lg sm:text-2xl font-bold text-black text-left w-full" suppressHydrationWarning>
-          Vos informations
-        </h3>
-        <div className="w-16" />
-      </div>
-
-      {/* Reservation Summary */}
-      <div className="bg-muted/30 rounded-lg p-3 mb-4">
-        <div className="text-sm text-muted-foreground mb-1">Votre réservation:</div>
-        <div className="text-sm font-medium">
-          {guestsValue} invité{parseInt(guestsValue) > 1 ? 's' : ''} • {selectedDate ? new Date(selectedDate).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : ''} • {selectedTime}
-        </div>
       </div>
 
       {submitError && (
@@ -762,41 +759,209 @@ export function ReservationForm({ onSuccess, onBack }: ReservationFormProps) {
       )}
 
       <form onSubmit={handleFinalSubmit} className="flex flex-col h-full">
-        <div className="flex-1 overflow-y-auto space-y-4 pb-4">
-          <Input
-            label="Nom complet"
-            placeholder="Jean Dupont"
-            error={errors.name?.message}
-            {...register('name')}
-          />
-          
-          <Input
-            type="email"
-            label="Email"
-            placeholder="jean@exemple.com"
-            error={errors.email?.message}
-            {...register('email')}
-          />
+        {/* Two Column Layout */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
+          {/* Left Column - Contact Form */}
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+              {/* Title Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Civilité</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="title"
+                      value="Madame"
+                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                    />
+                    <span className="text-sm">Madame</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="title"
+                      value="Monsieur"
+                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                    />
+                    <span className="text-sm">Monsieur</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="title"
+                      value="Mx."
+                      className="w-4 h-4 text-[#F34A23] accent-[#F34A23]"
+                    />
+                    <span className="text-sm">Mx.</span>
+                  </label>
+                </div>
+              </div>
 
-          <Input
-            type="tel"
-            label="Numéro de téléphone"
-            placeholder="+1 (555) 123-4567"
-            error={errors.phone?.message}
-            {...register('phone')}
-          />
+              {/* Name Fields Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Prénom"
+                  placeholder="Jean"
+                  error={errors.name?.message}
+                  {...register('name')}
+                />
+                <Input
+                  label="Nom"
+                  placeholder="Dupont"
+                  // We'll use the same name field for now, but you can add a separate lastName field if needed
+                />
+              </div>
 
-          <Textarea
-            label="Demandes spéciales (Optionnel)"
-            placeholder="Allergies, célébration, préférences de siège..."
-            rows={3}
-            error={errors.specialRequests?.message}
-            {...register('specialRequests')}
-          />
+              {/* Contact Fields Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Input
+                    type="tel"
+                    label="Téléphone"
+                    placeholder="+33 6 12 34 56 78"
+                    error={errors.phone?.message}
+                    {...register('phone')}
+                  />
+                </div>
+                <Input
+                  type="email"
+                  label="Email"
+                  placeholder="jean@exemple.com"
+                  error={errors.email?.message}
+                  {...register('email')}
+                />
+              </div>
+
+              <Textarea
+                label="Commentaires, préférences ou restrictions alimentaires (facultatif)"
+                placeholder="Allergies, célébration, préférences de siège..."
+                rows={3}
+                error={errors.specialRequests?.message}
+                {...register('specialRequests')}
+              />
+
+              {/* Checkboxes */}
+              <div className="space-y-3 text-sm">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
+                  />
+                  <span className="text-gray-700">Sauvegardez les informations pour mes prochaines réservations.</span>
+                </label>
+                
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
+                    required
+                  />
+                  <span className="text-gray-700">
+                    J'accepte les conditions générales d'utilisation du service. 
+                    <span className="text-red-500 ml-1">*</span>
+                  </span>
+                </label>
+
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
+                  />
+                  <span className="text-gray-700">Envoyez-moi des offres et actualités par e-mail.</span>
+                </label>
+
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
+                  />
+                  <span className="text-gray-700">Envoyez-moi des offres et actualités par SMS.</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Reservation Summary */}
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="bg-gray-50 rounded-lg p-4 h-full">
+              <h4 className="text-lg font-semibold text-black mb-4">Votre réservation</h4>
+              
+              {/* Service Notice */}
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-800">Notre premier service commence à 19h30.</p>
+              </div>
+
+              <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p className="text-sm text-yellow-800">
+                  Merci de respecter votre horaire de réservation. La table devra être libérée à 
+                  21h30 pour l'arrivée du second service.
+                </p>
+              </div>
+
+              {/* Reservation Details */}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <Image 
+                    src="/icons/guests.svg" 
+                    alt="Guests" 
+                    width={24} 
+                    height={24} 
+                    className="w-6 h-6"
+                  />
+                  <span className="font-medium text-lg">{guestsValue}</span>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Image 
+                    src="/icons/calendar.svg" 
+                    alt="Date" 
+                    width={24} 
+                    height={24} 
+                    className="w-6 h-6"
+                  />
+                  <span className="font-medium">
+                    {selectedDate ? new Date(selectedDate).toLocaleDateString('fr-FR', { 
+                      weekday: 'short', 
+                      day: 'numeric', 
+                      month: 'short' 
+                    }) : ''}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Image 
+                    src="/icons/clock.svg" 
+                    alt="Time" 
+                    width={24} 
+                    height={24} 
+                    className="w-6 h-6"
+                  />
+                  <span className="font-medium">{selectedTime}</span>
+                </div>
+              </div>
+
+
+              {/* Privacy Notice */}
+              <div className="text-xs text-gray-600 space-y-2">
+                <p>
+                  Le restaurant auprès duquel vous effectuez votre demande de réservation ou de commande collecte traite vos 
+                  données à caractère personnel aux fins de gestion et de suivi de votre demande et des réponses à y apporter, y 
+                  compris s'agissant des communications qui vous sont adressées par email ou SMS en lien avec votre réservation 
+                  (accusé de réception de votre demande, confirmation de réservation...), et ce éventuellement conjointement avec 
+                  Magnifiko qui met à disposition du restaurant un outil de gestion de ses réservations et commandes.
+                </p>
+                <p>
+                  Par ailleurs, le restaurant collecte et traite vos données à caractère personnel plus généralement aux fins de gestion 
+                  et de suivi de ses relations avec vous, et notamment pour...
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Fixed bottom section */}
-        <div className="bg-muted/50 -mx-2 -mb-2 px-4 py-4 rounded-b-2xl border-t border-border/20">
+        <div className="bg-muted/50 -mx-2 -mb-2 px-4 py-4 rounded-b-2xl border-t border-border/20 mt-4">
           <Button
             type="submit"
             loading={isSubmitting}

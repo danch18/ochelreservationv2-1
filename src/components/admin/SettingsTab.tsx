@@ -411,6 +411,9 @@ export function SettingsTab() {
   const [weeklySchedule, setWeeklySchedule] = useState<Record<number, WeeklySchedule>>({});
   const [loadingWeeklySchedule, setLoadingWeeklySchedule] = useState(true);
   const [updatingWeeklySchedule, setUpdatingWeeklySchedule] = useState<number | null>(null);
+  
+  // Calendar section collapse state
+  const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
 
   // Get current month/year
   const currentMonth = currentDate.getMonth();
@@ -1204,9 +1207,33 @@ export function SettingsTab() {
       {/* Weekly Schedule Management Section */}
       <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">
-          <h2 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-0">
-            Horaires Hebdomadaires par Défaut
-          </h2>
+          <div className="flex items-center gap-2 mb-2 md:mb-0">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900">
+              Horaires Hebdomadaires par Défaut
+            </h2>
+            <div className="relative group">
+              <div className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors cursor-help">
+                <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                </svg>
+              </div>
+              {/* Tooltip */}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 p-3 bg-white text-gray-700 text-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="space-y-2">
+                  <p className="font-medium text-gray-900">Comment ça marche :</p>
+                  <ul className="space-y-1 text-xs">
+                    <li>• Ces horaires sont appliqués par défaut à toutes les dates du système</li>
+                    <li>• Dans le calendrier ci-dessous : les jours fermés ici apparaissent en orange "Fermé (hebdo)"</li>
+                    <li>• Vous pouvez créer des exceptions en cliquant sur les dates individuelles dans le calendrier</li>
+                    <li>• "Horaires coupés" permet d'avoir un service midi et un service soir séparés</li>
+                    <li>• "Horaire continu" pour un service en continu toute la journée</li>
+                  </ul>
+                </div>
+                {/* Arrow */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-l border-t border-gray-200 rotate-45"></div>
+              </div>
+            </div>
+          </div>
           <div className="text-xs md:text-sm text-gray-600">
             Configuration appliquée à tout le système
           </div>
@@ -1236,259 +1263,34 @@ export function SettingsTab() {
           />
         )}
 
-        {/* Instructions */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">Comment ça marche :</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Ces horaires sont appliqués par défaut à toutes les dates du système</li>
-            <li>• <span className="font-medium">Dans le calendrier ci-dessous</span> : les jours fermés ici apparaissent en <span className="bg-orange-200 px-1 rounded">orange "Fermé (hebdo)"</span></li>
-            <li>• Vous pouvez créer des exceptions en cliquant sur les dates individuelles dans le calendrier</li>
-            <li>• "Horaires coupés" permet d'avoir un service midi et un service soir séparés</li>
-            <li>• "Horaire continu" pour un service en continu toute la journée</li>
-          </ul>
-        </div>
       </div>
 
-      {/* Calendar Section */}
-      <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h2 className="text-lg md:text-2xl font-bold text-gray-900">
-              Calendrier & Horaires du Restaurant
-            </h2>
-            <Button
-              onClick={goToToday}
-              variant="outline"
-              size="sm"
-              className="w-fit"
-            >
-              Aujourd'hui
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={goToPreviousMonth}
-              variant="outline"
-              size="sm"
-              className="px-3"
-            >
-              ←
-            </Button>
-            
-            <div className="min-w-[150px] md:min-w-[200px] text-center">
-              <h3 className="text-base md:text-lg font-semibold text-gray-900">
-                {MONTHS[currentMonth]} {currentYear}
-              </h3>
-            </div>
-            
-            <Button
-              onClick={goToNextMonth}
-              variant="outline"
-              size="sm"
-              className="px-3"
-            >
-              →
-            </Button>
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center gap-3 md:gap-6 mb-4 text-xs md:text-sm flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"></div>
-            <span className="text-gray-700">Ouvert</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-100 border-2 border-red-500 rounded"></div>
-            <span className="text-gray-700">Fermé (spécifique)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-orange-100 border-2 border-orange-500 rounded"></div>
-            <span className="text-gray-700">Fermé (hebdomadaire)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"></div>
-            <span className="text-gray-700">Aujourd'hui</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-500 rounded"></div>
-            <span className="text-gray-700">Horaires personnalisés</span>
-          </div>
-        </div>
-
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            {error}
-          </Alert>
-        )}
-
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <LoadingSpinner size="lg" />
-          </div>
-        ) : (
-          <>
-            {/* Calendar Grid */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              {/* Day headers */}
-              <div className="grid grid-cols-7 bg-gray-50">
-                {DAYS.map(day => (
-                  <div
-                    key={day}
-                    className="p-1 md:p-3 text-center text-xs md:text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
-                  >
-                    <span className="hidden sm:inline">{day}</span>
-                    <span className="sm:hidden">{day.charAt(0)}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Calendar days */}
-              <div className="grid grid-cols-7">
-                {calendarDays.map((day, index) => {
-                  if (day === null) {
-                    return (
-                      <div
-                        key={`empty-${index}`}
-                        className="h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0"
-                      />
-                    );
-                  }
-
-                  const dateStr = formatDate(currentYear, currentMonth, day);
-                  const status = getDateStatus(day);
-                  const isClosed = status?.is_closed || false;
-                  const isCurrentDay = isToday(day);
-                  const isPast = isPastDate(day);
-                  const isUpdatingThisDate = updating === dateStr;
-                  const hasCustomHours = status?.opening_time && status?.closing_time;
-                  
-                  // Check if this date is closed due to weekly schedule
-                  const date = new Date(currentYear, currentMonth, day);
-                  const dayOfWeek = date.getDay();
-                  const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
-                  const specificDateStatus = dateStatuses[dateStr];
-                  const isClosedByWeeklySchedule = weeklyScheduleForDay && !weeklyScheduleForDay.is_open && !specificDateStatus;
-
-                  return (
-                    <div
-                      key={day}
-                      className={`h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0 relative ${
-                        isPast ? 'bg-gray-50' : 'bg-white hover:bg-gray-50'
-                      } transition-colors`}
-                    >
-                      <div className="w-full h-full p-1 md:p-2">
-                        {/* Date number */}
-                        <div
-                          className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-medium ${
-                            isCurrentDay
-                              ? 'bg-blue-500 text-white'
-                              : isPast
-                              ? 'text-gray-400'
-                              : 'text-gray-900'
-                          }`}
-                        >
-                          {day}
-                        </div>
-
-                        {/* Status and controls */}
-                        {!isPast && (
-                          <div className="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
-                            {/* Open/Close toggle */}
-                            <button
-                              onClick={() => toggleDateStatus(day)}
-                              disabled={isUpdatingThisDate}
-                              className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors ${
-                                isClosed
-                                  ? isClosedByWeeklySchedule
-                                    ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                                    : 'bg-red-100 text-red-700 hover:bg-red-200'
-                                  : 'bg-green-100 text-green-700 hover:bg-green-200'
-                              }`}
-                            >
-                              <span className="hidden sm:inline">
-                                {isClosed 
-                                  ? isClosedByWeeklySchedule 
-                                    ? 'Fermé (hebdo)' 
-                                    : 'Fermé'
-                                  : 'Ouvert'
-                                }
-                              </span>
-                              <span className="sm:hidden">
-                                {isClosed ? 'F' : 'O'}
-                              </span>
-                            </button>
-
-                            {/* Hours button */}
-                            <button
-                              onClick={() => setShowHoursModal(dateStr)}
-                              disabled={isUpdatingThisDate}
-                              className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight ${
-                                hasCustomHours || status?.use_split_hours
-                                  ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
-                            >
-                              <span className="hidden sm:inline">
-                                {status?.use_split_hours 
-                                  ? `${status.morning_opening || '10:00'}-${status.morning_closing || '14:00'} • ${status.afternoon_opening || '19:00'}-${status.afternoon_closing || '22:00'}`
-                                  : hasCustomHours 
-                                    ? `${status.opening_time}-${status.closing_time}`
-                                    : '10:00-20:00'
-                                }
-                              </span>
-                              <span className="sm:hidden">
-                                {status?.use_split_hours 
-                                  ? `${status.morning_opening || '10:00'}-${status.afternoon_closing || '22:00'}`
-                                  : hasCustomHours 
-                                    ? `${status.opening_time}-${status.closing_time}`
-                                    : '10-20'
-                                }
-                              </span>
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Loading indicator */}
-                        {isUpdatingThisDate && (
-                          <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-                            <LoadingSpinner size="sm" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Instructions */}
-            <div className="mt-4 text-sm text-gray-600">
-              <p>• <span className="font-medium">Orange "Fermé (hebdo)"</span> : Fermé selon les horaires hebdomadaires ci-dessus</p>
-              <p>• <span className="font-medium">Rouge "Fermé"</span> : Fermé spécifiquement pour cette date</p>
-              <p>• Cliquez sur "Ouvert/Fermé" pour créer une exception à la règle hebdomadaire</p>
-              <p>• Cliquez sur les horaires pour personnaliser les heures d'ouverture</p>
-              <p>• Les dates passées ne peuvent pas être modifiées</p>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Opening Hours Modal */}
-      {showHoursModal && (
-        <OpeningHoursModal
-          date={showHoursModal}
-          currentHours={dateStatuses[showHoursModal] || { opening_time: '10:00', closing_time: '20:00' }}
-          onSave={(hours) => updateOpeningHours(showHoursModal, hours)}
-          onClose={() => setShowHoursModal(null)}
-        />
-      )}
 
       {/* Additional Settings Section */}
       <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-200 shadow-md">
-        <h2 className="text-lg md:text-xl font-semibold text-black mb-4">Paramètres par défaut</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-lg md:text-xl font-semibold text-black">Paramètres par défaut</h2>
+          <div className="relative group">
+            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors cursor-help">
+              <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+            </div>
+            {/* Tooltip */}
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 p-3 bg-white text-gray-700 text-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="space-y-2">
+                <p className="font-medium text-gray-900">Comment ça marche :</p>
+                <ul className="space-y-1 text-xs">
+                  <li>• 1-{guestLimit} invités : Confirmation automatique + email immédiat</li>
+                  <li>• {guestLimit + 1}+ invités : Statut "En attente" + validation manuelle requise</li>
+                  <li>• L'email de confirmation est envoyé uniquement après validation admin</li>
+                </ul>
+              </div>
+              {/* Arrow */}
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-l border-t border-gray-200 rotate-45"></div>
+            </div>
+          </div>
+        </div>
         <div className="space-y-3 md:space-y-4">
           {/* Guest Limit Setting - Controls automatic vs manual confirmation */}
           <div className="p-4 bg-gray-50 rounded-lg">
@@ -1517,13 +1319,6 @@ export function SettingsTab() {
                   {updatingGuestLimit ? '...' : 'Sauvegarder'}
                 </Button>
               </div>
-            </div>
-            {/* Explanation Panel - Shows current behavior */}
-            <div className="text-[10px] md:text-xs text-gray-500 bg-white p-2 md:p-3 rounded border">
-              <p className="font-medium mb-1">Comment ça marche :</p>
-              <p>• 1-{guestLimit} invités : Confirmation automatique + email immédiat</p>
-              <p>• {guestLimit + 1}+ invités : Statut "En attente" + validation manuelle requise</p>
-              <p>• L'email de confirmation est envoyé uniquement après validation admin</p>
             </div>
           </div>
 
@@ -1603,6 +1398,270 @@ export function SettingsTab() {
           </div>
         </div>
       </div>
+
+      {/* Collapsible Calendar Section */}
+      <div className="bg-white rounded-lg shadow-lg border border-gray-200">
+        {/* Header - Always visible */}
+        <div 
+          className="flex items-center justify-between p-4 md:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
+        >
+          <h2 className="text-lg md:text-2xl font-bold text-gray-900">
+            Calendrier & Horaires du Restaurant
+          </h2>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              {isCalendarExpanded ? 'Masquer' : 'Afficher'}
+            </span>
+            <svg 
+              className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                isCalendarExpanded ? 'rotate-180' : ''
+              }`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Collapsible Content */}
+        {isCalendarExpanded && (
+          <div className="px-4 md:px-6 pb-4 md:pb-6 border-t border-gray-200">
+            {/* Calendar Controls */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <Button
+                  onClick={goToToday}
+                  variant="outline"
+                  size="sm"
+                  className="w-fit"
+                >
+                  Aujourd'hui
+                </Button>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={goToPreviousMonth}
+                  variant="outline"
+                  size="sm"
+                  className="px-3"
+                >
+                  ←
+                </Button>
+                
+                <div className="min-w-[150px] md:min-w-[200px] text-center">
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900">
+                    {MONTHS[currentMonth]} {currentYear}
+                  </h3>
+                </div>
+                
+                <Button
+                  onClick={goToNextMonth}
+                  variant="outline"
+                  size="sm"
+                  className="px-3"
+                >
+                  →
+                </Button>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-3 md:gap-6 mb-4 text-xs md:text-sm flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"></div>
+                <span className="text-gray-700">Ouvert</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-red-100 border-2 border-red-500 rounded"></div>
+                <span className="text-gray-700">Fermé (spécifique)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-orange-100 border-2 border-orange-500 rounded"></div>
+                <span className="text-gray-700">Fermé (hebdomadaire)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"></div>
+                <span className="text-gray-700">Aujourd'hui</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-yellow-100 border-2 border-yellow-500 rounded"></div>
+                <span className="text-gray-700">Horaires personnalisés</span>
+              </div>
+            </div>
+
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                {error}
+              </Alert>
+            )}
+
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <LoadingSpinner size="lg" />
+              </div>
+            ) : (
+              <>
+                {/* Calendar Grid */}
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  {/* Day headers */}
+                  <div className="grid grid-cols-7 bg-gray-50">
+                    {DAYS.map(day => (
+                      <div
+                        key={day}
+                        className="p-1 md:p-3 text-center text-xs md:text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0"
+                      >
+                        <span className="hidden sm:inline">{day}</span>
+                        <span className="sm:hidden">{day.charAt(0)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar days */}
+                  <div className="grid grid-cols-7">
+                    {calendarDays.map((day, index) => {
+                      if (day === null) {
+                        return (
+                          <div
+                            key={`empty-${index}`}
+                            className="h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0"
+                          />
+                        );
+                      }
+
+                      const dateStr = formatDate(currentYear, currentMonth, day);
+                      const status = getDateStatus(day);
+                      const isClosed = status?.is_closed || false;
+                      const isCurrentDay = isToday(day);
+                      const isPast = isPastDate(day);
+                      const isUpdatingThisDate = updating === dateStr;
+                      const hasCustomHours = status?.opening_time && status?.closing_time;
+                      
+                      // Check if this date is closed due to weekly schedule
+                      const date = new Date(currentYear, currentMonth, day);
+                      const dayOfWeek = date.getDay();
+                      const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
+                      const specificDateStatus = dateStatuses[dateStr];
+                      const isClosedByWeeklySchedule = weeklyScheduleForDay && !weeklyScheduleForDay.is_open && !specificDateStatus;
+
+                      return (
+                        <div
+                          key={day}
+                          className={`h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0 relative ${
+                            isPast ? 'bg-gray-50' : 'bg-white hover:bg-gray-50'
+                          } transition-colors`}
+                        >
+                          <div className="w-full h-full p-1 md:p-2">
+                            {/* Date number */}
+                            <div
+                              className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-medium ${
+                                isCurrentDay
+                                  ? 'bg-blue-500 text-white'
+                                  : isPast
+                                  ? 'text-gray-400'
+                                  : 'text-gray-900'
+                              }`}
+                            >
+                              {day}
+                            </div>
+
+                            {/* Status and controls */}
+                            {!isPast && (
+                              <div className="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
+                                {/* Open/Close toggle */}
+                                <button
+                                  onClick={() => toggleDateStatus(day)}
+                                  disabled={isUpdatingThisDate}
+                                  className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors ${
+                                    isClosed
+                                      ? isClosedByWeeklySchedule
+                                        ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                                        : 'bg-red-100 text-red-700 hover:bg-red-200'
+                                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                  }`}
+                                >
+                                  <span className="hidden sm:inline">
+                                    {isClosed 
+                                      ? isClosedByWeeklySchedule 
+                                        ? 'Fermé (hebdo)' 
+                                        : 'Fermé'
+                                      : 'Ouvert'
+                                    }
+                                  </span>
+                                  <span className="sm:hidden">
+                                    {isClosed ? 'F' : 'O'}
+                                  </span>
+                                </button>
+
+                                {/* Hours button */}
+                                <button
+                                  onClick={() => setShowHoursModal(dateStr)}
+                                  disabled={isUpdatingThisDate}
+                                  className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight ${
+                                    hasCustomHours || status?.use_split_hours
+                                      ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                  }`}
+                                >
+                                  <span className="hidden sm:inline">
+                                    {status?.use_split_hours 
+                                      ? `${status.morning_opening || '10:00'}-${status.morning_closing || '14:00'} • ${status.afternoon_opening || '19:00'}-${status.afternoon_closing || '22:00'}`
+                                      : hasCustomHours 
+                                        ? `${status.opening_time}-${status.closing_time}`
+                                        : '10:00-20:00'
+                                    }
+                                  </span>
+                                  <span className="sm:hidden">
+                                    {status?.use_split_hours 
+                                      ? `${status.morning_opening || '10:00'}-${status.afternoon_closing || '22:00'}`
+                                      : hasCustomHours 
+                                        ? `${status.opening_time}-${status.closing_time}`
+                                        : '10-20'
+                                    }
+                                  </span>
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Loading indicator */}
+                            {isUpdatingThisDate && (
+                              <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                                <LoadingSpinner size="sm" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div className="mt-4 text-sm text-gray-600">
+                  <p>• <span className="font-medium">Orange "Fermé (hebdo)"</span> : Fermé selon les horaires hebdomadaires ci-dessus</p>
+                  <p>• <span className="font-medium">Rouge "Fermé"</span> : Fermé spécifiquement pour cette date</p>
+                  <p>• Cliquez sur "Ouvert/Fermé" pour créer une exception à la règle hebdomadaire</p>
+                  <p>• Cliquez sur les horaires pour personnaliser les heures d'ouverture</p>
+                  <p>• Les dates passées ne peuvent pas être modifiées</p>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Opening Hours Modal */}
+      {showHoursModal && (
+        <OpeningHoursModal
+          date={showHoursModal}
+          currentHours={dateStatuses[showHoursModal] || { opening_time: '10:00', closing_time: '20:00' }}
+          onSave={(hours) => updateOpeningHours(showHoursModal, hours)}
+          onClose={() => setShowHoursModal(null)}
+        />
+      )}
     </div>
   );
 }

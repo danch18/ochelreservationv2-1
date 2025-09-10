@@ -7,12 +7,17 @@ import { cn } from '@/lib/utils';
 interface FloatingActionButtonProps {
   children: React.ReactNode;
   className?: string;
+  currentStep?: 1 | 2;
 }
 
-function FloatingActionButtonContent({ children, className }: FloatingActionButtonProps) {
+function FloatingActionButtonContent({ children, className, currentStep = 1 }: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Dynamic popup dimensions based on step
+  const popupWidth = currentStep === 2 ? 1035 : 414;  // 2.5x width for step 2 (414 * 2.5 = 1035)
+  const popupHeight = currentStep === 2 ? 700 : 600; // Slightly taller for step 2
 
   const handleToggle = () => {
     const newIsOpen = !isOpen;
@@ -23,8 +28,8 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       window.parent.postMessage({
         type: 'popupResize',
         isOpen: newIsOpen,
-        width: newIsOpen ? 414 : 220,  // Base width (widget adds margins)
-        height: newIsOpen ? 688 : 80   // Base height (widget adds margins)
+        width: newIsOpen ? popupWidth : 220,  // Dynamic width based on step
+        height: newIsOpen ? popupHeight + 88 : 80   // Dynamic height + margins
       }, '*');
     }
   };
@@ -58,6 +63,18 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  // Handle step changes and resize popup accordingly
+  useEffect(() => {
+    if (isOpen && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'popupResize',
+        isOpen: true,
+        width: popupWidth,
+        height: popupHeight + 88
+      }, '*');
+    }
+  }, [currentStep, isOpen, popupWidth, popupHeight]);
 
   return (
     <>
@@ -99,7 +116,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       {isOpen && (
         <div 
           className="fixed bottom-20 right-2 z-[9998] pointer-events-auto"
-          style={{ width: '414px', height: '600px' }}
+          style={{ width: `${popupWidth}px`, height: `${popupHeight}px` }}
         />
       )}
 
@@ -107,7 +124,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
       <div
         ref={popupRef}
         className={cn(
-          'fixed bottom-20 right-2 w-[414px] max-w-[320px] sm:max-w-[414px] h-[600px] bg-white rounded-2xl shadow-2xl z-[9999]',
+          'fixed bottom-20 right-2 bg-white rounded-2xl shadow-2xl z-[9999]',
           'transform transition-all duration-300 ease-out pointer-events-auto',
           'overflow-hidden border border-[#D1D5DC]',
           isOpen
@@ -116,6 +133,9 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         )}
         style={{
           transformOrigin: 'bottom right',
+          width: `${popupWidth}px`,
+          height: `${popupHeight}px`,
+          maxWidth: currentStep === 2 ? `${popupWidth}px` : '414px',
         }}
       >
         {/* Header */}
@@ -136,7 +156,7 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
         {/* Content */}
         <div 
           className="overflow-y-auto p-4 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" 
-          style={{ height: '536px' }}
+          style={{ height: `${popupHeight - 64}px` }}
         >
           {children}
         </div>
@@ -145,9 +165,9 @@ function FloatingActionButtonContent({ children, className }: FloatingActionButt
   );
 }
 
-export function FloatingActionButton({ children, className }: FloatingActionButtonProps) {
+export function FloatingActionButton({ children, className, currentStep }: FloatingActionButtonProps) {
   return (
-    <FloatingActionButtonContent className={className}>
+    <FloatingActionButtonContent className={className} currentStep={currentStep}>
       {children}
     </FloatingActionButtonContent>
   );

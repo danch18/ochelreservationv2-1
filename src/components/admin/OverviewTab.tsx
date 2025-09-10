@@ -90,6 +90,80 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     return matchesStatus && matchesDate && matchesSearch;
   });
 
+  /**
+   * Export reservations to CSV format
+   * Creates a CSV file with all reservation data and downloads it
+   */
+  const exportToCSV = () => {
+    // Check if there are reservations to export
+    if (reservations.length === 0) {
+      alert('Aucune réservation à exporter.');
+      return;
+    }
+
+    // Define CSV headers
+    const headers = [
+      'ID',
+      'Nom',
+      'Email',
+      'Téléphone',
+      'Date de réservation',
+      'Heure',
+      'Nombre d\'invités',
+      'Statut',
+      'Demandes spéciales',
+      'Confirmé automatiquement',
+      'Date de création',
+      'Dernière mise à jour'
+    ];
+
+    // Helper function to escape CSV values
+    const escapeCSVValue = (value: string | null | undefined): string => {
+      if (!value) return '""';
+      // Escape quotes by doubling them and wrap in quotes
+      return `"${String(value).replace(/"/g, '""')}"`;
+    };
+
+    // Convert reservations to CSV rows
+    const csvRows = [
+      headers.join(','), // Header row
+      ...reservations.map(reservation => [
+        reservation.id,
+        escapeCSVValue(reservation.name),
+        escapeCSVValue(reservation.email),
+        escapeCSVValue(reservation.phone),
+        reservation.reservation_date,
+        reservation.reservation_time,
+        reservation.guests,
+        reservation.status,
+        escapeCSVValue(reservation.special_requests),
+        reservation.requires_confirmation ? 'Non' : 'Oui',
+        new Date(reservation.created_at).toLocaleString('fr-FR'),
+        new Date(reservation.updated_at).toLocaleString('fr-FR')
+      ].join(','))
+    ];
+
+    // Create CSV content with BOM for proper Excel encoding
+    const csvContent = '\uFEFF' + csvRows.join('\n');
+
+    // Create blob and download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `reservations_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
@@ -118,11 +192,12 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       {/* Statistics Cards - Display stats based on selected time range */}
       <StatsCards stats={stats} totalGuests={totalGuests} />
       
-      {/* Reservation Table Filters - Independent from stats filtering */}
+      {/* Reservation Table Filters */}
       <AdminFilters 
         filters={filters}
         onFiltersChange={setFilters}
         reservations={reservations}
+        onExportCSV={exportToCSV}
       />
       
       {/* Show filtered results summary when table filters are applied */}

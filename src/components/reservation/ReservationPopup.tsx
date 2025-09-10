@@ -16,6 +16,7 @@ export function ReservationPopup() {
   const [currentView, setCurrentView] = useState<PopupView>('form');
   const [submittedReservation, setSubmittedReservation] = useState<Reservation | null>(null);
   const [lookupEmail, setLookupEmail] = useState('');
+  const [currentFormStep, setCurrentFormStep] = useState<1 | 2>(1);
 
   const { reservations, refetch } = useReservationsByEmail(lookupEmail);
 
@@ -44,6 +45,11 @@ export function ReservationPopup() {
   const handleBackToForm = () => {
     setCurrentView('form');
     setLookupEmail('');
+    setCurrentFormStep(1); // Reset to step 1 when going back to form
+  };
+
+  const handleStepChange = (step: 1 | 2) => {
+    setCurrentFormStep(step);
   };
 
 
@@ -111,7 +117,11 @@ export function ReservationPopup() {
             }
           >
             <div className="w-full">
-              <ReservationForm onSuccess={handleReservationSuccess} key="reservation-form" />
+              <ReservationForm 
+                onSuccess={handleReservationSuccess} 
+                onStepChange={handleStepChange}
+                key="reservation-form" 
+              />
             </div>
           </ErrorBoundary>
         );
@@ -119,7 +129,7 @@ export function ReservationPopup() {
   };
 
   return (
-    <FloatingActionButton>
+    <FloatingActionButton currentStep={currentView === 'form' ? currentFormStep : 1}>
       {renderContent()}
     </FloatingActionButton>
   );
