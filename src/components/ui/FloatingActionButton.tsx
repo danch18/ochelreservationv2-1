@@ -143,7 +143,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
         {/* Header */}
         <div className="bg-[#F34A23] text-white p-4 max-sm:p-3 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold max-sm:text-sm">Magnifiko Réservez</span>
+            <span className="font-semibold max-sm:text-sm">Magnifiko</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}

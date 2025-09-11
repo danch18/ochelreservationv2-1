@@ -257,9 +257,12 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Statut :</label>
             <button
-              onClick={() => updateWeeklySchedule(activeTab, { 
-                is_open: !daySchedule.is_open 
-              })}
+              onClick={() => {
+                console.log(`Admin Panel: Toggling day ${activeTab} (${dayNames[activeTab]}) from ${daySchedule.is_open} to ${!daySchedule.is_open}`);
+                updateWeeklySchedule(activeTab, { 
+                  is_open: !daySchedule.is_open 
+                });
+              }}
               disabled={isUpdating}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 daySchedule.is_open
@@ -278,9 +281,26 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium text-gray-700">Type d'horaires :</label>
                 <button
-                  onClick={() => updateWeeklySchedule(activeTab, { 
-                    use_split_hours: !daySchedule.use_split_hours 
-                  })}
+                  onClick={() => {
+                    const newSplitHours = !daySchedule.use_split_hours;
+                    const updateData: Partial<WeeklySchedule> = {
+                      use_split_hours: newSplitHours
+                    };
+                    
+                    // When switching to split hours, ensure all split hour fields are initialized
+                    if (newSplitHours) {
+                      updateData.morning_opening = daySchedule.morning_opening || '10:00';
+                      updateData.morning_closing = daySchedule.morning_closing || '14:00';
+                      updateData.afternoon_opening = daySchedule.afternoon_opening || '19:00';
+                      updateData.afternoon_closing = daySchedule.afternoon_closing || '22:00';
+                    } else {
+                      // When switching to continuous hours, ensure single hour fields are initialized
+                      updateData.single_opening = daySchedule.single_opening || '10:00';
+                      updateData.single_closing = daySchedule.single_closing || '20:00';
+                    }
+                    
+                    updateWeeklySchedule(activeTab, updateData);
+                  }}
                   disabled={isUpdating}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     daySchedule.use_split_hours
@@ -308,7 +328,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             morning_opening: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-full sm:w-32 sm:flex-1"
+                          className="w-full sm:w-42 sm:flex-1"
                         />
                         <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
@@ -318,7 +338,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             morning_closing: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-full sm:w-32 sm:flex-1"
+                          className="w-full sm:w-42 sm:flex-1"
                         />
                       </div>
                     </div>
@@ -335,7 +355,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             afternoon_opening: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-full sm:w-32 sm:flex-1"
+                          className="w-full sm:w-42 sm:flex-1"
                         />
                         <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
@@ -345,7 +365,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                             afternoon_closing: e.target.value 
                           })}
                           disabled={isUpdating}
-                          className="w-full sm:w-32 sm:flex-1"
+                          className="w-full sm:w-42 sm:flex-1"
                         />
                       </div>
                     </div>
@@ -365,7 +385,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         single_opening: e.target.value 
                       })}
                       disabled={isUpdating}
-                      className="w-full sm:w-32"
+                      className="w-full sm:w-42"
                     />
                     <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                     <Input
@@ -375,7 +395,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         single_closing: e.target.value 
                       })}
                       disabled={isUpdating}
-                      className="w-full sm:w-32"
+                      className="w-full sm:w-42"
                     />
                   </div>
                 </div>
@@ -989,6 +1009,11 @@ export function SettingsTab() {
           use_split_hours: false,
           single_opening: '10:00',
           single_closing: '20:00',
+          // Initialize split hours fields with defaults too
+          morning_opening: '10:00',
+          morning_closing: '14:00',
+          afternoon_opening: '19:00',
+          afternoon_closing: '22:00',
         };
       }
 

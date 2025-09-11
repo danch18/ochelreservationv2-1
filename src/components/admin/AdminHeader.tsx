@@ -18,7 +18,7 @@ export function AdminHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-xl font-semibold text-white">Magnifiko Réservez</h1>
+              <h1 className="text-xl font-semibold text-white">Magnifiko</h1>
               <p className="text-sm text-white/80">Admin Dashboard</p>
             </div>
           </div>

@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useReservationForm, useHeaderTexts } from '@/hooks';
-// import { useDateAvailability } from '@/hooks/useDateAvailability';
+import { useRestaurantAvailability } from '@/hooks/useRestaurantAvailability';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
-import { TIME_SLOTS, GUEST_OPTIONS } from '@/lib/constants';
+import { GUEST_OPTIONS } from '@/lib/constants';
 import { getTodayDate } from '@/lib/utils';
 import type { Reservation } from '@/types';
 
@@ -28,7 +28,7 @@ interface DateDropdownProps {
   onToggle?: () => void;
 }
 
-function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, isOpen = false, onToggle }: DateDropdownProps) {
+function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, isOpen = false, onToggle, isDateClosed }: DateDropdownProps & { isDateClosed?: (date: string) => boolean }) {
   const [currentMonth, setCurrentMonth] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,11 +55,9 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
     return "Date";
   };
 
-  // Mock function to check if date is closed (you'll replace this with actual admin panel data)
-  const isDateClosed = (dateStr: string) => {
-    // This should be replaced with actual closed dates from admin panel
-    const closedDates = ['2024-12-25', '2024-01-01']; // Example closed dates
-    return closedDates.includes(dateStr);
+  // Use the passed isDateClosed function or fallback to default behavior
+  const checkDateClosed = (dateStr: string) => {
+    return isDateClosed ? isDateClosed(dateStr) : false;
   };
 
   const generateCalendarDays = () => {
@@ -81,7 +79,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
       const dateStr = date.toISOString().split('T')[0];
       const isCurrentMonth = date.getMonth() === month;
       const isPast = dateStr < today;
-      const isClosed = isDateClosed(dateStr);
+      const isClosed = checkDateClosed(dateStr);
       
       days.push({
         date: dateStr,
@@ -586,12 +584,22 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
   // Fetch header texts from database
   const { headerTexts, loading: headerTextsLoading } = useHeaderTexts();
 
+  // Fetch restaurant availability and dynamic time slots
+  const { getTimeSlots, isDateClosed, loading: availabilityLoading } = useRestaurantAvailability();
+
   const guestsValue = watch('guests');
   const selectedDate = watch('date');
   const selectedTime = watch('time');
   const nameValue = watch('name');
   const emailValue = watch('email');
   const phoneValue = watch('phone');
+
+  // Get dynamic time slots for the selected date based on admin-configured weekly schedule
+  // This replaces the static TIME_SLOTS constant with dynamic slots from database
+  const availableTimeSlots = selectedDate ? getTimeSlots(selectedDate) : [];
+  
+  // Check if the selected date is closed based on weekly schedule or specific date override
+  const selectedDateClosed = selectedDate ? isDateClosed(selectedDate) : false;
 
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -681,6 +689,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               icon="/icons/calendar.svg"
               isOpen={openDropdown === 'date'}
               onToggle={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}
+              isDateClosed={isDateClosed}
             />
             
             {/* Divider */}
@@ -693,12 +702,28 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                 setOpenDropdown(null); // Close dropdown after selection
               }}
               error={errors.time?.message}
-              timeSlots={TIME_SLOTS}
-              disabled={false}
+              timeSlots={availableTimeSlots}
+              disabled={selectedDateClosed || availabilityLoading || availableTimeSlots.length === 0}
               icon="/icons/clock.svg"
               isOpen={openDropdown === 'time'}
               onToggle={() => setOpenDropdown(openDropdown === 'time' ? null : 'time')}
             />
+
+            {/* Show helpful message when no time slots available */}
+            {selectedDate && !availabilityLoading && (
+              <>
+                {selectedDateClosed && (
+                  <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                    Restaurant fermé ce jour-là
+                  </div>
+                )}
+                {!selectedDateClosed && availableTimeSlots.length === 0 && (
+                  <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+                    Aucun créneau disponible pour cette date
+                  </div>
+                )}
+              </>
+            )}
 
             {/* Hidden inputs for form registration */}
             <input type="hidden" {...register('date')} />
