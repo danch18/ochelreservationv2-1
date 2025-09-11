@@ -119,6 +119,15 @@ export function useFilteredReservations(reservations: Reservation[], filters: Fi
       );
     }
 
+    // Sort filtered reservations chronologically
+    filtered.sort((a, b) => {
+      // Sort by date first, then by time
+      if (a.reservation_date !== b.reservation_date) {
+        return a.reservation_date.localeCompare(b.reservation_date);
+      }
+      return a.reservation_time.localeCompare(b.reservation_time);
+    });
+
     setFilteredReservations(filtered);
   }, [reservations, filters]);
 

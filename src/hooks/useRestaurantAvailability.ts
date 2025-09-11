@@ -68,6 +68,11 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
             use_split_hours: false,
             single_opening: '10:00',
             single_closing: '20:00',
+            // Initialize split hours fields with defaults too
+            morning_opening: '10:00',
+            morning_closing: '14:00',
+            afternoon_opening: '19:00',
+            afternoon_closing: '22:00',
           };
         }
 
@@ -137,9 +142,22 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
     const specificDateStatus = dateStatuses[date];
     
     // Get the day of week (0=Sunday, 1=Monday, etc.)
-    const dateObj = new Date(date);
+    // Parse date carefully to avoid timezone issues
+    const [year, month, day] = date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day); // month is 0-indexed
     const dayOfWeek = dateObj.getDay();
     const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
+    
+    // Debug logging - focusing on split hours issue
+    if (weeklyScheduleForDay?.use_split_hours) {
+      console.log(`SPLIT HOURS DEBUG - Date: ${date}, Day: ${dayOfWeek}, Schedule:`, {
+        use_split_hours: weeklyScheduleForDay.use_split_hours,
+        morning_opening: weeklyScheduleForDay.morning_opening,
+        morning_closing: weeklyScheduleForDay.morning_closing,
+        afternoon_opening: weeklyScheduleForDay.afternoon_opening,
+        afternoon_closing: weeklyScheduleForDay.afternoon_closing
+      });
+    }
     
     // If there's a specific date override, use that
     if (specificDateStatus) {
@@ -202,12 +220,16 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
   };
 
   const generateTimeSlots = (startTime: string, endTime: string): string[] => {
+    console.log(`⚙️ generateTimeSlots called with: ${startTime} to ${endTime}`);
+    
     const slots: string[] = [];
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
     
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
+    
+    console.log(`⚙️ Converting to minutes: ${startMinutes} to ${endMinutes}`);
     
     for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
@@ -216,6 +238,7 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
       slots.push(timeStr);
     }
     
+    console.log(`⚙️ Generated ${slots.length} slots:`, slots);
     return slots;
   };
 
@@ -229,15 +252,28 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
 
     // Handle split hours
     if (status?.use_split_hours) {
-      const morningSlots = generateTimeSlots(
-        status.morning_opening || '10:00',
-        status.morning_closing || '14:00'
-      );
-      const afternoonSlots = generateTimeSlots(
-        status.afternoon_opening || '19:00',
-        status.afternoon_closing || '22:00'
-      );
-      return [...morningSlots, ...afternoonSlots];
+      console.log('🕐 SPLIT HOURS DETECTED for date:', date);
+      console.log('📋 Full status object:', status);
+      
+      const morningStart = status.morning_opening || '10:00';
+      const morningEnd = status.morning_closing || '14:00';
+      const afternoonStart = status.afternoon_opening || '19:00';
+      const afternoonEnd = status.afternoon_closing || '22:00';
+      
+      console.log('🌅 Morning period:', morningStart, 'to', morningEnd);
+      console.log('🌆 Afternoon period:', afternoonStart, 'to', afternoonEnd);
+      
+      const morningSlots = generateTimeSlots(morningStart, morningEnd);
+      const afternoonSlots = generateTimeSlots(afternoonStart, afternoonEnd);
+      
+      console.log('🌅 Morning slots generated:', morningSlots);
+      console.log('🌆 Afternoon slots generated:', afternoonSlots);
+      
+      const combinedSlots = [...morningSlots, ...afternoonSlots];
+      console.log('✅ Final combined slots:', combinedSlots);
+      console.log('📊 Total slots count:', combinedSlots.length);
+      
+      return combinedSlots;
     }
 
     // Handle continuous hours

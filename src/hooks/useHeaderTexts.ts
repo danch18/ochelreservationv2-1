@@ -78,3 +78,4 @@ export function useHeaderTexts() {
 
   return { headerTexts, loading, error };
 }
+

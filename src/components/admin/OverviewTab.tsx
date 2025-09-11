@@ -92,6 +92,13 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       reservation.phone.includes(filters.search);
     
     return matchesStatus && matchesDate && matchesSearch;
+  }).sort((a, b) => {
+    // Sort by date first, then by time (chronological order)
+    // Ensures reservations are always displayed in chronological order by default
+    if (a.reservation_date !== b.reservation_date) {
+      return a.reservation_date.localeCompare(b.reservation_date);
+    }
+    return a.reservation_time.localeCompare(b.reservation_time);
   });
 
   /**

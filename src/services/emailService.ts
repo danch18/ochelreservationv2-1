@@ -170,7 +170,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           z-index: 1;
         }
         .logo::before {
-          content: '';
+          content: '🍽️';
           font-size: 0.8em;
           margin-right: 8px;
         }
@@ -224,7 +224,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           position: relative;
         }
         .reservation-details::before {
-          content: '';
+          content: '📅';
           position: absolute;
           top: -15px;
           left: 30px;
@@ -278,7 +278,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           position: relative;
         }
         .special-requests::before {
-          content: '';
+          content: '💬';
           position: absolute;
           top: -15px;
           left: 30px;
@@ -305,7 +305,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           position: relative;
         }
         .important-notes::before {
-          content: '';
+          content: '⚠️';
           position: absolute;
           top: -15px;
           left: 30px;
@@ -347,7 +347,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           position: relative;
         }
         .contact-info::before {
-          content: '';
+          content: '📞';
           position: absolute;
           top: -15px;
           left: 50%;
@@ -390,7 +390,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
         .reservation-button {
           display: inline-block;
           background: linear-gradient(135deg, #F34A23 0%, #e63946 100%);
-          color: #ffffff !important;
+          color: #ffffff;
           text-decoration: none;
           padding: 18px 40px;
           border-radius: 50px;
@@ -407,7 +407,6 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
         }
         .reservation-button:hover {
           background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
-          color: #ffffff !important;
           transform: translateY(-3px);
           box-shadow: 0 12px 35px rgba(243, 74, 35, 0.5);
         }
@@ -465,7 +464,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
           </div>
           
           <div class="confirmation-message">
-            Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! We're delighted to confirm your reservation and look forward to providing you with an exceptional dining experience.
+             Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! We're delighted to confirm your reservation and look forward to providing you with an exceptional dining experience.
           </div>
           
           <div class="reservation-details">
@@ -651,7 +650,7 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
           z-index: 1;
         }
         .logo::before {
-          content: '';
+          content: '🍽️';
           font-size: 0.8em;
           margin-right: 8px;
         }
@@ -752,7 +751,7 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
           position: relative;
         }
         .contact-info::before {
-          content: '';
+          content: '📞';
           position: absolute;
           top: -15px;
           left: 50%;
@@ -872,13 +871,13 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
           </div>
           
           <div class="cancellation-message">
-            This email confirms that your reservation has been <strong style="color: #e74c3c;">cancelled</strong>. We're sorry to see you won't be joining us.
+            😔 This email confirms that your reservation has been <strong style="color: #e74c3c;">cancelled</strong>. We're sorry to see you won't be joining us.
           </div>
           
           <div class="cancelled-details">
             <h3 style="margin-top: 20px; color: #e74c3c; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Cancelled Reservation</h3>
             <div class="detail-row">
-              <span class="detail-label">Confirmation ID:</span>
+              <span class="detail-label">🆔 Confirmation ID:</span>
               <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
             </div>
             <div class="detail-row">
@@ -898,15 +897,15 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
           <div class="divider"></div>
           
           <p style="font-size: 1.1em; color: #495057; text-align: center; margin: 24px 0;">
-            We hope you'll consider dining with us in the future. If you'd like to make a new reservation, please visit our website or contact us directly.
+            💝 We hope you'll consider dining with us in the future. If you'd like to make a new reservation, please visit our website or contact us directly.
           </p>
           
           <div class="contact-info">
             <h4>Ready to Book Again?</h4>
-            <p>(555) 123-4567</p>
-            <p>info@ochel.com</p>
-            <p>123 Fine Dining Street, Downtown</p>
-            <p>Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
+            <p>📞 (555) 123-4567</p>
+            <p>📧 info@ochel.com</p>
+            <p>📍 123 Fine Dining Street, Downtown</p>
+            <p>🕒 Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
           </div>
           
           <div class="button-container">
@@ -917,7 +916,7 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
         </div>
         
         <div class="footer">
-          <p>We hope to see you at <span class="highlight">Magnifiko Réservez</span> soon!</p>
+          <p>🌟 We hope to see you at <span class="highlight">Magnifiko Réservez</span> soon! 🌟</p>
           <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
             This is an automated cancellation email. Please do not reply to this email.
           </p>
