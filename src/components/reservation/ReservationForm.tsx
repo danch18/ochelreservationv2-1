@@ -970,15 +970,14 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               {/* Privacy Notice */}
               <div className="text-xs max-sm:text-[10px] text-gray-600 space-y-2 max-sm:space-y-1">
                 <p>
-                  Le restaurant auprès duquel vous effectuez votre demande de réservation ou de commande collecte traite vos 
-                  données à caractère personnel aux fins de gestion et de suivi de votre demande et des réponses à y apporter, y 
-                  compris s'agissant des communications qui vous sont adressées par email ou SMS en lien avec votre réservation 
-                  (accusé de réception de votre demande, confirmation de réservation...), et ce éventuellement conjointement avec 
-                  Magnifiko qui met à disposition du restaurant un outil de gestion de ses réservations et commandes.
+                  Les informations que vous nous transmettez dans le cadre de votre réservation sont collectées par le restaurant et traitées via l'outil de réservation mis à disposition par Ochel.
                 </p>
                 <p>
-                  Par ailleurs, le restaurant collecte et traite vos données à caractère personnel plus généralement aux fins de gestion 
-                  et de suivi de ses relations avec vous, et notamment pour...
+                  Elles sont utilisées uniquement pour gérer votre demande (confirmation, modification, annulation) et pour assurer le suivi de votre venue (notifications par email ou SMS liées à votre réservation).
+                  Ces données peuvent également être utilisées par le restaurant afin d'améliorer votre expérience et, si vous y avez consenti, pour vous adresser des communications personnalisées (actualités, offres spéciales, campagnes de fidélisation).
+                </p>
+                <p>
+                  Conformément à la réglementation applicable (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données, ainsi que d'un droit d'opposition ou de limitation de leur traitement. Vous pouvez exercer ces droits directement auprès du restaurant.
                 </p>
               </div>
             </div>
