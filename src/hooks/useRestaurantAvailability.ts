@@ -77,7 +77,7 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
         }
 
         if (weeklyData) {
-          weeklyData.forEach(setting => {
+            weeklyData.forEach(setting => {
             const match = setting.setting_key.match(/^weekly_schedule_(\d+)$/);
             if (match) {
               const dayOfWeek = parseInt(match[1]);
@@ -142,22 +142,15 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
     const specificDateStatus = dateStatuses[date];
     
     // Get the day of week (0=Sunday, 1=Monday, etc.)
-    // Parse date carefully to avoid timezone issues
-    const [year, month, day] = date.split('-').map(Number);
-    const dateObj = new Date(year, month - 1, day); // month is 0-indexed
-    const dayOfWeek = dateObj.getDay();
-    const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
+    // Parse date string more robustly to ensure correct day calculation
+    const dateStr = date.includes('T') ? date.split('T')[0] : date; // Remove time if present
+    const [year, month, day] = dateStr.split('-').map(Number);
     
-    // Debug logging - focusing on split hours issue
-    if (weeklyScheduleForDay?.use_split_hours) {
-      console.log(`SPLIT HOURS DEBUG - Date: ${date}, Day: ${dayOfWeek}, Schedule:`, {
-        use_split_hours: weeklyScheduleForDay.use_split_hours,
-        morning_opening: weeklyScheduleForDay.morning_opening,
-        morning_closing: weeklyScheduleForDay.morning_closing,
-        afternoon_opening: weeklyScheduleForDay.afternoon_opening,
-        afternoon_closing: weeklyScheduleForDay.afternoon_closing
-      });
-    }
+    // Parse date and get day of week consistently with admin panel
+    // Use local timezone to match how admin panel calculates days
+    const localDate = new Date(year, month - 1, day);
+    const dayOfWeek = localDate.getDay(); // 0=Sunday, 1=Monday, etc.
+    const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
     
     // If there's a specific date override, use that
     if (specificDateStatus) {
@@ -220,16 +213,12 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
   };
 
   const generateTimeSlots = (startTime: string, endTime: string): string[] => {
-    console.log(`⚙️ generateTimeSlots called with: ${startTime} to ${endTime}`);
-    
     const slots: string[] = [];
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
     
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
-    
-    console.log(`⚙️ Converting to minutes: ${startMinutes} to ${endMinutes}`);
     
     for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
@@ -238,7 +227,6 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
       slots.push(timeStr);
     }
     
-    console.log(`⚙️ Generated ${slots.length} slots:`, slots);
     return slots;
   };
 
@@ -252,28 +240,15 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
 
     // Handle split hours
     if (status?.use_split_hours) {
-      console.log('🕐 SPLIT HOURS DETECTED for date:', date);
-      console.log('📋 Full status object:', status);
-      
       const morningStart = status.morning_opening || '10:00';
       const morningEnd = status.morning_closing || '14:00';
       const afternoonStart = status.afternoon_opening || '19:00';
       const afternoonEnd = status.afternoon_closing || '22:00';
       
-      console.log('🌅 Morning period:', morningStart, 'to', morningEnd);
-      console.log('🌆 Afternoon period:', afternoonStart, 'to', afternoonEnd);
-      
       const morningSlots = generateTimeSlots(morningStart, morningEnd);
       const afternoonSlots = generateTimeSlots(afternoonStart, afternoonEnd);
       
-      console.log('🌅 Morning slots generated:', morningSlots);
-      console.log('🌆 Afternoon slots generated:', afternoonSlots);
-      
-      const combinedSlots = [...morningSlots, ...afternoonSlots];
-      console.log('✅ Final combined slots:', combinedSlots);
-      console.log('📊 Total slots count:', combinedSlots.length);
-      
-      return combinedSlots;
+      return [...morningSlots, ...afternoonSlots];
     }
 
     // Handle continuous hours
