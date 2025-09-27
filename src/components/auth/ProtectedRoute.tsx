@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { PageLayout } from '@/components/layout';
+import { AdminLayout } from '@/components/layout';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -22,14 +22,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <PageLayout showHeader={false} showFooter={false}>
+      <AdminLayout showHeader={false} showFooter={false}>
         <div className="min-h-screen bg-black flex items-center justify-center">
           <div className="text-center">
             <LoadingSpinner size="lg" className="mb-4" />
             <p className="text-muted-foreground">Vérification de l'authentification...</p>
           </div>
         </div>
-      </PageLayout>
+      </AdminLayout>
     );
   }
 

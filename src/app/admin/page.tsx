@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useReservations } from '@/hooks';
-import { PageLayout } from '@/components/layout';
+import { AdminLayout } from '@/components/layout';
 import { AdminTabs, AdminHeader, OverviewTab, SettingsTab, ManageReservationTab } from '@/components/admin';
 import { ProtectedRoute } from '@/components/auth';
 
@@ -13,7 +13,7 @@ export default function AdminPage() {
   if (error) {
     return (
       <ProtectedRoute>
-        <PageLayout showHeader={false} showFooter={false}>
+        <AdminLayout showHeader={false} showFooter={false}>
           <div className="min-h-screen bg-white flex items-center justify-center">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Admin Panel</h1>
@@ -26,14 +26,14 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
-        </PageLayout>
+        </AdminLayout>
       </ProtectedRoute>
     );
   }
 
   return (
     <ProtectedRoute>
-      <PageLayout showHeader={false} showFooter={false}>
+      <AdminLayout showHeader={false} showFooter={false}>
         <div className="min-h-screen bg-gray-50 md:bg-white">
           <AdminHeader />
           
@@ -97,7 +97,7 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
-      </PageLayout>
+      </AdminLayout>
     </ProtectedRoute>
   );
 }

@@ -1,26 +1,21 @@
-import { Header } from './Header';
-import { Footer } from './Footer';
+import { ReservationPopup } from '@/components/reservation';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 interface PageLayoutProps {
   children: React.ReactNode;
-  showHeader?: boolean;
-  showFooter?: boolean;
-  className?: string;
 }
 
 export function PageLayout({ 
-  children, 
-  showHeader = true, 
-  showFooter = true,
-  className = 'min-h-screen bg-gradient-to-br from-amber-50 to-orange-100'
+  children
 }: PageLayoutProps) {
   return (
-    <div className={className}>
-      {showHeader && <Header />}
-      <main className="flex-1">
-        {children}
-      </main>
-      {showFooter && <Footer />}
-    </div>
+    <ErrorBoundary>
+      <div className='relative overflow-hidden dark bg-[var(--background)]'>
+        <div className='min-h-screen w-screen '>
+          {children}
+        </div>
+        <ReservationPopup />
+      </div>
+    </ErrorBoundary>
   );
 }

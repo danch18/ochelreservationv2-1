@@ -107,3 +107,7 @@ html, body {
   font-feature-settings: "rlig" 1, "calt" 1;
   overflow-y: scroll;
 }
+
+.w-screen{
+  @apply px-5 w-full max-w-[1440px];
+}
