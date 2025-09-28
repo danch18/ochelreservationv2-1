@@ -635,7 +635,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
   if (currentStep === 1) {
     return (
-      <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh]">
+      <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] font-forum">
         {/* Header Information Lines */}
         {!headerTextsLoading && (
           <div className="mb-6 max-sm:mb-4 space-y-2 max-sm:space-y-1">
@@ -766,7 +766,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
   // Step 2: Personal Details - Two Column Layout
   return (
-    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl">
+    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl font-forum">
       {/* Header */}
       <div className="flex items-center mb-6">
         <button

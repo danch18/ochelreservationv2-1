@@ -90,11 +90,12 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
           onClick={handleToggle}
           className={cn(
             'w-auto px-4 py-3 rounded-full',
-            'flex items-center justify-center text-[#F5F5DC] text-base font-medium',
+            'flex items-center justify-center text-black text-base font-medium',
             'transform hover:scale-105 active:scale-95 transition-all duration-300',
-            'whitespace-nowrap bg-black hover:bg-black/90',
+            'whitespace-nowrap hover:opacity-90 font-forum',
             className
           )}
+          style={{ backgroundColor: '#FFF2CC' }}
         >
           {!isOpen && (
             <>
@@ -105,7 +106,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
                 height={24}
                 className="w-6 h-6 object-contain"
               />
-              <div className="w-px h-6 bg-white/30 mx-3"></div>
+              <div className="w-px h-6 bg-black mx-3"></div>
             </>
           )}
           {isOpen ? 'Fermer' : 'Réserver une table'}
@@ -137,11 +138,11 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
           transformOrigin: 'bottom right',
           width: `${popupWidth}px`,
           height: `${popupHeight}px`,
-          maxWidth: currentStep === 2 ? `${popupWidth}px` : '414px',
+          maxWidth: currentStep === 2 ? `${popupWidth}px` : '414px'
         }}
       >
         {/* Header */}
-        <div className="bg-[#F34A23] text-white p-4 max-sm:p-3 flex items-center justify-between">
+        <div className="bg-[#F34A23] text-white p-4 max-sm:p-3 flex items-center justify-between font-forum">
           <div className="flex items-center space-x-2">
             <span className="font-semibold max-sm:text-sm">Magnifiko</span>
           </div>
@@ -156,8 +157,8 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
         </div>
 
         {/* Content */}
-        <div 
-          className="overflow-y-auto p-4 max-sm:p-3 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500" 
+        <div
+          className="overflow-y-auto p-4 max-sm:p-3 bg-white text-black scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500 font-forum"
           style={{ height: `${popupHeight - 64}px` }}
         >
           {children}

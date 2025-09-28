@@ -43,8 +43,8 @@ const forum = Forum({
 });
 
 export const metadata: Metadata = {
-  title: "ochel Restaurant - Fine Dining & Reservations",
-  description: "Experience exceptional dining at ochel. Book your table for an unforgettable culinary journey.",
+  title: "Magnifiko - Restaurant Italien Halal à Ivry-sur-Seine",
+  description: "Magnifiko - La référence de la cuisine italienne halal en Île-de-France, certifiée Achahada. Pizzas, pâtes fraîches et desserts traditionnels.",
 };
 
 export default function RootLayout({

@@ -79,37 +79,42 @@ export default function Navigation({
     <>
       {/* Fixed Navigation Bar */}
       <nav className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 ${className}`}>
-        <div className="bg-[#1a1612] bg-opacity-95 backdrop-blur-sm rounded-full px-6 py-3 border border-[#4a3f35] shadow-lg">
-          <div className="flex items-center gap-6">
+        <div className="border border-[#4a3f35] shadow-lg" style={{ display: 'flex', padding: '0.375rem', justifyContent: 'center', alignItems: 'center', gap: '1rem', borderRadius: '3.75rem', background: '#1F1F1F', backdropFilter: 'blur(5px)' }}>
             {/* Hamburger Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="relative w-8 h-8 flex flex-col justify-center items-center focus:outline-none group"
-              aria-label="Toggle navigation menu"
-            >
+            <div className="rounded-full flex items-center justify-center" style={{ width: '56px', height: '56px', backgroundColor: '#101010' }}>
+              <button
+                onClick={toggleMenu}
+                className="relative flex flex-col justify-center items-center focus:outline-none group"
+                style={{ width: '48px', height: '48px' }}
+                aria-label="Toggle navigation menu"
+              >
               {/* Hamburger Lines with Animation */}
               <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${
-                  isOpen 
-                    ? 'rotate-45 translate-y-0.5' 
+                className={`block w-6 h-0.5 transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? 'rotate-45 translate-y-0.5'
                     : 'group-hover:-translate-y-1 -translate-y-1.5'
                 }`}
+                style={{ backgroundColor: '#EFE6D2' }}
               />
               <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${
-                  isOpen 
-                    ? 'opacity-0' 
+                className={`block w-6 h-0.5 transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? 'opacity-0'
                     : 'group-hover:opacity-0 opacity-100'
                 }`}
+                style={{ backgroundColor: '#EFE6D2' }}
               />
               <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 ease-in-out ${
-                  isOpen 
-                    ? '-rotate-45 -translate-y-0.5' 
+                className={`block w-6 h-0.5 transition-all duration-300 ease-in-out ${
+                  isOpen
+                    ? '-rotate-45 -translate-y-0.5'
                     : 'group-hover:translate-y-1 translate-y-1.5'
                 }`}
+                style={{ backgroundColor: '#EFE6D2' }}
               />
             </button>
+            </div>
 
             {/* Logo/Brand */}
             <div className="flex items-center">
@@ -129,19 +134,30 @@ export default function Navigation({
             </div>
 
             {/* Main Navigation Items - Desktop */}
-            <div className="hidden md:flex space-x-6 font-eb-garamond text-sm tracking-wider">
-              {primaryItems.map((item, index) => (
-                <Link 
-                  key={index}
-                  href={item.href} 
-                  className="text-white hover:text-[#d4af37] transition-colors"
-                  {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <div className="hidden md:flex">
+              <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
+                {primaryItems.map((item, index) => (
+                  <div key={index} style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
+                    <Link
+                      href={item.href}
+                      className="hover:text-[#d4af37] transition-colors"
+                      style={{
+                        color: '#FFF',
+                        fontFamily: 'Forum',
+                        fontSize: '0.875rem',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        lineHeight: '1.4rem',
+                        letterSpacing: '-0.0175rem'
+                      }}
+                      {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                    >
+                      {item.label}
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
         </div>
       </nav>
 

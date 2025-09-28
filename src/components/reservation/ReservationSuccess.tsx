@@ -16,7 +16,7 @@ export function ReservationSuccess({
   onBack
 }: ReservationSuccessProps) {
   return (
-    <div className="text-center">
+    <div className="text-center font-forum">
       {onBack && (
         <div className="flex justify-start mb-4">
           <button

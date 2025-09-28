@@ -15,7 +15,7 @@ const tabs = [
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <>
+    <div className="font-forum">
       {/* Desktop Tabs */}
       <div className="hidden md:block !border-b !border-[#F6F1F0]">
         <nav className="-mb-px flex space-x-8">
@@ -67,6 +67,6 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
           ))}
         </nav>
       </div>
-    </>
+    </div>
   );
 }

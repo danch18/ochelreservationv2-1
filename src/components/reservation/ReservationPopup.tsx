@@ -83,7 +83,7 @@ export function ReservationPopup() {
 
       case 'lookup':
         return (
-          <div>
+          <div className="font-forum">
             <div className="text-center mb-4">
               <h3 className="text-lg font-semibold text-popover-foreground mb-1">Trouvez vos réservations</h3>
               <p className="text-sm text-muted-foreground">Entrez votre email pour voir les réservations existantes</p>
@@ -100,11 +100,11 @@ export function ReservationPopup() {
         return (
           <ErrorBoundary
             fallback={
-              <div className="w-full p-4 text-center">
+              <div className="w-full p-4 text-center font-forum">
                 <div className="text-4xl mb-2">⚠️</div>
                 <h3 className="text-lg font-semibold mb-2">Erreur du formulaire</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Une erreur s'est produite lors du chargement du formulaire. 
+                  Une erreur s'est produite lors du chargement du formulaire.
                   Veuillez fermer et rouvrir le popup.
                 </p>
                 <button

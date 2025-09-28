@@ -85,7 +85,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   }
 
   return (
-    <>
+    <div className="font-forum">
       {/* Desktop Table View */}
       <div className="hidden md:block bg-white rounded-2xl !border !border-[#F6F1F0] overflow-hidden shadow-md">
         <div className="overflow-x-auto">
@@ -379,6 +379,6 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

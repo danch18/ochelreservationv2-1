@@ -1223,7 +1223,7 @@ export function SettingsTab() {
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6 font-forum">
       {/* Weekly Schedule Management Section */}
       <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">

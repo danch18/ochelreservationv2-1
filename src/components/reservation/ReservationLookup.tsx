@@ -39,7 +39,7 @@ export function ReservationLookup({ onLookup, onBack }: ReservationLookupProps) 
   };
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-lg p-4">
+    <div className="bg-card/80 backdrop-blur-sm rounded-lg p-4 font-forum">
       {onBack && (
         <div className="flex justify-start mb-4">
           <button

@@ -14,7 +14,7 @@ export default function AdminPage() {
     return (
       <ProtectedRoute>
         <PageLayout showHeader={false} showFooter={false}>
-          <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="min-h-screen bg-white flex items-center justify-center font-forum">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Admin Panel</h1>
               <p className="text-gray-600">{error}</p>
@@ -34,7 +34,7 @@ export default function AdminPage() {
   return (
     <ProtectedRoute>
       <PageLayout showHeader={false} showFooter={false}>
-        <div className="min-h-screen bg-gray-50 md:bg-white">
+        <div className="min-h-screen bg-gray-50 md:bg-white font-forum">
           <AdminHeader />
           
           {/* Desktop Layout */}

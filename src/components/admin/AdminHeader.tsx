@@ -12,7 +12,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="bg-[#F34A23] !border-b !border-[#F6F1F0]">
+    <header className="bg-[#F34A23] !border-b !border-[#F6F1F0] font-forum">
       {/* Desktop Header */}
       <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

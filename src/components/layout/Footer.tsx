@@ -172,4 +172,4 @@ export default function Footer({
 }
 
 // Named export for convenience
-export { default as RestaurantFooter };
+export const RestaurantFooter = Footer;
