@@ -81,7 +81,7 @@ export function DeliveryPopup() {
       {/* Background overlay */}
       <div
         className="absolute inset-0 transition-opacity duration-300"
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
         onClick={handleClose}
       />
 
