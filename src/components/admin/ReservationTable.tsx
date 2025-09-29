@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, Badge, LoadingSpinner } from '@/components/ui';
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
 import { formatDate } from '@/lib/utils';
 import { reservationService } from '@/services';
 import type { Reservation } from '@/types';
@@ -12,57 +13,121 @@ interface ReservationTableProps {
   onReservationsUpdate: () => void;
 }
 
+type SortField = 'created_at' | 'reservation_date' | 'guests';
+type SortOrder = 'asc' | 'desc';
+
 export function ReservationTable({ reservations, isLoading, onReservationsUpdate }: ReservationTableProps) {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [reservationToCancel, setReservationToCancel] = useState<Reservation | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [reservationToConfirm, setReservationToConfirm] = useState<Reservation | null>(null);
+  const [sortField, setSortField] = useState<SortField>('created_at');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const itemsPerPage = 8;
 
-  const handleCancelReservation = async (reservation: Reservation) => {
-    if (!reservation.id) return;
-    
-    const confirmed = confirm(`Êtes-vous sûr de vouloir annuler la réservation pour ${reservation.name} ?`);
-    if (!confirmed) return;
+  const handleCancelClick = (reservation: Reservation) => {
+    setReservationToCancel(reservation);
+    setShowCancelModal(true);
+  };
 
-    setCancellingId(reservation.id);
+  const handleCancelConfirm = async () => {
+    if (!reservationToCancel?.id) return;
+
+    setCancellingId(reservationToCancel.id);
+    setShowCancelModal(false);
+
     try {
-      await reservationService.updateReservationStatus(reservation.id, 'cancelled');
+      await reservationService.updateReservationStatus(reservationToCancel.id, 'cancelled');
       onReservationsUpdate();
     } catch (error) {
       console.error('Failed to cancel reservation:', error);
       alert('Échec de l\'annulation de la réservation. Veuillez réessayer.');
     } finally {
       setCancellingId(null);
+      setReservationToCancel(null);
     }
   };
 
-  const handleConfirmReservation = async (reservation: Reservation) => {
-    if (!reservation.id) return;
-    
-    setConfirmingId(reservation.id);
+  const handleCancelModalClose = () => {
+    setShowCancelModal(false);
+    setReservationToCancel(null);
+  };
+
+  const handleConfirmClick = (reservation: Reservation) => {
+    setReservationToConfirm(reservation);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmConfirm = async () => {
+    if (!reservationToConfirm?.id) return;
+
+    setConfirmingId(reservationToConfirm.id);
+    setShowConfirmModal(false);
+
     try {
-      await reservationService.updateReservationStatus(reservation.id, 'confirmed');
+      await reservationService.updateReservationStatus(reservationToConfirm.id, 'confirmed');
       onReservationsUpdate();
     } catch (error) {
       console.error('Failed to confirm reservation:', error);
       alert('Échec de la confirmation de la réservation. Veuillez réessayer.');
     } finally {
       setConfirmingId(null);
+      setReservationToConfirm(null);
     }
   };
 
+  const handleConfirmModalClose = () => {
+    setShowConfirmModal(false);
+    setReservationToConfirm(null);
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
+
+  // Sort reservations
+  const sortedReservations = React.useMemo(() => {
+    const sorted = [...reservations].sort((a, b) => {
+      let compareValue = 0;
+
+      if (sortField === 'created_at') {
+        const dateA = new Date(a.created_at || 0).getTime();
+        const dateB = new Date(b.created_at || 0).getTime();
+        compareValue = dateA - dateB;
+      } else if (sortField === 'reservation_date') {
+        const dateA = new Date(`${a.reservation_date} ${a.reservation_time}`).getTime();
+        const dateB = new Date(`${b.reservation_date} ${b.reservation_time}`).getTime();
+        compareValue = dateA - dateB;
+      } else if (sortField === 'guests') {
+        compareValue = a.guests - b.guests;
+      }
+
+      return sortOrder === 'asc' ? compareValue : -compareValue;
+    });
+
+    return sorted;
+  }, [reservations, sortField, sortOrder]);
+
   // Pagination calculations
-  const totalPages = Math.ceil(reservations.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedReservations.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedReservations = reservations.slice(startIndex, endIndex);
+  const paginatedReservations = sortedReservations.slice(startIndex, endIndex);
 
-  // Reset to first page when reservations change
+  // Reset to first page when reservations or sort changes
   React.useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [reservations.length, currentPage, totalPages]);
+  }, [sortedReservations.length, currentPage, totalPages]);
+
+  // Reset to first page when sort field or order changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [sortField, sortOrder]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -86,6 +151,36 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
 
   return (
     <div className="font-forum">
+      {/* Sort Controls */}
+      <div className="mb-4 flex items-center gap-3">
+        <label htmlFor="sort-field" className="text-sm font-medium text-gray-700">
+          Trier par:
+        </label>
+        <select
+          id="sort-field"
+          value={sortField}
+          onChange={(e) => setSortField(e.target.value as SortField)}
+          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent"
+        >
+          <option value="created_at">Date de création</option>
+          <option value="reservation_date">Date de réservation</option>
+          <option value="guests">Nombre d&apos;invités</option>
+        </select>
+
+        <button
+          onClick={toggleSortOrder}
+          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm hover:bg-[#F34A23]/5 hover:border-[#F34A23] transition-colors flex items-center gap-2"
+          title={sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
+        >
+          <span className="text-gray-700">
+            {sortOrder === 'asc' ? '↑' : '↓'}
+          </span>
+          <span className="text-gray-600">
+            {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
+          </span>
+        </button>
+      </div>
+
       {/* Desktop Table View */}
       <div className="hidden md:block bg-white rounded-2xl !border !border-[#F6F1F0] overflow-hidden shadow-md">
         <div className="overflow-x-auto">
@@ -159,7 +254,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       <Button
                         size="sm"
                         variant="primary"
-                        onClick={() => handleConfirmReservation(reservation)}
+                        onClick={() => handleConfirmClick(reservation)}
                         loading={confirmingId === reservation.id}
                         disabled={confirmingId === reservation.id}
                       >
@@ -173,7 +268,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleCancelReservation(reservation)}
+                        onClick={() => handleCancelClick(reservation)}
                         loading={cancellingId === reservation.id}
                         disabled={cancellingId === reservation.id}
                         className="!border-red-600 !text-red-600 hover:!bg-red-50 hover:!border-red-700 hover:!text-red-700"
@@ -238,7 +333,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                 <Button
                   size="sm"
                   variant="primary"
-                  onClick={() => handleConfirmReservation(reservation)}
+                  onClick={() => handleConfirmClick(reservation)}
                   loading={confirmingId === reservation.id}
                   disabled={confirmingId === reservation.id}
                   className="flex-1"
@@ -250,7 +345,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleCancelReservation(reservation)}
+                  onClick={() => handleCancelClick(reservation)}
                   loading={cancellingId === reservation.id}
                   disabled={cancellingId === reservation.id}
                   className={`!border-red-600 !text-red-600 hover:!bg-red-50 hover:!border-red-700 hover:!text-red-700 ${
@@ -269,7 +364,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
       {totalPages > 1 && (
         <div className="hidden md:flex items-center justify-between px-6 py-4 border-t !border-[#F6F1F0]">
           <div className="text-sm text-gray-600">
-            Affichage de {startIndex + 1}-{Math.min(endIndex, reservations.length)} sur {reservations.length} réservations
+            Affichage de {startIndex + 1}-{Math.min(endIndex, sortedReservations.length)} sur {sortedReservations.length} réservations
           </div>
           
           <div className="flex items-center space-x-2">
@@ -329,7 +424,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
         <div className="block md:hidden">
           {/* Mobile pagination info */}
           <div className="text-center text-sm text-gray-600 mb-4">
-            Page {currentPage} sur {totalPages} ({reservations.length} réservations)
+            Page {currentPage} sur {totalPages} ({sortedReservations.length} réservations)
           </div>
           
           {/* Mobile pagination buttons */}
@@ -379,6 +474,32 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
           </div>
         </div>
       )}
+
+      {/* Cancel Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showCancelModal}
+        onClose={handleCancelModalClose}
+        onConfirm={handleCancelConfirm}
+        title="Confirmer l'annulation"
+        message={`Êtes-vous sûr de vouloir annuler la réservation pour ${reservationToCancel?.name || 'ce client'} ?`}
+        confirmText="Annuler la réservation"
+        cancelText="Retour"
+        variant="danger"
+        isLoading={cancellingId === reservationToCancel?.id}
+      />
+
+      {/* Confirm Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={handleConfirmModalClose}
+        onConfirm={handleConfirmConfirm}
+        title="Confirmer la réservation"
+        message={`Êtes-vous sûr de vouloir confirmer la réservation pour ${reservationToConfirm?.name || 'ce client'} ?`}
+        confirmText="Confirmer la réservation"
+        cancelText="Retour"
+        variant="default"
+        isLoading={confirmingId === reservationToConfirm?.id}
+      />
     </div>
   );
 }
