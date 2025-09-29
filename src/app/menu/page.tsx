@@ -15,7 +15,7 @@ export default function MenuPage() {
         >
           <div 
             className={cn(
-              "relative flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat h-[400px] lg:h-[900px]" 
+              "relative flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat h-[250px] md:h-[300px] lg:h-[900px]" 
             )}
             style={{ backgroundImage: 'url("/images/menu-bg.webp")' }}>
             {/* Navigation positioned at the top center of image section */}
