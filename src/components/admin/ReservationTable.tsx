@@ -36,18 +36,19 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   const handleCancelConfirm = async () => {
     if (!reservationToCancel?.id) return;
 
-    setCancellingId(reservationToCancel.id);
+    const reservationId = reservationToCancel.id;
+    setCancellingId(reservationId);
     setShowCancelModal(false);
+    setReservationToCancel(null);
 
     try {
-      await reservationService.updateReservationStatus(reservationToCancel.id, 'cancelled');
-      onReservationsUpdate();
+      await reservationService.updateReservationStatus(reservationId, 'cancelled');
+      await onReservationsUpdate();
     } catch (error) {
       console.error('Failed to cancel reservation:', error);
       alert('Échec de l\'annulation de la réservation. Veuillez réessayer.');
     } finally {
       setCancellingId(null);
-      setReservationToCancel(null);
     }
   };
 
@@ -64,18 +65,19 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
   const handleConfirmConfirm = async () => {
     if (!reservationToConfirm?.id) return;
 
-    setConfirmingId(reservationToConfirm.id);
+    const reservationId = reservationToConfirm.id;
+    setConfirmingId(reservationId);
     setShowConfirmModal(false);
+    setReservationToConfirm(null);
 
     try {
-      await reservationService.updateReservationStatus(reservationToConfirm.id, 'confirmed');
-      onReservationsUpdate();
+      await reservationService.updateReservationStatus(reservationId, 'confirmed');
+      await onReservationsUpdate();
     } catch (error) {
       console.error('Failed to confirm reservation:', error);
       alert('Échec de la confirmation de la réservation. Veuillez réessayer.');
     } finally {
       setConfirmingId(null);
-      setReservationToConfirm(null);
     }
   };
 
