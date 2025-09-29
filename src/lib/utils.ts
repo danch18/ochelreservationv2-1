@@ -7,6 +7,45 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
+// Phone number validation for French numbers
+export function validatePhoneFormat(phoneNumber: string): { isValid: boolean; suggestion?: string } {
+  const cleaned = phoneNumber.replace(/[^\d+]/g, '');
+
+  // Check if it matches the required pattern
+  const isValid = /^[\+]?[1-9][\d]{9,15}$/.test(cleaned);
+
+  if (isValid) {
+    return { isValid: true };
+  }
+
+  // Provide suggestions based on common mistakes
+  if (cleaned.startsWith('0')) {
+    return {
+      isValid: false,
+      suggestion: `Essayez sans le 0: ${cleaned.substring(1)}`
+    };
+  }
+
+  if (phoneNumber.includes(' ') || phoneNumber.includes('-')) {
+    return {
+      isValid: false,
+      suggestion: `Supprimez les espaces/tirets: ${cleaned}`
+    };
+  }
+
+  if (cleaned.length < 10) {
+    return {
+      isValid: false,
+      suggestion: 'Le numéro doit contenir au moins 10 chiffres'
+    };
+  }
+
+  return {
+    isValid: false,
+    suggestion: 'Format attendu: 612345678 ou +33612345678'
+  };
+}
+
 // Date formatting utilities
 export function formatDate(dateString: string): string {
   if (!dateString || dateString.trim() === '') {

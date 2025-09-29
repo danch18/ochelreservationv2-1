@@ -6,7 +6,7 @@ import { useReservationForm, useHeaderTexts } from '@/hooks';
 import { useRestaurantAvailability } from '@/hooks/useRestaurantAvailability';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { GUEST_OPTIONS } from '@/lib/constants';
-import { getTodayDate } from '@/lib/utils';
+import { getTodayDate, validatePhoneFormat } from '@/lib/utils';
 import type { Reservation } from '@/types';
 
 
@@ -594,6 +594,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
   const emailValue = watch('email');
   const phoneValue = watch('phone');
 
+  // Phone validation state
+  const phoneValidation = phoneValue ? validatePhoneFormat(phoneValue) : { isValid: true };
+
   // Get dynamic time slots for the selected date based on admin-configured weekly schedule
   // This replaces the static TIME_SLOTS constant with dynamic slots from database
   const availableTimeSlots = selectedDate ? getTimeSlots(selectedDate) : [];
@@ -844,10 +847,27 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   <Input
                     type="tel"
                     label="Téléphone"
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder="612345678 ou +33612345678"
                     error={errors.phone?.message}
                     {...register('phone')}
                   />
+                  {phoneValue && !phoneValidation.isValid && phoneValidation.suggestion && (
+                    <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-xs text-blue-700">
+                        💡 <strong>Suggestion:</strong> {phoneValidation.suggestion}
+                      </p>
+                    </div>
+                  )}
+                  {!phoneValue && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Format: sans espaces, sans 0 initial (ex: 612345678)
+                    </p>
+                  )}
+                  {phoneValue && phoneValidation.isValid && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Format valide
+                    </p>
+                  )}
                 </div>
                 <Input
                   type="email"
