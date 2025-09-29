@@ -179,7 +179,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="p-2 hover:bg-gray-100 rounded transition-colors duration-200"
+                  className="w-10 h-10 hover:bg-gray-100 rounded transition-colors duration-200 flex items-center justify-center"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -197,7 +197,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="p-2 hover:bg-gray-100 rounded transition-colors duration-200"
+                  className="w-10 h-10 hover:bg-gray-100 rounded transition-colors duration-200 flex items-center justify-center"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
