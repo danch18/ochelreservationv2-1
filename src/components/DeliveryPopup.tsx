@@ -143,7 +143,7 @@ export function DeliveryPopup() {
         {/* Buttons */}
         <div className="flex gap-4 w-full">
           <button
-            onClick={() => window.open('https://www.ubereats.com', '_blank')}
+            onClick={() => window.open('https://www.ubereats.com/fr/store/magnifiko/KZMzirofRcaWBMZN9TWreA?srsltid=AfmBOoqmzepjgRkylRxN0rPgdv14UGlGR-omHI3ugZUQQNotbxsIxKj9', '_blank')}
             style={{
               display: 'flex',
               height: '2.5rem',
@@ -164,7 +164,7 @@ export function DeliveryPopup() {
             Uber Eats
           </button>
           <button
-            onClick={() => window.open('https://deliveroo.fr', '_blank')}
+            onClick={() => window.open('https://deliveroo.fr/fr/menu/Paris/ivry-sur-seine-centre/love-pizza-ivry', '_blank')}
             style={{
               display: 'flex',
               height: '2.5rem',
