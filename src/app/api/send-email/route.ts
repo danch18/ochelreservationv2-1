@@ -107,19 +107,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // In development, just log the email instead of sending it
+    // In development, log the email details AND still try to send it
     if (ENV_CONFIG.isDevelopment) {
-      console.log('📧 Email would be sent:');
+      console.log('📧 Attempting to send email:');
+      console.log('From:', mailOptions.from);
       console.log('To:', mailOptions.to);
       console.log('Subject:', mailOptions.subject);
-      console.log('HTML Preview:', mailOptions.html.substring(0, 200) + '...');
-      console.log('Full Text:', mailOptions.text || 'No plain text version');
-      
-      return NextResponse.json({
-        success: true,
-        message: 'Email logged to console (development mode)',
-        messageId: `dev-${Date.now()}`
-      });
+      console.log('Email Provider:', process.env.EMAIL_PROVIDER);
+      console.log('Using Resend API Key:', process.env.RESEND_API_KEY ? 'Yes' : 'No');
+
+      // Don't return early - continue to actually send the email
     }
 
     // Production email sending with nodemailer (fallback)

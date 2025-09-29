@@ -76,11 +76,11 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       const isCurrentMonth = date.getMonth() === month;
       const isPast = dateStr < today;
       const isClosed = checkDateClosed(dateStr);
-      
+
       days.push({
         date: dateStr,
         day: date.getDate(),
@@ -121,7 +121,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   }
 
   return (
-    <div className="space-y-2" ref={dropdownRef}>
+    <div className="space-y-2" ref={dropdownRef} key={`date-dropdown-${currentMonth?.getTime()}`}>
       {/* Entire Date Section Container with Border */}
       <div className={`border rounded-lg overflow-hidden transition-all duration-300 ease-in-out
         ${error ? 'border-red-500' : 'border-gray-300'}
@@ -216,9 +216,9 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                   <div className="text-xs font-medium text-gray-500 py-2">Ven</div>
                   <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
                   
-                  {days.map((day, index) => (
+                  {days.map((day) => (
                     <button
-                      key={index}
+                      key={day.date}
                       type="button"
                       disabled={day.isPast || day.isClosed}
                       onClick={() => {
@@ -228,14 +228,14 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       }}
                       className={`
                         aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200
-                        ${!day.isCurrentMonth 
-                          ? 'text-gray-300 cursor-default' 
-                          : day.isPast 
-                          ? 'text-gray-300 cursor-not-allowed' 
+                        ${!day.isCurrentMonth
+                          ? 'text-gray-300 cursor-default'
+                          : day.isPast
+                          ? 'text-gray-300 cursor-not-allowed'
                           : day.isClosed
-                          ? 'text-gray-400 cursor-not-allowed line-through' 
+                          ? 'text-gray-400 cursor-not-allowed line-through'
                           : day.isSelected
-                          ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium' 
+                          ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium'
                           : 'text-black hover:bg-[#FF7043]/5 hover:border hover:border-[#FF7043] cursor-pointer'
                         }
                       `}
@@ -946,11 +946,15 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     className="w-6 h-6 max-sm:w-5 max-sm:h-5"
                   />
                   <span className="font-medium max-sm:text-sm">
-                    {selectedDate ? new Date(selectedDate).toLocaleDateString('fr-FR', { 
-                      weekday: 'short', 
-                      day: 'numeric', 
-                      month: 'short' 
-                    }) : ''}
+                    {selectedDate ? (() => {
+                      const [year, month, day] = selectedDate.split('-').map(Number);
+                      const date = new Date(year, month - 1, day);
+                      return date.toLocaleDateString('fr-FR', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                      });
+                    })() : ''}
                   </span>
                 </div>
                 
