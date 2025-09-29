@@ -88,6 +88,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
         <button
           ref={buttonRef}
           onClick={handleToggle}
+          data-reservation-button
           className={cn(
             'w-auto px-4 py-3 rounded-full',
             'flex items-center justify-center text-black text-base font-medium',
