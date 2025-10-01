@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useReservations } from '@/hooks';
 import { PageLayout } from '@/components/layout';
-import { AdminTabs, AdminHeader, OverviewTab, SettingsTab, ManageReservationTab } from '@/components/admin';
+import { AdminTabs, AdminHeader, OverviewTab, SettingsTab, ManageReservationTab, MenuManagementTab } from '@/components/admin';
 import { ProtectedRoute } from '@/components/auth';
 
 export default function AdminPage() {
@@ -61,6 +61,10 @@ export default function AdminPage() {
                   onReservationsUpdate={refetch}
                 />
               )}
+
+              {activeTab === 'menu' && (
+                <MenuManagementTab />
+              )}
             </div>
           </div>
 
@@ -87,6 +91,10 @@ export default function AdminPage() {
                     isLoading={loading}
                     onReservationsUpdate={refetch}
                   />
+                )}
+
+                {activeTab === 'menu' && (
+                  <MenuManagementTab />
                 )}
               </div>
             </div>

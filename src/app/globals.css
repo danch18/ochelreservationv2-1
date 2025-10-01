@@ -176,12 +176,22 @@ body {
   .font-eb-garamond {
     font-family: var(--font-eb-garamond), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   }
-  
+
   .font-satoshi {
     font-family: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
   }
-  
+
   .font-forum {
     font-family: var(--font-forum), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

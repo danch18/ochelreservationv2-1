@@ -11,6 +11,7 @@ const tabs = [
   { id: 'overview', label: 'Vue d\'ensemble', mobileLabel: 'Aperçu', icon: '📊' },
   { id: 'settings', label: 'Paramètres', mobileLabel: 'Paramètres', icon: '⚙️' },
   { id: 'manage', label: 'Gestion des Réservations', mobileLabel: 'Gestion', icon: '🍽️' },
+  { id: 'menu', label: 'Gestion du Menu', mobileLabel: 'Menu', icon: '📋' },
 ];
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {

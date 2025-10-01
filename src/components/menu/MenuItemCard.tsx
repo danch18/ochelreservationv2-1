@@ -11,8 +11,11 @@ interface MenuItemCardProps {
   hasCamera?: boolean;
   has3D?: boolean;
   model3DUrl?: string;
+  additionalImageUrl?: string;
   variant?: 'regular' | 'special';
 }
+
+type ModalType = '3d' | 'image' | null;
 
 export default function MenuItemCard({
   image,
@@ -22,33 +25,50 @@ export default function MenuItemCard({
   hasCamera = false,
   has3D = false,
   model3DUrl,
+  additionalImageUrl,
   variant = 'regular'
 }: MenuItemCardProps) {
-  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<ModalType>(null);
 
-  const handleCameraClick = () => {
-    window.open(image, '_blank');
+  const handleCardClick = () => {
+    // Open image modal when card is clicked
+    setModalType('image');
   };
 
-  const handle3DClick = () => {
+  const handleCameraClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setModalType('image');
+  };
+
+  const handle3DClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
     if (model3DUrl) {
-      setShowModal(true);
+      setModalType('3d');
     }
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setModalType(null);
+  };
+
+  const handleRedirect3D = () => {
+    if (model3DUrl) {
+      window.open(model3DUrl, '_blank');
+    }
   };
 
   const isSpecial = variant === 'special';
 
   return (
     <>
-      <div className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg ${
-        isSpecial
-          ? 'bg-[#EFE6D2] text-black'
-          : 'bg-[#101010] border border-white/10 text-white'
-      }`}>
+      <div
+        onClick={handleCardClick}
+        className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg cursor-pointer transition-opacity hover:opacity-90 ${
+          isSpecial
+            ? 'bg-[#EFE6D2] text-black'
+            : 'bg-[#101010] border border-white/10 text-white'
+        }`}
+      >
         {/* Image */}
         <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 ${
           isSpecial ? 'border-[3px] border-[#FFD65A]' : 'border-2 border-white/30'
@@ -58,6 +78,7 @@ export default function MenuItemCard({
             alt={title}
             fill
             className="object-cover"
+            unoptimized
           />
         </div>
 
@@ -80,7 +101,7 @@ export default function MenuItemCard({
                     alt="3D View"
                     width={24}
                     height={24}
-                    className="w-full h-full"
+                    className="w-full h-full cursor-pointer"
                   />
                 </button>
               )}
@@ -94,7 +115,7 @@ export default function MenuItemCard({
                     alt="View Image"
                     width={24}
                     height={24}
-                    className="w-full h-full"
+                    className="w-full h-full cursor-pointer"
                   />
                 </button>
               )}
@@ -114,17 +135,17 @@ export default function MenuItemCard({
         </div>
       </div>
 
-      {/* 3D Model Modal */}
-      {showModal && model3DUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Modal */}
+      {modalType && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Background Overlay */}
           <div
             className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
             onClick={closeModal}
           />
 
-          {/* Modal Content */}
-          <div className="relative bg-[#101010] rounded-lg border border-white/20 w-[90vw] h-[80vh] max-w-4xl">
+          {/* Modal Content - 80% of viewport */}
+          <div className="relative bg-[#101010] rounded-lg border border-white/20 w-[80vw] h-[80vh] flex flex-col">
             {/* Close Button */}
             <button
               onClick={closeModal}
@@ -133,14 +154,44 @@ export default function MenuItemCard({
               ✕
             </button>
 
-            {/* 3D Model Embed */}
-            <div className="w-full h-full p-4">
-              <iframe
-                src={model3DUrl}
-                className="w-full h-full rounded-lg"
-                title="3D Model View"
-                allowFullScreen
-              />
+            {/* Content Area */}
+            <div className="w-full h-full p-4 flex flex-col">
+              {modalType === '3d' && model3DUrl ? (
+                <>
+                  {/* 3D Model Embed */}
+                  <div className="flex-1 mb-4">
+                    <iframe
+                      src={model3DUrl}
+                      className="w-full h-full rounded-lg"
+                      title="3D Model View"
+                      allowFullScreen
+                    />
+                  </div>
+
+                  {/* Redirect Button */}
+                  <div className="flex justify-center pb-2">
+                    <button
+                      onClick={handleRedirect3D}
+                      className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
+                    >
+                      Open in New Tab
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* Image Display */
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={additionalImageUrl || image}
+                      alt={title}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

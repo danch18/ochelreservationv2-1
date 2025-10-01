@@ -1,365 +1,308 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib';
 import MenuItemCard from './MenuItemCard';
+import {
+  menuService,
+  type Category,
+  type MenuItem,
+  type Addon,
+  type Subcategory
+} from '@/services/menuService';
 
-interface MenuItem {
-  image: string;
+interface MenuDisplaySection {
   title: string;
-  subtitle?: string;
-  price: string;
-  hasCamera?: boolean;
-  has3D?: boolean;
-  model3DUrl?: string;
-}
-
-interface MenuCategory {
-  title: string;
-  subtitle?: string;
+  subtitle?: string | null;
   isSpecial?: boolean;
-  items: MenuItem[];
+  items: {
+    id: number;
+    image: string;
+    title: string;
+    subtitle?: string;
+    price: string;
+    hasCamera?: boolean;
+    has3D?: boolean;
+    model3DUrl?: string;
+    additionalImageUrl?: string;
+  }[];
 }
-
-const menuTabs = [
-  'Appetizers',
-  'Pasta',
-  'Pizzas',
-  'Mains',
-  'Desserts',
-  'Beverages'
-];
-
-// Comprehensive menu data structure
-const menuData: Record<string, MenuCategory[]> = {
-  Appetizers: [
-    {
-      title: 'Cold Starters',
-      subtitle: 'Fresh and light appetizers to begin your meal',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Bruschetta Classica',
-          subtitle: 'Toasted bread with fresh tomatoes and basil',
-          price: '$8.00',
-          hasCamera: true,
-          has3D: false
-        },
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Antipasto Platter',
-          subtitle: 'Selection of cured meats and cheeses',
-          price: '$16.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-antipasto'
-        }
-      ]
-    },
-    {
-      title: 'Hot Starters',
-      items: [
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Arancini Siciliani',
-          subtitle: 'Crispy risotto balls with mozzarella',
-          price: '$12.00',
-          hasCamera: false,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-arancini'
-        }
-      ]
-    }
-  ],
-  Pasta: [
-    {
-      title: 'Fresh Pasta',
-      subtitle: 'Made daily with imported Italian flour',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Spaghetti Carbonara',
-          subtitle: 'Classic Roman pasta with eggs and pancetta',
-          price: '$18.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-carbonara'
-        },
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Penne Arrabbiata',
-          subtitle: 'Spicy tomato sauce with garlic and chili',
-          price: '$16.00',
-          hasCamera: true,
-          has3D: false
-        }
-      ]
-    },
-    {
-      title: 'Filled Pasta',
-      items: [
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Ravioli Ricotta e Spinaci',
-          subtitle: 'Hand-made ravioli with ricotta and spinach',
-          price: '$20.00',
-          hasCamera: false,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-ravioli'
-        }
-      ]
-    },
-    {
-      title: "Chef's Special",
-      subtitle: 'Signature pasta creations',
-      isSpecial: true,
-      items: [
-        {
-          image: '/images/menu/image-4.png',
-          title: 'Truffle Tagliatelle',
-          subtitle: 'Fresh pasta with black truffle and parmesan',
-          price: '$28.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-truffle'
-        }
-      ]
-    }
-  ],
-  Pizzas: [
-    {
-      title: 'Classic Pizzas',
-      subtitle: 'Traditional Neapolitan style pizzas',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Margherita',
-          subtitle: 'Tomato, mozzarella, fresh basil',
-          price: '$14.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-margherita'
-        },
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Quattro Stagioni',
-          subtitle: 'Four seasons pizza with varied toppings',
-          price: '$18.00',
-          hasCamera: true,
-          has3D: false
-        }
-      ]
-    },
-    {
-      title: 'Gourmet Pizzas',
-      items: [
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Prosciutto e Rucola',
-          subtitle: 'Prosciutto, arugula, and parmesan',
-          price: '$20.00',
-          hasCamera: false,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-prosciutto'
-        }
-      ]
-    }
-  ],
-  Mains: [
-    {
-      title: 'Meat Dishes',
-      subtitle: 'Premium cuts and traditional preparations',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Osso Buco alla Milanese',
-          subtitle: 'Braised veal shanks with saffron risotto',
-          price: '$32.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-ossobuco'
-        }
-      ]
-    },
-    {
-      title: 'Fish & Seafood',
-      items: [
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Branzino al Sale',
-          subtitle: 'Sea bass baked in salt crust',
-          price: '$28.00',
-          hasCamera: true,
-          has3D: false
-        },
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Linguine alle Vongole',
-          subtitle: 'Linguine with fresh clams',
-          price: '$24.00',
-          hasCamera: false,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-vongole'
-        }
-      ]
-    }
-  ],
-  Desserts: [
-    {
-      title: 'Traditional Desserts',
-      subtitle: 'Authentic Italian sweet endings',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Tiramisu',
-          subtitle: 'Classic coffee-flavored dessert',
-          price: '$10.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-tiramisu'
-        },
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Panna Cotta',
-          subtitle: 'Silky vanilla custard with berry coulis',
-          price: '$9.00',
-          hasCamera: true,
-          has3D: false
-        }
-      ]
-    },
-    {
-      title: 'Gelato & Sorbetto',
-      items: [
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Gelato Selection',
-          subtitle: 'Three scoops of artisanal gelato',
-          price: '$8.00',
-          hasCamera: false,
-          has3D: false
-        }
-      ]
-    }
-  ],
-  Beverages: [
-    {
-      title: 'Coffee & Espresso',
-      items: [
-        {
-          image: '/images/menu/image-1.png',
-          title: 'Espresso Romano',
-          subtitle: 'Traditional Italian espresso',
-          price: '$3.00',
-          hasCamera: false,
-          has3D: false
-        },
-        {
-          image: '/images/menu/image-2.png',
-          title: 'Cappuccino',
-          subtitle: 'Espresso with steamed milk foam',
-          price: '$4.50',
-          hasCamera: true,
-          has3D: false
-        }
-      ]
-    },
-    {
-      title: 'Italian Wines',
-      subtitle: 'Carefully selected wines from Italian regions',
-      items: [
-        {
-          image: '/images/menu/image-3.png',
-          title: 'Chianti Classico',
-          subtitle: 'Full-bodied red wine from Tuscany',
-          price: '$12.00',
-          hasCamera: true,
-          has3D: false
-        }
-      ]
-    },
-    {
-      title: 'Signature Cocktails',
-      subtitle: 'Italian-inspired cocktail creations',
-      isSpecial: true,
-      items: [
-        {
-          image: '/images/menu/image-4.png',
-          title: 'Negroni Perfetto',
-          subtitle: 'Classic Italian aperitif cocktail',
-          price: '$14.00',
-          hasCamera: true,
-          has3D: true,
-          model3DUrl: 'https://example.com/3d-negroni'
-        }
-      ]
-    }
-  ]
-};
 
 export default function MenuDisplay() {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [sections, setSections] = useState<MenuDisplaySection[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const currentMenuData = menuData[menuTabs[activeTab] as keyof typeof menuData];
+  // Load active categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const cats = await menuService.getActiveCategories();
+        setCategories(cats);
+        if (cats.length > 0) {
+          setCurrentCategory(cats[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load categories:', err);
+        setError('Failed to load menu categories');
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Load menu data when active tab changes
+  useEffect(() => {
+    if (!categories[activeTab]) return;
+
+    const loadMenuData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const categoryId = categories[activeTab].id;
+        const menuData = await menuService.getMenuByCategory(categoryId);
+
+        setCurrentCategory(menuData.category);
+
+        // Build sections based on the structure:
+        // 1. General subcategory items (regular, non-special)
+        // 2. Custom subcategories with their items
+        // 3. Special items
+        // 4. Add-ons
+
+        const newSections: MenuDisplaySection[] = [];
+
+        // Find General subcategory
+        const generalSubcat = menuData.subcategories.find(s =>
+          s.title.toLowerCase().includes('general')
+        );
+
+        // 1. General subcategory items (non-special) - NO HEADING
+        if (generalSubcat) {
+          const generalItems = menuData.menuItems.filter(
+            item => item.subcategory_id === generalSubcat.id && !item.is_special
+          );
+
+          if (generalItems.length > 0) {
+            newSections.push({
+              title: '', // No heading for general items
+              subtitle: null,
+              items: generalItems.map(item => ({
+                id: item.id,
+                image: item.image_path || '/images/menu/placeholder.png',
+                title: item.title,
+                subtitle: item.text || item.description,
+                price: `€${item.price.toFixed(2)}`,
+                hasCamera: !!item.additional_image_url,
+                has3D: !!item.model_3d_url || !!item.redirect_3d_url,
+                model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+                additionalImageUrl: item.additional_image_url || undefined,
+              })),
+            });
+          }
+        }
+
+        // 2. Custom subcategories with their items
+        const customSubcats = menuData.subcategories.filter(
+          s => !s.title.toLowerCase().includes('general')
+        );
+
+        for (const subcat of customSubcats) {
+          const subcatItems = menuData.menuItems.filter(
+            item => item.subcategory_id === subcat.id
+          );
+
+          if (subcatItems.length > 0) {
+            newSections.push({
+              title: subcat.title,
+              subtitle: subcat.text,
+              items: subcatItems.map(item => ({
+                id: item.id,
+                image: item.image_path || '/images/menu/placeholder.png',
+                title: item.title,
+                subtitle: item.text || item.description,
+                price: `€${item.price.toFixed(2)}`,
+                hasCamera: !!item.additional_image_url,
+                has3D: !!item.model_3d_url || !!item.redirect_3d_url,
+                model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+                additionalImageUrl: item.additional_image_url || undefined,
+              })),
+            });
+          }
+        }
+
+        // 3. Special items
+        const specialItems = menuData.menuItems.filter(item => item.is_special);
+
+        if (specialItems.length > 0) {
+          newSections.push({
+            title: "Magnifiko Specials",
+            subtitle: null,
+            isSpecial: true,
+            items: specialItems.map(item => ({
+              id: item.id,
+              image: item.image_path || '/images/menu/placeholder.png',
+              title: item.title,
+              subtitle: item.text || item.description,
+              price: `€${item.price.toFixed(2)}`,
+              hasCamera: !!item.additional_image_url,
+              has3D: !!item.model_3d_url || !!item.redirect_3d_url,
+              model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+              additionalImageUrl: item.additional_image_url || undefined,
+            })),
+          });
+        }
+
+        // 4. Add-ons (Supplements)
+        if (menuData.addons.length > 0) {
+          newSections.push({
+            title: 'Supplements',
+            subtitle: null,
+            items: menuData.addons.map(addon => ({
+              id: addon.id,
+              image: addon.image_path || '/images/menu/placeholder.png',
+              title: addon.title,
+              subtitle: addon.description || undefined,
+              price: `€${addon.price.toFixed(2)}`,
+              hasCamera: false,
+              has3D: false,
+            })),
+          });
+        }
+
+        setSections(newSections);
+      } catch (err) {
+        console.error('Failed to load menu data:', err);
+        setError('Failed to load menu data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMenuData();
+  }, [activeTab, categories]);
+
+  if (categories.length === 0 && !loading) {
+    return (
+      <div className="w-full h-full p-4 md:p-6 lg:p-8 flex items-center justify-center">
+        <p className="text-white/60 text-center">
+          No menu categories available at the moment.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full p-4 md:p-6 lg:p-8">
       {/* Tab Bar Container */}
       <div className="bg-[#101010] border border-white/30 rounded-[8px] p-[6px] mb-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1">
-          {menuTabs.map((tab, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              className={cn(
-                "text-[14px] text-center rounded-[6px] cursor-pointer transition-all duration-200 py-2 px-2",
-                "min-h-[40px] flex items-center justify-center",
-                activeTab === index
-                  ? "text-[#FFD65A] bg-[#FFD65A]/10"
-                  : "text-white bg-white/10 hover:text-[#FFD65A]"
-              )}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className="overflow-x-auto scrollbar-hide md:overflow-x-visible">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-1 md:gap-1">
+            {categories.map((category, index) => (
+              <button
+                key={category.id}
+                onClick={() => {
+                  setActiveTab(index);
+                  // Scroll selected tab to center on mobile
+                  const button = document.getElementById(`tab-${index}`);
+                  if (button && window.innerWidth < 768) {
+                    button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                  }
+                }}
+                id={`tab-${index}`}
+                className={cn(
+                  "text-[14px] text-center rounded-[6px] cursor-pointer transition-all duration-200 py-2 px-4",
+                  "min-h-[40px] flex items-center justify-center whitespace-nowrap flex-shrink-0",
+                  activeTab === index
+                    ? "text-[#FFD65A] bg-[#FFD65A]/10"
+                    : "text-white bg-white/10 hover:text-[#FFD65A]"
+                )}
+              >
+                {category.title}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Menu Content Section */}
-      <div className="w-full">
-        {currentMenuData.map((category, categoryIndex) => (
-          <div key={categoryIndex} className="mb-8">
-            {/* Category Title */}
-            <div className="mb-4">
-              <h2 className="text-[24px] font-forum text-[#FFF2CC] font-medium">
-                {category.title}
-              </h2>
-              {category.subtitle && (
-                <p className="text-[14px] font-forum text-[#FFD65A] mt-1">
-                  ({category.subtitle})
-                </p>
-              )}
-            </div>
+      {/* Category Title and Description */}
+      {currentCategory && (
+        <div className="mb-6">
+          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium">
+            {currentCategory.title}
+          </h2>
+          {currentCategory.text && (
+            <p className="text-[14px] md:text-[16px] font-forum text-[#FFD65A]/80 mt-2">
+              {currentCategory.text}
+            </p>
+          )}
+        </div>
+      )}
 
-            {/* Menu Items */}
-            <div className="space-y-4">
-              {category.items.map((item, itemIndex) => (
-                <MenuItemCard
-                  key={itemIndex}
-                  image={item.image}
-                  title={item.title}
-                  subtitle={item.subtitle}
-                  price={item.price}
-                  hasCamera={item.hasCamera}
-                  has3D={item.has3D}
-                  model3DUrl={item.model3DUrl}
-                  variant={category.isSpecial ? 'special' : 'regular'}
-                />
-              ))}
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-white/60">Loading menu...</div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-red-400">{error}</div>
+        </div>
+      )}
+
+      {/* Menu Content Section */}
+      {!loading && !error && (
+        <div className="w-full">
+          {sections.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-white/60">No items available in this category.</p>
             </div>
-          </div>
-        ))}
-      </div>
+          ) : (
+            sections.map((section, sectionIndex) => (
+              <div key={sectionIndex} className="mb-8">
+                {/* Section Title - Only show if title is not empty */}
+                {section.title && (
+                  <div className="mb-4">
+                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium">
+                      {section.title}
+                    </h3>
+                    {section.subtitle && (
+                      <p className="text-[14px] font-forum text-[#FFD65A] mt-1">
+                        ({section.subtitle})
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Menu Items */}
+                <div className="space-y-4">
+                  {section.items.map((item) => (
+                    <MenuItemCard
+                      key={item.id}
+                      image={item.image}
+                      title={item.title}
+                      subtitle={item.subtitle}
+                      price={item.price}
+                      hasCamera={item.hasCamera}
+                      has3D={item.has3D}
+                      model3DUrl={item.model3DUrl}
+                      additionalImageUrl={item.additionalImageUrl}
+                      variant={section.isSpecial ? 'special' : 'regular'}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }

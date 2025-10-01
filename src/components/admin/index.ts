@@ -7,3 +7,4 @@ export { RestaurantCalendar } from './RestaurantCalendar';
 export { StatsCards } from './StatsCards';
 export { SettingsTab } from './SettingsTab';
 export { ManageReservationTab } from './ManageReservationTab';
+export { MenuManagementTab } from './MenuManagementTab';
