@@ -35,7 +35,7 @@ export default function MenuPage() {
 
             {/* OUR MENU text in the middle */}
             <div className="text-center">
-              <h1 className="text-[2.5rem] md:text-[3rem] font-normal tracking-normal text-white">
+              <h1 className="text-[2.5rem] md:text-[3rem] font-normal tracking-normal text-white" suppressHydrationWarning>
                 OUR MENU
               </h1>
             </div>
