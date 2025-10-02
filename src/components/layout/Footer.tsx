@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface FooterSection {
   title: string;
@@ -17,6 +18,12 @@ export interface FooterProps {
   brandInfo?: {
     name: string;
     description: string;
+  };
+  logo?: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
   };
   sections?: FooterSection[];
   socialLinks?: Array<{
@@ -85,6 +92,7 @@ const SocialIcon = ({ icon }: { icon: 'facebook' | 'instagram' | 'twitter' }) =>
 
 export default function Footer({
   brandInfo = defaultBrandInfo,
+  logo,
   sections = defaultSections,
   socialLinks = defaultSocialLinks,
   copyright = '© 2024 Restaurant LM. Tous droits réservés.',
@@ -94,23 +102,50 @@ export default function Footer({
   return (
     <footer className={`${backgroundColor} py-16 w-full overflow-hidden ${className}`}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12">
+        <div className="grid md:grid-cols-5 gap-12">
           {/* Brand Section */}
-          {brandInfo && (
+          {(brandInfo || logo) && (
             <div className="md:col-span-2">
-              <div className="font-eb-garamond text-3xl font-bold tracking-wider mb-6">
-                {brandInfo.name}
-              </div>
-              <p className="font-forum text-[#c9b99b] mb-6 leading-relaxed">
-                {brandInfo.description}
-              </p>
+              {logo ? (
+                <div className="mb-6">
+                  <Link href="/">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={logo.width || 100}
+                      height={logo.height || 34}
+                      className="object-contain cursor-pointer"
+                    />
+                  </Link>
+                </div>
+              ) : (
+                <Link href="/">
+                  <div className="font-eb-garamond text-3xl font-bold tracking-wider mb-6 cursor-pointer">
+                    {brandInfo?.name}
+                  </div>
+                </Link>
+              )}
+              {brandInfo && (
+                <p className="font-forum text-[#c9b99b] mb-6 leading-relaxed">
+                  {brandInfo.description}
+                </p>
+              )}
             </div>
           )}
 
           {/* Dynamic Sections */}
           {sections.map((section, index) => (
             <div key={index}>
-              <h3 className="font-eb-garamond text-xl mb-6 tracking-wider" suppressHydrationWarning>
+              <h3 style={{
+                color: '#FFF2CC',
+                fontFamily: 'Forum',
+                fontSize: '1.125rem',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                lineHeight: '1.6rem',
+                textTransform: 'uppercase',
+                marginBottom: '1.5rem'
+              }} suppressHydrationWarning>
                 {section.title}
               </h3>
               <div className="space-y-3 text-[#c9b99b] font-forum">

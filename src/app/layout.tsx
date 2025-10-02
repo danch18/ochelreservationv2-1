@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { EB_Garamond, Forum } from "next/font/google";
 import { ClientProviders } from "@/components/providers";
+import { GlobalReservationButton } from "@/components/GlobalReservationButton";
+import { DeliveryPopup } from "@/components/DeliveryPopup";
 import "./globals.css";
 
 const satoshi = localFont({
@@ -59,6 +61,10 @@ export default function RootLayout({
       >
         <ClientProviders>
           {children}
+          {/* Global Reservation Button - Available on all pages except admin */}
+          <GlobalReservationButton />
+          {/* Global Delivery Popup - Available on all pages */}
+          <DeliveryPopup />
         </ClientProviders>
       </body>
     </html>
