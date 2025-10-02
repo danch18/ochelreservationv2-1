@@ -214,7 +214,7 @@ export function ManageReservationTab({ reservations, isLoading, onReservationsUp
               <button
                 key={option.key}
                 onClick={() => setDateFilter(option.key)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
                   dateFilter === option.key
                     ? 'bg-white text-[#F34A23] shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -384,7 +384,7 @@ export function ManageReservationTab({ reservations, isLoading, onReservationsUp
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
-                          className={`px-3 py-1 rounded text-sm ${
+                          className={`px-3 py-1 rounded text-sm cursor-pointer ${
                             currentPage === page
                               ? 'bg-[#F34A23] text-white'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

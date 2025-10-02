@@ -29,7 +29,7 @@ export function ConfirmationModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
@@ -37,7 +37,7 @@ export function ConfirmationModal({
         <button
           onClick={onCancel}
           disabled={isLoading}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

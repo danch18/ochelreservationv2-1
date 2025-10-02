@@ -90,12 +90,12 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
             </label>
             <button
               onClick={() => setUseSplitHours(!useSplitHours)}
-              className={`px-3 py-1 rounded text-sm transition-colors ${
+              className={`px-3 py-1 rounded text-sm transition-colors cursor-pointer ${
                 useSplitHours
                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -242,7 +242,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <button
             key={dayIndex}
             onClick={() => setActiveTab(dayIndex)}
-            className={`px-2 md:px-3 py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+            className={`px-2 md:px-3 py-2 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
               activeTab === dayIndex
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
@@ -268,11 +268,11 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Statut :</label>
             <button
-              onClick={() => updateWeeklySchedule(activeTab, { 
-                is_open: !daySchedule.is_open 
+              onClick={() => updateWeeklySchedule(activeTab, {
+                is_open: !daySchedule.is_open
               })}
               disabled={isUpdating}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                 daySchedule.is_open
                   ? 'bg-green-100 text-green-700 hover:bg-green-200'
                   : 'bg-red-100 text-red-700 hover:bg-red-200'
@@ -289,6 +289,7 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium text-gray-700">Type d'horaires :</label>
                 <button
+                  className="cursor-pointer"
                   onClick={() => {
                     const newSplitHours = !daySchedule.use_split_hours;
                     const updateData: Partial<WeeklySchedule> = {
@@ -1622,7 +1623,7 @@ export function SettingsTab() {
                                 <button
                                   onClick={() => toggleDateStatus(day)}
                                   disabled={isUpdatingThisDate}
-                                  className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors ${
+                                  className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors cursor-pointer ${
                                     isClosed
                                       ? isClosedByWeeklySchedule
                                         ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
@@ -1647,7 +1648,7 @@ export function SettingsTab() {
                                 <button
                                   onClick={() => setShowHoursModal(dateStr)}
                                   disabled={isUpdatingThisDate}
-                                  className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight ${
+                                  className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight cursor-pointer ${
                                     hasCustomHours || status?.use_split_hours
                                       ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
                                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
