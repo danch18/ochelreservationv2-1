@@ -85,6 +85,18 @@ export function ConfirmationModal({
           className="relative bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           {/* Content */}
           <div className="p-6">
             {/* Icon */}

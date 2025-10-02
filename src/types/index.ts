@@ -11,6 +11,7 @@ export interface Reservation {
   special_requests?: string | null;
   status?: ReservationStatus;
   requires_confirmation?: boolean;
+  arrival_status?: ArrivalStatus | null;
   created_at?: string;
   updated_at?: string;
   confirmed_at?: string | null;
@@ -18,6 +19,7 @@ export interface Reservation {
 }
 
 export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type ArrivalStatus = 'arrived' | 'no_show';
 
 export type CreateReservationData = Omit<Reservation, 'id' | 'created_at' | 'updated_at' | 'status'>;
 

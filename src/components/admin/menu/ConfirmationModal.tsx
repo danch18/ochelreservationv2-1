@@ -32,7 +32,19 @@ export function ConfirmationModal({
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+        {/* Close Button */}
+        <button
+          onClick={onCancel}
+          disabled={isLoading}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Close"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
         <p className="text-sm text-gray-600 mb-6">{message}</p>
 
