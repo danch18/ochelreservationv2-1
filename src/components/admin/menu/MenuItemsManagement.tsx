@@ -26,7 +26,6 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
   const [imagePath, setImagePath] = useState(menuItem?.image_path || '');
   const [model3dUrl, setModel3dUrl] = useState(menuItem?.model_3d_url || '');
   const [redirect3dUrl, setRedirect3dUrl] = useState(menuItem?.redirect_3d_url || '');
-  const [additionalImageUrl, setAdditionalImageUrl] = useState(menuItem?.additional_image_url || '');
   const [isSpecial, setIsSpecial] = useState(menuItem?.is_special || false);
   const [categoryId, setCategoryId] = useState<number>(0);
   const [subcategoryId, setSubcategoryId] = useState<number>(0);
@@ -133,7 +132,7 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
         image_path: imagePath.trim() || null,
         model_3d_url: model3dUrl.trim() || null,
         redirect_3d_url: redirect3dUrl.trim() || null,
-        additional_image_url: additionalImageUrl.trim() || null,
+        additional_image_url: null,
         is_special: isSpecial,
         subcategory_id: finalSubcategoryId,
         status: menuItem?.status || 'active',
@@ -317,18 +316,6 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
               type="url"
               value={redirect3dUrl}
               onChange={(e) => setRedirect3dUrl(e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL image supplémentaire
-            </label>
-            <Input
-              type="url"
-              value={additionalImageUrl}
-              onChange={(e) => setAdditionalImageUrl(e.target.value)}
               placeholder="https://..."
             />
           </div>

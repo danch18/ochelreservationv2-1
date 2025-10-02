@@ -17,14 +17,12 @@ interface MenuDisplaySection {
   isSpecial?: boolean;
   items: {
     id: number;
-    image: string;
+    image?: string;
     title: string;
     subtitle?: string;
     price: string;
-    hasCamera?: boolean;
     has3D?: boolean;
     model3DUrl?: string;
-    additionalImageUrl?: string;
   }[];
 }
 
@@ -129,14 +127,12 @@ export default function MenuDisplay() {
             subtitle: null,
             items: generalItems.map(item => ({
               id: item.id,
-              image: item.image_path || '/images/menu/placeholder.png',
+              image: item.image_path || undefined,
               title: item.title,
               subtitle: item.text || item.description,
               price: `€${item.price.toFixed(2)}`,
-              hasCamera: !!item.additional_image_url,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
-              additionalImageUrl: item.additional_image_url || undefined,
             })),
           });
         }
@@ -158,14 +154,12 @@ export default function MenuDisplay() {
             subtitle: subcat.text,
             items: subcatItems.map(item => ({
               id: item.id,
-              image: item.image_path || '/images/menu/placeholder.png',
+              image: item.image_path || undefined,
               title: item.title,
               subtitle: item.text || item.description,
               price: `€${item.price.toFixed(2)}`,
-              hasCamera: !!item.additional_image_url,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
-              additionalImageUrl: item.additional_image_url || undefined,
             })),
           });
         }
@@ -181,14 +175,12 @@ export default function MenuDisplay() {
           isSpecial: true,
           items: specialItems.map(item => ({
             id: item.id,
-            image: item.image_path || '/images/menu/placeholder.png',
+            image: item.image_path || undefined,
             title: item.title,
             subtitle: item.text || item.description,
             price: `€${item.price.toFixed(2)}`,
-            hasCamera: !!item.additional_image_url,
             has3D: !!item.model_3d_url || !!item.redirect_3d_url,
             model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
-            additionalImageUrl: item.additional_image_url || undefined,
           })),
         });
       }
@@ -200,11 +192,10 @@ export default function MenuDisplay() {
           subtitle: null,
           items: menuData.addons.map(addon => ({
             id: addon.id,
-            image: addon.image_path || '/images/menu/placeholder.png',
+            image: addon.image_path || undefined,
             title: addon.title,
             subtitle: addon.description || undefined,
             price: `€${addon.price.toFixed(2)}`,
-            hasCamera: false,
             has3D: false,
           })),
         });
@@ -321,10 +312,8 @@ export default function MenuDisplay() {
                       title={item.title}
                       subtitle={item.subtitle}
                       price={item.price}
-                      hasCamera={item.hasCamera}
                       has3D={item.has3D}
                       model3DUrl={item.model3DUrl}
-                      additionalImageUrl={item.additionalImageUrl}
                       variant={section.isSpecial ? 'special' : 'regular'}
                     />
                   ))}

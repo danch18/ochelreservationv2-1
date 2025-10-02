@@ -4,14 +4,12 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 interface MenuItemCardProps {
-  image: string;
+  image?: string;
   title: string;
   subtitle?: string;
   price: string;
-  hasCamera?: boolean;
   has3D?: boolean;
   model3DUrl?: string;
-  additionalImageUrl?: string;
   variant?: 'regular' | 'special';
 }
 
@@ -22,10 +20,8 @@ export default function MenuItemCard({
   title,
   subtitle,
   price,
-  hasCamera = false,
   has3D = false,
   model3DUrl,
-  additionalImageUrl,
   variant = 'regular'
 }: MenuItemCardProps) {
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -33,17 +29,12 @@ export default function MenuItemCard({
   const [isOpening, setIsOpening] = useState(false);
 
   const handleCardClick = () => {
-    // Open image modal when card is clicked
-    setIsOpening(true);
-    setModalType('image');
-    setTimeout(() => setIsOpening(false), 50);
-  };
-
-  const handleCameraClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    setIsOpening(true);
-    setModalType('image');
-    setTimeout(() => setIsOpening(false), 50);
+    // Only open image modal if image exists
+    if (image) {
+      setIsOpening(true);
+      setModalType('image');
+      setTimeout(() => setIsOpening(false), 50);
+    }
   };
 
   const handle3DClick = (e: React.MouseEvent) => {
@@ -75,24 +66,28 @@ export default function MenuItemCard({
     <>
       <div
         onClick={handleCardClick}
-        className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg cursor-pointer transition-opacity hover:opacity-90 ${
+        className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg transition-opacity hover:opacity-90 ${
+          image ? 'cursor-pointer' : 'cursor-default'
+        } ${
           isSpecial
             ? 'bg-[#EFE6D2] text-black'
             : 'bg-[#101010] border border-white/10 text-white'
         }`}
       >
-        {/* Image */}
-        <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 ${
-          isSpecial ? 'border-[3px] border-[#FFD65A]' : 'border-2 border-white/30'
-        }`}>
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
+        {/* Image - Only render if image exists */}
+        {image && (
+          <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 ${
+            isSpecial ? 'border-[3px] border-[#FFD65A]' : 'border-2 border-white/30'
+          }`}>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -102,36 +97,20 @@ export default function MenuItemCard({
             }`}>{title}</h3>
 
             {/* Icons */}
-            <div className="flex gap-1 ml-1 sm:ml-2">
-              {has3D && (
-                <button
-                  onClick={handle3DClick}
-                  className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <Image
-                    src="/icons/3d.svg"
-                    alt="3D View"
-                    width={24}
-                    height={24}
-                    className="w-full h-full cursor-pointer"
-                  />
-                </button>
-              )}
-              {hasCamera && (
-                <button
-                  onClick={handleCameraClick}
-                  className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <Image
-                    src="/icons/camera.svg"
-                    alt="View Image"
-                    width={24}
-                    height={24}
-                    className="w-full h-full cursor-pointer"
-                  />
-                </button>
-              )}
-            </div>
+            {has3D && (
+              <button
+                onClick={handle3DClick}
+                className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer ml-1 sm:ml-2"
+              >
+                <Image
+                  src="/icons/3d.svg"
+                  alt="3D View"
+                  width={24}
+                  height={24}
+                  className="w-full h-full cursor-pointer"
+                />
+              </button>
+            )}
           </div>
 
           {subtitle && (
@@ -161,9 +140,12 @@ export default function MenuItemCard({
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer bg-white rounded-full w-8 h-8 flex items-center justify-center"
+              aria-label="Close"
             >
-              ✕
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
 
             {/* Content Area */}
@@ -192,17 +174,19 @@ export default function MenuItemCard({
                 </>
               ) : (
                 /* Image Display */
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={additionalImageUrl || image}
-                      alt={title}
-                      fill
-                      className="object-contain"
-                      unoptimized
-                    />
+                image && (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
                   </div>
-                </div>
+                )
               )}
             </div>
           </div>
