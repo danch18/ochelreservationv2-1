@@ -228,7 +228,7 @@ export default function MenuDisplay() {
   }
 
   return (
-    <div className="w-full h-full p-4 md:p-6 lg:p-8">
+    <div className="w-full p-4 md:p-6 lg:p-8 pb-8">
       {/* Tab Bar Container */}
       <div className="bg-[#101010] border border-white/30 rounded-[8px] p-[6px] mb-6">
         <div className="overflow-x-auto scrollbar-hide md:overflow-x-visible">

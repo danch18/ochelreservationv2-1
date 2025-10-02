@@ -38,9 +38,9 @@ const defaultPrimaryItems: NavigationItem[] = [
 ];
 
 const defaultDesktopItems: NavigationItem[] = [
-  { label: 'Menu', href: '#menu' },
+  { label: 'Menu', href: '/menu' },
   { label: 'Reservation', href: '#reservation', isReservation: true },
-  { label: 'Delivery', href: '#delivery', isDelivery: true },
+  { label: 'Livraison', href: '#delivery', isDelivery: true },
 ];
 
 const defaultSecondaryItems: NavigationItem[] = [
