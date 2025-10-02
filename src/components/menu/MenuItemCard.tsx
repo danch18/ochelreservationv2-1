@@ -29,26 +29,38 @@ export default function MenuItemCard({
   variant = 'regular'
 }: MenuItemCardProps) {
   const [modalType, setModalType] = useState<ModalType>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
 
   const handleCardClick = () => {
     // Open image modal when card is clicked
+    setIsOpening(true);
     setModalType('image');
+    setTimeout(() => setIsOpening(false), 50);
   };
 
   const handleCameraClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
+    setIsOpening(true);
     setModalType('image');
+    setTimeout(() => setIsOpening(false), 50);
   };
 
   const handle3DClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
     if (model3DUrl) {
+      setIsOpening(true);
       setModalType('3d');
+      setTimeout(() => setIsOpening(false), 50);
     }
   };
 
   const closeModal = () => {
-    setModalType(null);
+    setIsClosing(true);
+    setTimeout(() => {
+      setModalType(null);
+      setIsClosing(false);
+    }, 300); // Match animation duration
   };
 
   const handleRedirect3D = () => {
@@ -137,7 +149,7 @@ export default function MenuItemCard({
 
       {/* Modal */}
       {modalType && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${isClosing ? 'opacity-0' : isOpening ? 'opacity-0' : 'opacity-100'}`}>
           {/* Background Overlay */}
           <div
             className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
@@ -145,7 +157,7 @@ export default function MenuItemCard({
           />
 
           {/* Modal Content - 80% of viewport */}
-          <div className="relative bg-[#101010] rounded-lg border border-white/20 w-[80vw] h-[80vh] flex flex-col">
+          <div className={`relative bg-[#101010] rounded-lg border border-white/20 w-[80vw] h-[80vh] flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
             {/* Close Button */}
             <button
               onClick={closeModal}

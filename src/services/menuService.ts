@@ -309,6 +309,46 @@ export const menuService = {
     if (error) throw error;
     return data || [];
   },
+
+  async getAllMenuData(): Promise<Map<number, MenuData>> {
+    // Fetch all data in one go
+    const [categories, subcategories, menuItems, addons] = await Promise.all([
+      this.getActiveCategories(),
+      subcategoryService.getAll(),
+      menuItemService.getAll(),
+      addonService.getAll(),
+    ]);
+
+    // Build a map of category ID to menu data
+    const menuDataMap = new Map<number, MenuData>();
+
+    for (const category of categories) {
+      const categorySubcats = subcategories.filter(
+        s => s.category_id === category.id && s.status === 'active'
+      );
+
+      const subcatIds = categorySubcats.map(s => s.id);
+
+      const categoryMenuItems = menuItems.filter(
+        item => subcatIds.includes(item.subcategory_id) && item.status === 'active'
+      );
+
+      const categoryAddons = addons.filter(
+        addon =>
+          (addon.category_id === category.id || subcatIds.includes(addon.subcategory_id ?? 0)) &&
+          addon.status === 'active'
+      );
+
+      menuDataMap.set(category.id, {
+        category,
+        subcategories: categorySubcats,
+        menuItems: categoryMenuItems,
+        addons: categoryAddons,
+      });
+    }
+
+    return menuDataMap;
+  },
 };
 
 // ============================================================================
