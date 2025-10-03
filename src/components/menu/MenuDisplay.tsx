@@ -22,7 +22,8 @@ interface MenuDisplaySection {
     subtitle?: string;
     price: string;
     has3D?: boolean;
-    model3DUrl?: string;
+    model3DGlbUrl?: string;
+    model3DUsdzUrl?: string;
   }[];
 }
 
@@ -57,15 +58,19 @@ export default function MenuDisplay() {
 
         // Check sessionStorage first
         const cachedData = sessionStorage.getItem('menuData');
+        const cacheTimestamp = sessionStorage.getItem('menuDataTimestamp');
+        const now = Date.now();
+        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
 
-        if (cachedData) {
-          // Use cached data
+        // Use cache if it exists and is less than 5 minutes old
+        if (cachedData && cacheAge < 5 * 60 * 1000) {
           const parsedData = JSON.parse(cachedData);
           allMenuData = new Map(parsedData);
         } else {
           // Fetch fresh data
           allMenuData = await menuService.getAllMenuData();
           sessionStorage.setItem('menuData', JSON.stringify(Array.from(allMenuData.entries())));
+          sessionStorage.setItem('menuDataTimestamp', now.toString());
         }
 
         setMenuDataCache(allMenuData);
@@ -85,6 +90,23 @@ export default function MenuDisplay() {
     };
 
     loadAllMenuData();
+
+    // Listen for menu data changes from admin panel via BroadcastChannel
+    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+
+    menuUpdateChannel.onmessage = (event) => {
+      if (event.data === 'invalidate') {
+        console.log('Menu data changed, refreshing...');
+        sessionStorage.removeItem('menuData');
+        sessionStorage.removeItem('menuDataTimestamp');
+        loadAllMenuData();
+      }
+    };
+
+    // Cleanup on unmount
+    return () => {
+      menuUpdateChannel.close();
+    };
   }, []);
 
   // Build sections when active tab changes (no API call)
@@ -132,7 +154,8 @@ export default function MenuDisplay() {
               subtitle: item.text || item.description,
               price: `€${item.price.toFixed(2)}`,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
-              model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+              model3DGlbUrl: item.model_3d_url || undefined,
+              model3DUsdzUrl: item.redirect_3d_url || undefined,
             })),
           });
         }
@@ -159,7 +182,8 @@ export default function MenuDisplay() {
               subtitle: item.text || item.description,
               price: `€${item.price.toFixed(2)}`,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
-              model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+              model3DGlbUrl: item.model_3d_url || undefined,
+              model3DUsdzUrl: item.redirect_3d_url || undefined,
             })),
           });
         }
@@ -180,7 +204,8 @@ export default function MenuDisplay() {
             subtitle: item.text || item.description,
             price: `€${item.price.toFixed(2)}`,
             has3D: !!item.model_3d_url || !!item.redirect_3d_url,
-            model3DUrl: item.redirect_3d_url || item.model_3d_url || undefined,
+            model3DGlbUrl: item.model_3d_url || undefined,
+            model3DUsdzUrl: item.redirect_3d_url || undefined,
           })),
         });
       }
@@ -313,7 +338,8 @@ export default function MenuDisplay() {
                       subtitle={item.subtitle}
                       price={item.price}
                       has3D={item.has3D}
-                      model3DUrl={item.model3DUrl}
+                      model3DGlbUrl={item.model3DGlbUrl}
+                      model3DUsdzUrl={item.model3DUsdzUrl}
                       variant={section.isSpecial ? 'special' : 'regular'}
                     />
                   ))}

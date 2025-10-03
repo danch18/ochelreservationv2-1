@@ -237,6 +237,10 @@ export function SubcategoriesManagement() {
     } else {
       await subcategoryService.create(subcategoryData);
     }
+    // Notify all tabs that menu data has changed
+    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+    menuUpdateChannel.postMessage('invalidate');
+    menuUpdateChannel.close();
     await loadData();
   };
 
@@ -252,6 +256,10 @@ export function SubcategoriesManagement() {
       setDeletingId(subcategoryToDelete.id);
       setError(null);
       await subcategoryService.delete(subcategoryToDelete.id);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
       await loadData();
       setShowDeleteModal(false);
       setSubcategoryToDelete(null);

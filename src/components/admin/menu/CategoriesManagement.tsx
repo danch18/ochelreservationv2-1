@@ -206,6 +206,10 @@ export function CategoriesManagement() {
         // Don't block the category creation if subcategory creation fails
       }
     }
+    // Notify all tabs that menu data has changed
+    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+    menuUpdateChannel.postMessage('invalidate');
+    menuUpdateChannel.close();
     await loadCategories();
   };
 
@@ -221,6 +225,10 @@ export function CategoriesManagement() {
       setDeletingId(categoryToDelete.id);
       setError(null);
       await categoryService.delete(categoryToDelete.id);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
       await loadCategories();
       setShowDeleteModal(false);
       setCategoryToDelete(null);

@@ -9,7 +9,8 @@ interface MenuItemCardProps {
   subtitle?: string;
   price: string;
   has3D?: boolean;
-  model3DUrl?: string;
+  model3DGlbUrl?: string;
+  model3DUsdzUrl?: string;
   variant?: 'regular' | 'special';
 }
 
@@ -21,7 +22,8 @@ export default function MenuItemCard({
   subtitle,
   price,
   has3D = false,
-  model3DUrl,
+  model3DGlbUrl,
+  model3DUsdzUrl,
   variant = 'regular'
 }: MenuItemCardProps) {
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -39,7 +41,8 @@ export default function MenuItemCard({
 
   const handle3DClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    if (model3DUrl) {
+    if (model3DGlbUrl || model3DUsdzUrl) {
+      console.log('3D URLs:', { model3DGlbUrl, model3DUsdzUrl });
       setIsOpening(true);
       setModalType('3d');
       setTimeout(() => setIsOpening(false), 50);
@@ -54,9 +57,16 @@ export default function MenuItemCard({
     }, 300); // Match animation duration
   };
 
-  const handleRedirect3D = () => {
-    if (model3DUrl) {
-      window.open(model3DUrl, '_blank');
+  const handleARClick = () => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    if (isIOS && model3DUsdzUrl) {
+      // iOS opens USDZ automatically in AR Quick Look
+      window.location.href = model3DUsdzUrl;
+    } else if (model3DGlbUrl) {
+      // Android opens GLB in Scene Viewer
+      const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model3DGlbUrl)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+      window.location.href = intent;
     }
   };
 
@@ -150,25 +160,34 @@ export default function MenuItemCard({
 
             {/* Content Area */}
             <div className="w-full h-full p-4 flex flex-col">
-              {modalType === '3d' && model3DUrl ? (
+              {modalType === '3d' && (model3DGlbUrl || model3DUsdzUrl) ? (
                 <>
-                  {/* 3D Model Embed */}
+                  {/* 3D Model Viewer */}
                   <div className="flex-1 mb-4">
-                    <iframe
-                      src={model3DUrl}
-                      className="w-full h-full rounded-lg"
-                      title="3D Model View"
-                      allowFullScreen
+                    <model-viewer
+                      src={model3DGlbUrl || ''}
+                      ios-src={model3DUsdzUrl || ''}
+                      camera-controls
+                      touch-action="pan-y"
+                      exposure="1"
+                      shadow-intensity="1"
+                      alt={title}
+                      interaction-prompt="auto"
+                      interaction-prompt-threshold="0"
+                      interaction-prompt-style="basic"
+                      auto-rotate
+                      auto-rotate-delay="1000"
+                      style={{ width: '100%', height: '100%', minHeight: '300px', background: '#fff', borderRadius: '0.5rem' }}
                     />
                   </div>
 
-                  {/* Redirect Button */}
+                  {/* AR Button */}
                   <div className="flex justify-center pb-2">
                     <button
-                      onClick={handleRedirect3D}
+                      onClick={handleARClick}
                       className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
                     >
-                      Open in New Tab
+                      View in AR
                     </button>
                   </div>
                 </>

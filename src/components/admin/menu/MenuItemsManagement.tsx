@@ -24,8 +24,8 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
   const [description, setDescription] = useState(menuItem?.description || '');
   const [price, setPrice] = useState(menuItem?.price?.toString() || '');
   const [imagePath, setImagePath] = useState(menuItem?.image_path || '');
-  const [model3dUrl, setModel3dUrl] = useState(menuItem?.model_3d_url || '');
-  const [redirect3dUrl, setRedirect3dUrl] = useState(menuItem?.redirect_3d_url || '');
+  const [model3dGlbUrl, setModel3dGlbUrl] = useState(menuItem?.model_3d_url || '');
+  const [model3dUsdzUrl, setModel3dUsdzUrl] = useState(menuItem?.redirect_3d_url || '');
   const [isSpecial, setIsSpecial] = useState(menuItem?.is_special || false);
   const [categoryId, setCategoryId] = useState<number>(0);
   const [subcategoryId, setSubcategoryId] = useState<number>(0);
@@ -130,8 +130,8 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
         description: description.trim(),
         price: parseFloat(price),
         image_path: imagePath.trim() || null,
-        model_3d_url: model3dUrl.trim() || null,
-        redirect_3d_url: redirect3dUrl.trim() || null,
+        model_3d_url: model3dGlbUrl.trim() || null,
+        redirect_3d_url: model3dUsdzUrl.trim() || null,
         additional_image_url: null,
         is_special: isSpecial,
         subcategory_id: finalSubcategoryId,
@@ -298,26 +298,32 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL du modèle 3D
+              URL du modèle 3D GLB (Android/Web)
             </label>
             <Input
               type="url"
-              value={model3dUrl}
-              onChange={(e) => setModel3dUrl(e.target.value)}
-              placeholder="https://..."
+              value={model3dGlbUrl}
+              onChange={(e) => setModel3dGlbUrl(e.target.value)}
+              placeholder="https://example.com/model.glb"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Format GLB pour Android et affichage web 3D
+            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL de redirection 3D (ex: Sketchfab)
+              URL du modèle 3D USDZ (iOS AR)
             </label>
             <Input
               type="url"
-              value={redirect3dUrl}
-              onChange={(e) => setRedirect3dUrl(e.target.value)}
-              placeholder="https://..."
+              value={model3dUsdzUrl}
+              onChange={(e) => setModel3dUsdzUrl(e.target.value)}
+              placeholder="https://example.com/model.usdz"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Format USDZ pour la réalité augmentée iOS
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 mt-6">
@@ -469,6 +475,10 @@ export function MenuItemsManagement() {
     } else {
       await menuItemService.create(menuItemData);
     }
+    // Notify all tabs that menu data has changed
+    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+    menuUpdateChannel.postMessage('invalidate');
+    menuUpdateChannel.close();
     await loadData();
   };
 
@@ -484,6 +494,10 @@ export function MenuItemsManagement() {
       setDeletingId(menuItemToDelete.id);
       setError(null);
       await menuItemService.delete(menuItemToDelete.id);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
       await loadData();
       setShowDeleteModal(false);
       setMenuItemToDelete(null);
