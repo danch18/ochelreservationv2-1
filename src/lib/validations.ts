@@ -15,9 +15,9 @@ export const reservationSchema = z.object({
   
   phone: z
     .string()
-    .min(10, 'Phone number must be at least 10 digits')
-    .max(20, 'Phone number must be less than 20 characters')
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Please enter a valid phone number'),
+    .min(10, 'Le numéro de téléphone doit contenir au moins 10 chiffres')
+    .max(20, 'Le numéro de téléphone doit contenir moins de 20 caractères')
+    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Format invalide. Utilisez: 612345678 ou +33612345678 (sans espaces, sans 0 initial)'),
   
   date: z
     .string()

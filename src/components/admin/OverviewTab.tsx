@@ -229,7 +229,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-forum">
       {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
       <div className="flex justify-end mb-4">
         <div className="flex bg-gray-100 rounded-lg p-1">

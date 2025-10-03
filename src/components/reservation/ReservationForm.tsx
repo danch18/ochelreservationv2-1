@@ -6,7 +6,7 @@ import { useReservationForm, useHeaderTexts } from '@/hooks';
 import { useRestaurantAvailability } from '@/hooks/useRestaurantAvailability';
 import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { GUEST_OPTIONS } from '@/lib/constants';
-import { getTodayDate } from '@/lib/utils';
+import { getTodayDate, validatePhoneFormat } from '@/lib/utils';
 import type { Reservation } from '@/types';
 
 
@@ -52,6 +52,13 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   }, [isOpen, onToggle]);
 
   const formatDisplayDate = () => {
+    if (value) {
+      const date = new Date(value);
+      const day = date.getDate();
+      const month = date.toLocaleString('fr-FR', { month: 'long' });
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
     return "Date";
   };
 
@@ -76,11 +83,11 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
     for (let i = 0; i < 42; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       const isCurrentMonth = date.getMonth() === month;
       const isPast = dateStr < today;
       const isClosed = checkDateClosed(dateStr);
-      
+
       days.push({
         date: dateStr,
         day: date.getDate(),
@@ -121,7 +128,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   }
 
   return (
-    <div className="space-y-2" ref={dropdownRef}>
+    <div className="space-y-2" ref={dropdownRef} key={`date-dropdown-${currentMonth?.getTime()}`}>
       {/* Entire Date Section Container with Border */}
       <div className={`border rounded-lg overflow-hidden transition-all duration-300 ease-in-out
         ${error ? 'border-red-500' : 'border-gray-300'}
@@ -170,8 +177,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
           <div className="bg-white">
             <div className="py-4">
               <div className="flex items-center justify-between mb-4 px-4">
-                <button
-                  type="button"
+                <div
                   onClick={() => {
                     if (currentMonth) {
                       const newDate = new Date(currentMonth);
@@ -179,17 +185,25 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="p-2 hover:bg-gray-100 rounded transition-colors duration-200"
+                  className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(239, 230, 210, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+                  }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                </button>
+                </div>
                 <h3 className="font-semibold text-gray-800">
                   {currentMonth ? `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}` : ''}
                 </h3>
-                <button
-                  type="button"
+                <div
                   onClick={() => {
                     if (currentMonth) {
                       const newDate = new Date(currentMonth);
@@ -197,12 +211,21 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="p-2 hover:bg-gray-100 rounded transition-colors duration-200"
+                  className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(239, 230, 210, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+                  }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
+                </div>
               </div>
 
               {/* Calendar Grid */}
@@ -216,33 +239,40 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                   <div className="text-xs font-medium text-gray-500 py-2">Ven</div>
                   <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
                   
-                  {days.map((day, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      disabled={day.isPast || day.isClosed}
+                  {days.map((day) => (
+                    <div
+                      key={day.date}
                       onClick={() => {
                         if (!day.isPast && !day.isClosed) {
                           onChange(day.date);
                         }
                       }}
                       className={`
-                        aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200
-                        ${!day.isCurrentMonth 
-                          ? 'text-gray-300 cursor-default' 
-                          : day.isPast 
-                          ? 'text-gray-300 cursor-not-allowed' 
+                        aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200 flex items-center justify-center
+                        ${!day.isCurrentMonth
+                          ? 'cursor-default'
+                          : day.isPast
+                          ? 'cursor-not-allowed'
                           : day.isClosed
-                          ? 'text-gray-400 cursor-not-allowed line-through' 
+                          ? 'cursor-not-allowed line-through'
                           : day.isSelected
-                          ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium' 
-                          : 'text-black hover:bg-[#FF7043]/5 hover:border hover:border-[#FF7043] cursor-pointer'
+                          ? 'font-medium cursor-pointer'
+                          : 'cursor-pointer'
                         }
                       `}
                       title={day.isClosed ? 'Restaurant fermé' : ''}
+                      style={{
+                        backgroundColor: 'transparent',
+                        color: (!day.isCurrentMonth || day.isPast || day.isClosed)
+                          ? 'rgba(239, 230, 210, 0.1)'
+                          : day.isSelected
+                          ? '#EFE6D2'
+                          : '#EFE6D2',
+                        border: day.isSelected ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                      }}
                     >
                       {day.day}
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -292,6 +322,9 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
   }, [isOpen, onToggle]);
 
   const formatDisplayTime = () => {
+    if (value) {
+      return value;
+    }
     return "Heure";
   };
 
@@ -370,27 +403,33 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
         }`}>
           <div className="bg-white">
             <div className="py-4">
-              {/* Time slots in tag layout */}
-              <div className="flex flex-wrap gap-2 px-4">
-                {timeSlots.map(time => (
-                  <button
-                    key={time}
-                    type="button"
-                    onClick={() => !disabled && onChange(time)}
-                    disabled={disabled}
-                    className={`
-                      px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                      border whitespace-nowrap flex-shrink-0
-                      ${value === time
-                        ? '!border-[#FF7043] bg-[#FF7043] text-white' 
-                        : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
-                      }
-                      ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                    `}
-                  >
-                    {time}
-                  </button>
-                ))}
+              {/* Time slots in grid layout */}
+              <div className="px-4">
+                <div className="border border-white/30 rounded-[8px] p-[6px]">
+                  <div className="grid grid-cols-3 gap-1">
+                    {timeSlots.map(time => (
+                      <div
+                        key={time}
+                        onClick={() => !disabled && onChange(time)}
+                        className={`
+                          text-[14px] text-center rounded-[6px] transition-all duration-200 py-2 px-4
+                          min-h-[40px] flex items-center justify-center whitespace-nowrap
+                          ${value === time
+                            ? 'text-[#FFD65A]'
+                            : 'text-[#EFE6D2] hover:text-[#FFD65A]'
+                          }
+                          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                        `}
+                        style={{
+                          backgroundColor: 'rgba(239, 230, 210, 0.1)',
+                          border: value === time ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                        }}
+                      >
+                        {time}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -418,7 +457,7 @@ interface GuestsDropdownProps {
 function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false, onToggle }: GuestsDropdownProps) {
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const shortcuts = [1, 2, 3, 4, 5];
+  const shortcuts = [1, 2, 3, 4, 5, 6];
 
   // Initialize after mount to avoid hydration issues
   useEffect(() => {
@@ -536,27 +575,31 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
               {/* Quick shortcuts */}
               <div className="px-4">
                 <div className="text-xs font-medium text-gray-500 mb-2">Sélection rapide</div>
-                <div className="flex flex-wrap gap-2">
-                  {shortcuts.map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => !disabled && onChange(num.toString())}
-                      disabled={disabled}
-                      className={`
-                        px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                        border min-w-[65px] flex-shrink-0
-                        ${value === num.toString()
-                          ? '!border-[#FF7043] bg-[#FF7043] text-white' 
-                          : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
-                        }
-                        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                      `}
-                    >
-                      <span>{num}</span>
-                      <span className="text-xs"> invités</span>
-                    </button>
-                  ))}
+                <div className="border border-white/30 rounded-[8px] p-[6px]">
+                  <div className="grid grid-cols-3 grid-rows-2 gap-1">
+                    {shortcuts.map(num => (
+                      <div
+                        key={num}
+                        onClick={() => !disabled && onChange(num.toString())}
+                        className={`
+                          text-[14px] text-center rounded-[6px] transition-all duration-200 py-2 px-4
+                          min-h-[40px] flex items-center justify-center whitespace-nowrap
+                          ${value === num.toString()
+                            ? 'text-[#FFD65A]'
+                            : 'text-[#EFE6D2] hover:text-[#FFD65A]'
+                          }
+                          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                        `}
+                        style={{
+                          backgroundColor: 'rgba(239, 230, 210, 0.1)',
+                          border: value === num.toString() ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                        }}
+                      >
+                        <span>{num}</span>
+                        <span className="text-xs ml-1">invités</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -593,6 +636,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
   const nameValue = watch('name');
   const emailValue = watch('email');
   const phoneValue = watch('phone');
+
+  // Phone validation state
+  const phoneValidation = phoneValue ? validatePhoneFormat(phoneValue) : { isValid: true };
 
   // Get dynamic time slots for the selected date based on admin-configured weekly schedule
   // This replaces the static TIME_SLOTS constant with dynamic slots from database
@@ -635,7 +681,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
   if (currentStep === 1) {
     return (
-      <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh]">
+      <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] font-forum">
         {/* Header Information Lines */}
         {!headerTextsLoading && (
           <div className="mb-6 max-sm:mb-4 space-y-2 max-sm:space-y-1">
@@ -653,12 +699,23 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
         {onBack && (
           <div className="mb-6">
-            <button
+            <div
               onClick={onBack}
-              className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+              className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+              style={{
+                backgroundColor: 'rgba(239, 230, 210, 0.1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+              }}
             >
-              ← Retour
-            </button>
+              <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
           </div>
         )}
 
@@ -766,15 +823,26 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
   // Step 2: Personal Details - Two Column Layout
   return (
-    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl">
+    <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl font-forum">
       {/* Header */}
       <div className="flex items-center mb-6">
-        <button
+        <div
           onClick={handleBackToStep1}
-          className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+          className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+          style={{
+            backgroundColor: 'rgba(239, 230, 210, 0.1)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+          }}
         >
-          ← Retour
-        </button>
+          <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
       </div>
 
       {submitError && (
@@ -844,10 +912,27 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   <Input
                     type="tel"
                     label="Téléphone"
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder="612345678 ou +33612345678"
                     error={errors.phone?.message}
                     {...register('phone')}
                   />
+                  {phoneValue && !phoneValidation.isValid && phoneValidation.suggestion && (
+                    <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-xs text-blue-700">
+                        💡 <strong>Suggestion:</strong> {phoneValidation.suggestion}
+                      </p>
+                    </div>
+                  )}
+                  {!phoneValue && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Format: sans espaces, sans 0 initial (ex: 612345678)
+                    </p>
+                  )}
+                  {phoneValue && phoneValidation.isValid && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Format valide
+                    </p>
+                  )}
                 </div>
                 <Input
                   type="email"
@@ -873,7 +958,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Sauvegardez les informations pour mes prochaines réservations.</span>
+                  <span className="text-gray-600">Sauvegardez les informations pour mes prochaines réservations.</span>
                 </label>
                 
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -882,8 +967,8 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                     required
                   />
-                  <span className="text-gray-700">
-                    J'accepte les conditions générales d'utilisation du service. 
+                  <span className="text-gray-600">
+                    J'accepte les conditions générales d'utilisation du service.
                     <span className="text-red-500 ml-1">*</span>
                   </span>
                 </label>
@@ -893,7 +978,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Envoyez-moi des offres et actualités par e-mail.</span>
+                  <span className="text-gray-600">Envoyez-moi des offres et actualités par e-mail.</span>
                 </label>
 
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -901,7 +986,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Envoyez-moi des offres et actualités par SMS.</span>
+                  <span className="text-gray-600">Envoyez-moi des offres et actualités par SMS.</span>
                 </label>
               </div>
             </div>
@@ -946,11 +1031,15 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     className="w-6 h-6 max-sm:w-5 max-sm:h-5"
                   />
                   <span className="font-medium max-sm:text-sm">
-                    {selectedDate ? new Date(selectedDate).toLocaleDateString('fr-FR', { 
-                      weekday: 'short', 
-                      day: 'numeric', 
-                      month: 'short' 
-                    }) : ''}
+                    {selectedDate ? (() => {
+                      const [year, month, day] = selectedDate.split('-').map(Number);
+                      const date = new Date(year, month - 1, day);
+                      return date.toLocaleDateString('fr-FR', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                      });
+                    })() : ''}
                   </span>
                 </div>
                 

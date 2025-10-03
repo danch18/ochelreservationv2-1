@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
   // Show loading while checking authentication
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center font-forum">
         <div className="text-center">
           <LoadingSpinner size="lg" className="mb-4" />
           <p className="text-muted-foreground">Vérification de l'authentification...</p>
@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#EFE7D2] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#EFE7D2] flex items-center justify-center p-4 font-forum">
       <div className="w-full max-w-md">
         {/* Main Container */}
         <div className="bg-white rounded-2xl shadow-xl border border-[#F6F1F0] overflow-hidden">

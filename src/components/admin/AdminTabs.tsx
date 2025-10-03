@@ -11,11 +11,12 @@ const tabs = [
   { id: 'overview', label: 'Vue d\'ensemble', mobileLabel: 'Aperçu', icon: '📊' },
   { id: 'settings', label: 'Paramètres', mobileLabel: 'Paramètres', icon: '⚙️' },
   { id: 'manage', label: 'Gestion des Réservations', mobileLabel: 'Gestion', icon: '🍽️' },
+  { id: 'menu', label: 'Gestion du Menu', mobileLabel: 'Menu', icon: '📋' },
 ];
 
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
   return (
-    <>
+    <div className="font-forum">
       {/* Desktop Tabs */}
       <div className="hidden md:block !border-b !border-[#F6F1F0]">
         <nav className="-mb-px flex space-x-8">
@@ -67,6 +68,6 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
           ))}
         </nav>
       </div>
-    </>
+    </div>
   );
 }

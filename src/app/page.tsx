@@ -1,15 +1,12 @@
 'use client';
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { ReservationPopup } from '@/components/reservation';
+import HomePage from '@/components/HomePage';
 
 export default function Home() {
   return (
     <ErrorBoundary>
-      <div className="w-full h-full bg-transparent relative pointer-events-none">
-        {/* Reservation Popup */}
-        <ReservationPopup />
-      </div>
+      <HomePage />
     </ErrorBoundary>
   );
 }

@@ -15,6 +15,49 @@ export interface EmailData {
 }
 
 export const emailService = {
+  // Send reservation submission acknowledgment email (sent immediately upon submission)
+  async sendReservationSubmission(reservation: Reservation): Promise<void> {
+    const emailData: EmailData = {
+      to: reservation.email,
+      subject: `Reservation Request Received - ${reservation.name}`,
+      html: generateSubmissionEmailHTML(reservation),
+      text: generateSubmissionEmailText(reservation)
+    };
+
+    try {
+      const response = await fetch(EMAIL_CONFIG.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Email service error (${response.status}):`, errorText);
+        throw new Error(`Email service responded with status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        console.error('Email service failed:', result);
+        throw new Error(result.error || 'Failed to send email');
+      }
+
+      // Log success in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Submission email sent successfully:', result.message);
+      }
+    } catch (error) {
+      console.error('Error sending submission email:', error);
+
+      // Provide more specific error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Failed to send submission email: ${errorMessage}`);
+    }
+  },
+
   // Send reservation confirmation email
   async sendReservationConfirmation(reservation: Reservation): Promise<void> {
     const emailData: EmailData = {
@@ -952,5 +995,471 @@ function generateCancellationEmailText(reservation: Reservation): string {
     We're sorry to see you won't be joining us. If you'd like to make a new reservation, please visit our website or contact us directly.
 
     Contact us: (555) 123-4567 | info@ochel.com
+  `;
+}
+
+// Generate HTML email template for submission acknowledgment
+function generateSubmissionEmailHTML(reservation: Reservation): string {
+  const formattedDate = new Date(reservation.reservation_date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const statusMessage = reservation.status === 'pending'
+    ? "Your reservation request is being reviewed by our team. You'll receive a confirmation email once it's approved."
+    : "Your reservation has been automatically confirmed!";
+
+  const statusColor = reservation.status === 'pending' ? '#f39c12' : '#27ae60';
+  const statusIcon = reservation.status === 'pending' ? '⏳' : '✅';
+
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reservation Request Received</title>
+      <style>
+        body {
+          font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          line-height: 1.6;
+          color: #2c3e50;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+        }
+        .email-container {
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+        }
+        .header {
+          background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+          color: #ffffff;
+          padding: 40px 24px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .header::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+        }
+        .logo {
+          font-size: 2.8em;
+          font-weight: 800;
+          color: #ffffff;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          position: relative;
+          z-index: 1;
+        }
+        .logo::before {
+          content: '🍽️';
+          font-size: 0.8em;
+          margin-right: 8px;
+        }
+        .tagline {
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 1.1em;
+          font-weight: 300;
+          position: relative;
+          z-index: 1;
+        }
+        .submission-icon {
+          font-size: 4em;
+          color: #17a2b8;
+          margin: 20px 0;
+          animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        .content {
+          padding: 40px 32px;
+          background: #ffffff;
+          color: #2c3e50;
+        }
+        .greeting {
+          font-size: 1.3em;
+          margin-bottom: 24px;
+          color: #2c3e50;
+          font-weight: 600;
+        }
+        .submission-message {
+          background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+          border-left: 4px solid #17a2b8;
+          padding: 20px;
+          margin: 24px 0;
+          border-radius: 8px;
+          font-size: 1.1em;
+          color: #0c5460;
+          font-weight: 500;
+        }
+        .status-message {
+          background: linear-gradient(135deg, ${reservation.status === 'pending' ? '#fff3cd' : '#d4edda'} 0%, ${reservation.status === 'pending' ? '#ffeaa7' : '#c3e6cb'} 100%);
+          border: 2px solid ${statusColor};
+          border-radius: 16px;
+          padding: 24px;
+          margin: 24px 0;
+          text-align: center;
+          position: relative;
+        }
+        .status-message::before {
+          content: '${statusIcon}';
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: ${statusColor};
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .status-message h4 {
+          color: ${statusColor};
+          margin: 0 0 12px 0;
+          font-size: 1.2em;
+          font-weight: 700;
+        }
+        .status-message p {
+          color: ${reservation.status === 'pending' ? '#856404' : '#155724'};
+          margin: 0;
+          font-weight: 500;
+        }
+        .reservation-details {
+          background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
+          border: 2px solid #17a2b8;
+          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+          position: relative;
+        }
+        .reservation-details::before {
+          content: '📋';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #17a2b8;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          padding: 12px 0;
+          border-bottom: 1px solid rgba(23, 162, 184, 0.2);
+          transition: all 0.3s ease;
+        }
+        .detail-row:hover {
+          background: rgba(23, 162, 184, 0.05);
+          border-radius: 8px;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+        .detail-row:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+        }
+        .detail-label {
+          font-weight: 700;
+          color: #17a2b8;
+          font-size: 1.05em;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .detail-value {
+          color: #2c3e50;
+          text-align: right;
+          font-weight: 600;
+          font-size: 1.05em;
+        }
+        .special-requests {
+          background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+          border-radius: 16px;
+          padding: 28px;
+          margin: 32px 0;
+          border: 2px solid #17a2b8;
+          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+          position: relative;
+        }
+        .special-requests::before {
+          content: '💬';
+          position: absolute;
+          top: -15px;
+          left: 30px;
+          background: #17a2b8;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+        .special-requests h4 {
+          margin-top: 0;
+          color: #17a2b8;
+          font-size: 1.2em;
+          font-weight: 700;
+        }
+        .next-steps {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 16px;
+          padding: 32px;
+          margin: 32px 0;
+          text-align: center;
+          border: 2px solid #6c757d;
+          box-shadow: 0 8px 25px rgba(108, 117, 125, 0.15);
+          position: relative;
+        }
+        .next-steps::before {
+          content: '📞';
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #6c757d;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 1.2em;
+          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+        .next-steps h4 {
+          color: #6c757d;
+          margin-top: 0;
+          margin-bottom: 20px;
+          font-size: 1.2em;
+          font-weight: 700;
+        }
+        .next-steps p {
+          color: #495057;
+          margin: 12px 0;
+          line-height: 1.6;
+          font-weight: 500;
+        }
+        .footer {
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          padding: 32px 24px;
+          text-align: center;
+          color: #ecf0f1;
+          font-size: 0.95em;
+        }
+        .footer p {
+          margin: 12px 0;
+          font-weight: 500;
+        }
+        .highlight {
+          color: #17a2b8;
+          font-weight: 700;
+        }
+        .divider {
+          height: 2px;
+          background: linear-gradient(90deg, transparent 0%, #17a2b8 50%, transparent 100%);
+          margin: 32px 0;
+          border-radius: 1px;
+        }
+        @media (max-width: 640px) {
+          body {
+            padding: 12px;
+          }
+          .content {
+            padding: 24px 20px;
+          }
+          .header {
+            padding: 32px 20px;
+          }
+          .logo {
+            font-size: 2.2em;
+          }
+          .reservation-details, .special-requests, .status-message, .next-steps {
+            padding: 24px 20px;
+          }
+          .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .detail-value {
+            text-align: left;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <div class="logo">Magnifiko Réservez</div>
+          <div class="tagline">Request Received</div>
+        </div>
+
+        <div class="content">
+          <div style="text-align: center;">
+            <div class="submission-icon">📨</div>
+          </div>
+
+          <div class="greeting">
+            Dear ${reservation.name},
+          </div>
+
+          <div class="submission-message">
+            🎉 Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! We have successfully received your reservation request.
+          </div>
+
+          <div class="status-message">
+            <h4>${reservation.status === 'pending' ? 'Under Review' : 'Confirmed!'}</h4>
+            <p>${statusMessage}</p>
+          </div>
+
+          <div class="reservation-details">
+            <h3 style="margin-top: 20px; color: #17a2b8; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Your Request Details</h3>
+            <div class="detail-row">
+              <span class="detail-label">📋 Request ID:</span>
+              <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">📅 Date:</span>
+              <span class="detail-value">${formattedDate}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">🕐 Time:</span>
+              <span class="detail-value">${reservation.reservation_time}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">👥 Party Size:</span>
+              <span class="detail-value">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">📞 Contact:</span>
+              <span class="detail-value">${reservation.phone}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">📧 Email:</span>
+              <span class="detail-value">${reservation.email}</span>
+            </div>
+          </div>
+
+          ${reservation.special_requests ? `
+          <div class="special-requests">
+            <h4>Special Requests</h4>
+            <p style="margin-bottom: 0; color: #495057; font-weight: 500; line-height: 1.6;">${reservation.special_requests}</p>
+          </div>
+          ` : ''}
+
+          <div class="divider"></div>
+
+          <div class="next-steps">
+            <h4>What Happens Next?</h4>
+            ${reservation.status === 'pending' ? `
+              <p>⏰ Our team will review your request within <strong>2 hours</strong> during business hours.</p>
+              <p>📧 You'll receive a confirmation email once your reservation is approved.</p>
+              <p>❓ If you have any questions, feel free to contact us directly.</p>
+            ` : `
+              <p>✅ Your reservation is <strong>confirmed</strong>! No further action needed.</p>
+              <p>📧 You'll receive a reminder email on the day of your reservation.</p>
+              <p>🍽️ We're excited to welcome you!</p>
+            `}
+            <div style="margin-top: 20px;">
+              <p><strong>📞 (555) 123-4567</strong></p>
+              <p><strong>📧 info@ochel.com</strong></p>
+              <p>🕒 Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>Thank you for choosing <span class="highlight">Magnifiko Réservez</span>! 🌟</p>
+          <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
+            This is an automated confirmation email. Please do not reply to this email.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// Generate plain text email for submission acknowledgment
+function generateSubmissionEmailText(reservation: Reservation): string {
+  const formattedDate = new Date(reservation.reservation_date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const statusMessage = reservation.status === 'pending'
+    ? "Your reservation request is being reviewed by our team. You'll receive a confirmation email once it's approved."
+    : "Your reservation has been automatically confirmed!";
+
+  return `
+    RESERVATION REQUEST RECEIVED - MAGNIFIKO RÉSERVEZ
+
+    Dear ${reservation.name},
+
+    Thank you for choosing Magnifiko Réservez! We have successfully received your reservation request.
+
+    STATUS: ${reservation.status === 'pending' ? 'UNDER REVIEW' : 'CONFIRMED'}
+    ${statusMessage}
+
+    YOUR REQUEST DETAILS:
+    Request ID: #${reservation.id?.slice(-8).toUpperCase()}
+    Date: ${formattedDate}
+    Time: ${reservation.reservation_time}
+    Party Size: ${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}
+    Contact: ${reservation.phone}
+    Email: ${reservation.email}
+
+    ${reservation.special_requests ? `SPECIAL REQUESTS:\n${reservation.special_requests}\n\n` : ''}
+
+    WHAT HAPPENS NEXT:
+    ${reservation.status === 'pending'
+      ? `- Our team will review your request within 2 hours during business hours.
+    - You'll receive a confirmation email once your reservation is approved.
+    - If you have any questions, feel free to contact us directly.`
+      : `- Your reservation is confirmed! No further action needed.
+    - You'll receive a reminder email on the day of your reservation.
+    - We're excited to welcome you!`
+    }
+
+    CONTACT US:
+    Phone: (555) 123-4567
+    Email: info@ochel.com
+    Hours: Open Tuesday-Sunday, 5:00 PM - 11:00 PM
+
+    Thank you for choosing Magnifiko Réservez!
+
+    ---
+    This is an automated confirmation email.
   `;
 }

@@ -257,12 +257,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Statut :</label>
             <button
-              onClick={() => {
-                console.log(`Admin Panel: Toggling day ${activeTab} (${dayNames[activeTab]}) from ${daySchedule.is_open} to ${!daySchedule.is_open}`);
-                updateWeeklySchedule(activeTab, { 
-                  is_open: !daySchedule.is_open 
-                });
-              }}
+              onClick={() => updateWeeklySchedule(activeTab, { 
+                is_open: !daySchedule.is_open 
+              })}
               disabled={isUpdating}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 daySchedule.is_open
@@ -1019,7 +1016,6 @@ export function SettingsTab() {
 
       // Override with saved settings
       if (data && data.length > 0) {
-        console.log('Processing saved weekly schedule data:', data);
         data.forEach(setting => {
           const match = setting.setting_key.match(/^weekly_schedule_(\d+)$/);
           if (match) {
@@ -1027,17 +1023,14 @@ export function SettingsTab() {
             try {
               const dayConfig = JSON.parse(setting.setting_value);
               schedule[dayOfWeek] = { ...schedule[dayOfWeek], ...dayConfig };
-              console.log(`Loaded schedule for day ${dayOfWeek}:`, schedule[dayOfWeek]);
+              console.log(`🏠 ADMIN - Loaded day ${dayOfWeek} (${dayNames[dayOfWeek]}):`, schedule[dayOfWeek]);
             } catch (parseError) {
               console.error(`Error parsing weekly schedule for day ${dayOfWeek}:`, parseError);
             }
           }
         });
-      } else {
-        console.log('No saved weekly schedule found, using defaults');
       }
 
-      console.log('Final weekly schedule:', schedule);
       setWeeklySchedule(schedule);
     } catch (err) {
       console.error('Error loading weekly schedule:', err);
@@ -1073,7 +1066,6 @@ export function SettingsTab() {
       const updatedSchedule = { ...weeklySchedule[dayOfWeek], ...scheduleData };
       const settingKey = `weekly_schedule_${dayOfWeek}`;
       
-      console.log(`Updating weekly schedule for day ${dayOfWeek}:`, updatedSchedule);
       
       // Check if record exists and update accordingly
       const { data: existingRecord } = await supabase
@@ -1231,7 +1223,7 @@ export function SettingsTab() {
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6 font-forum">
       {/* Weekly Schedule Management Section */}
       <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">

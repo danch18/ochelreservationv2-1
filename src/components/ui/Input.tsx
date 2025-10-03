@@ -34,10 +34,25 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               'disabled:bg-gray-100 disabled:text-gray-400',
             error
               ? '!border-[#e54d2e] focus:!border-[#e54d2e] focus:border-[1px]'
-              : '!border-[#F6F1F0] focus:!border-[#FF7043] focus:border-[1px]',
+              : 'focus:border-[1px]',
               icon && 'pr-10',
               className
             )}
+            style={{
+              ...(!error && {
+                borderColor: 'rgba(239, 230, 210, 0.2)',
+              }),
+            }}
+            onFocus={(e) => {
+              if (!error) {
+                e.currentTarget.style.borderColor = 'rgba(239, 230, 210, 0.4)';
+              }
+            }}
+            onBlur={(e) => {
+              if (!error) {
+                e.currentTarget.style.borderColor = 'rgba(239, 230, 210, 0.2)';
+              }
+            }}
             ref={ref}
             {...props}
           />

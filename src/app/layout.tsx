@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { EB_Garamond, Forum } from "next/font/google";
 import { ClientProviders } from "@/components/providers";
+import { GlobalReservationButton } from "@/components/GlobalReservationButton";
+import { DeliveryPopup } from "@/components/DeliveryPopup";
 import "./globals.css";
 
 const satoshi = localFont({
@@ -29,9 +32,21 @@ const satoshi = localFont({
   variable: "--font-satoshi",
 });
 
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  variable: "--font-eb-garamond",
+  weight: ["400", "500", "600", "700"],
+});
+
+const forum = Forum({
+  subsets: ["latin"],
+  variable: "--font-forum",
+  weight: ["400"],
+});
+
 export const metadata: Metadata = {
-  title: "ochel Restaurant - Fine Dining & Reservations",
-  description: "Experience exceptional dining at ochel. Book your table for an unforgettable culinary journey.",
+  title: "Magnifiko - Restaurant Italien Halal à Ivry-sur-Seine",
+  description: "Magnifiko - La référence de la cuisine italienne halal en Île-de-France, certifiée Achahada. Pizzas, pâtes fraîches et desserts traditionnels.",
 };
 
 export default function RootLayout({
@@ -42,10 +57,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${satoshi.variable} font-sans antialiased`}
+        className={`${satoshi.variable} ${ebGaramond.variable} ${forum.variable} font-sans antialiased`}
       >
         <ClientProviders>
           {children}
+          {/* Global Reservation Button - Available on all pages except admin */}
+          <GlobalReservationButton />
+          {/* Global Delivery Popup - Available on all pages */}
+          <DeliveryPopup />
         </ClientProviders>
       </body>
     </html>

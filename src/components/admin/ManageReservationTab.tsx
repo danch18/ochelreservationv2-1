@@ -171,7 +171,7 @@ export function ManageReservationTab({ reservations, isLoading, onReservationsUp
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-forum">
 
       {/* Statistics Cards - Same style as overview page */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">

@@ -52,7 +52,7 @@ export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
 
   return (
     /* Statistics Cards Grid - Responsive layout: 2 columns mobile, 6 columns desktop */
-    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-6 mb-8">
+    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-6 mb-8 font-forum">
       {statItems.map((item, index) => (
         <Card key={index}>
           <CardContent className="p-3 md:p-6">

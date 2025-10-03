@@ -1,0 +1,90 @@
+{
+  "hero": {
+    "title": "BIENVENUE CHEZ",
+    "videoSrc": "/assets/heroBackground.mp4"
+  },
+  "experience": {
+    "subtitle": "Notre Histoire",
+    "title": "UNE EXPÉRIENCE UNIQUE AU CŒUR D'IVRY-SUR-SEINE",
+    "description": "Magnifiko est né d'un rêve : créer un lieu où l'authenticité de l'Italie rencontre le respect des règles halal, dans un cadre moderne, familial et chaleureux. Nous sommes bien plus qu'un restaurant : nous sommes une référence de la cuisine italienne halal en Île-de-France, un espace de partage pour les amateurs de pâtes à l'italienne, de pizzas artisanales Napolitaine, de desserts traditionnels et de produits 100% halal et certifiés.",
+    "images": {
+      "interior": "/images/Interior.webp",
+      "pasta": "/images/Pasta.webp"
+    },
+    "badge": "DEPUIS 2020"
+  },
+  "menu": {
+    "subtitle": "Notre Menu",
+    "title": "LUNCH",
+    "items": [
+      {
+        "title": "NOS PASTA",
+        "description": "Nos pâtes importées d'Italie sont sublimées par les sauces maison préparées par notre chef.",
+        "note": "✓ Sans gluten disponible avec toutes nos pâtes",
+        "image": "/images/Nos Pasta.webp"
+      },
+      {
+        "title": "PIZZAS NAPOLITAINES",
+        "description": "Pizzas napolitaines cuites à la pierre, avec des farines italiennes de qualité supérieure et notre mozzarella fior di latte.",
+        "image": "/images/Pizzas Napolitaines.webp"
+      },
+      {
+        "title": "DESSERTS ITALIENS",
+        "description": "Découvrez nos desserts traditionnels italiens, des fraises à la crème aux panna cotta artisanales, préparés avec amour.",
+        "image": "/images/Deserts Italiens.webp"
+      }
+    ],
+    "button": {
+      "text": "Voir notre menu complet"
+    }
+  },
+  "hours": {
+    "subtitle": "NOTRE CHEF CUISINÉ",
+    "title": "TOUS LES JOURS",
+    "hours": "11H - MINUIT",
+    "note": "(Sauf Vendredi: 14h - Minuit)",
+    "backgroundImage": "/images/restaurant-evening.webp"
+  },
+  "secrets": {
+    "subtitle": "Notre Histoire",
+    "title": "SECRETS DE SAVEUR",
+    "paragraphs": [
+      "Nous croyons que le secret des bonnes pâtes réside aussi dans la sauce, c'est pourquoi toutes nos sauces sont préparées sur place en utilisant uniquement les meilleurs ingrédients. Que vous préfériez une Amatriciana classique, une carbonara crémeuse ou une délicieuse bolognaise, nous avons une sauce qui saura satisfaire vos papilles.",
+      "Dans notre restaurant, nous proposons une variété de formes et de tailles de pâtes artisanales, chacune avec sa propre texture et saveur unique. Que vous préfériez de simples spaghettis ou de copieux tonnarelli, notre sélection de plats de pâtes saura vous plaire."
+    ],
+    "image": "/images/Secrets de Saveur.webp"
+  },
+  "testimonials": {
+    "subtitle": "Nos Témoignages",
+    "title": "CE QUE DISENT NOS CLIENTS",
+    "items": [
+      {
+        "rating": 5,
+        "title": "UN COUP DE CŒUR",
+        "description": "\"Une expérience culinaire exceptionnelle ! Le service est impeccable et chaque plat est une œuvre d'art. Un restaurant que je recommande vivement.\"",
+        "author": {
+          "name": "Marie-Claire Dupont",
+          "title": "Critique gastronomique"
+        }
+      },
+      {
+        "rating": 5,
+        "title": "REFINED, MODERN CUISINE",
+        "description": "\"Le cadre est magnifique et l'atmosphère très chaleureuse. Les pizzas napolitaines sont authentiques et délicieuses. Une adresse à retenir !\"",
+        "author": {
+          "name": "Jean-Michel Bernard",
+          "title": "Chef étoilé"
+        }
+      },
+      {
+        "rating": 5,
+        "title": "EXQUISITE FRENCH CUISINE",
+        "description": "\"Un service attentionné et une cuisine d'exception. Chaque détail est soigné, de l'amuse-bouche au dessert. Une expérience inoubliable.\"",
+        "author": {
+          "name": "Sophie Martin",
+          "title": "Blogueuse gastronomique"
+        }
+      }
+    ]
+  }
+}

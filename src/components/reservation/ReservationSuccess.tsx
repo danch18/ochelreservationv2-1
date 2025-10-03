@@ -16,18 +16,7 @@ export function ReservationSuccess({
   onBack
 }: ReservationSuccessProps) {
   return (
-    <div className="text-center">
-      {onBack && (
-        <div className="flex justify-start mb-4">
-          <button
-            onClick={onBack}
-            className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
-          >
-            ← Retour
-          </button>
-        </div>
-      )}
-      
+    <div className="text-center font-forum">
       <div className="text-primary text-4xl mb-4">✓</div>
       
       <h3 className="text-lg font-bold text-card-foreground mb-3">
