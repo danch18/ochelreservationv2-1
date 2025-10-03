@@ -45,10 +45,10 @@ const defaultSections: FooterSection[] = [
   {
     title: 'NOUS SITUER',
     items: [
-      { label: '123 Avenue de la République', text: '123 Avenue de la République' },
-      { label: '94200 Ivry-sur-Seine', text: '94200 Ivry-sur-Seine' },
-      { label: 'Tél: 01 23 45 67 89', text: 'Tél: 01 23 45 67 89' },
-      { label: 'contact@restaurant-lm.com', text: 'contact@restaurant-lm.com' },
+      { label: '63 Bd Paul Vaillant Couturier', text: '63 Bd Paul Vaillant Couturier' },
+      { label: '94200 Ivry-sur-Seine, France', text: '94200 Ivry-sur-Seine, France' },
+      { label: 'Tél: 01 49 59 00 94', text: 'Tél: 01 49 59 00 94' },
+      { label: 'compte.magnifiko@gmail.com', text: 'compte.magnifiko@gmail.com' },
     ],
   },
   {

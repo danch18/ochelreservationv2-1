@@ -52,6 +52,13 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   }, [isOpen, onToggle]);
 
   const formatDisplayDate = () => {
+    if (value) {
+      const date = new Date(value);
+      const day = date.getDate();
+      const month = date.toLocaleString('fr-FR', { month: 'long' });
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
     return "Date";
   };
 
@@ -170,8 +177,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
           <div className="bg-white">
             <div className="py-4">
               <div className="flex items-center justify-between mb-4 px-4">
-                <button
-                  type="button"
+                <div
                   onClick={() => {
                     if (currentMonth) {
                       const newDate = new Date(currentMonth);
@@ -179,17 +185,25 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="w-10 h-10 hover:bg-gray-100 rounded transition-colors duration-200 flex items-center justify-center"
+                  className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(239, 230, 210, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+                  }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                </button>
+                </div>
                 <h3 className="font-semibold text-gray-800">
                   {currentMonth ? `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}` : ''}
                 </h3>
-                <button
-                  type="button"
+                <div
                   onClick={() => {
                     if (currentMonth) {
                       const newDate = new Date(currentMonth);
@@ -197,12 +211,21 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                       setCurrentMonth(newDate);
                     }
                   }}
-                  className="w-10 h-10 hover:bg-gray-100 rounded transition-colors duration-200 flex items-center justify-center"
+                  className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(239, 230, 210, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+                  }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
+                </div>
               </div>
 
               {/* Calendar Grid */}
@@ -217,32 +240,39 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                   <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
                   
                   {days.map((day) => (
-                    <button
+                    <div
                       key={day.date}
-                      type="button"
-                      disabled={day.isPast || day.isClosed}
                       onClick={() => {
                         if (!day.isPast && !day.isClosed) {
                           onChange(day.date);
                         }
                       }}
                       className={`
-                        aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200
+                        aspect-square p-1 text-xs sm:text-sm rounded transition-all duration-200 flex items-center justify-center
                         ${!day.isCurrentMonth
-                          ? 'text-gray-300 cursor-default'
+                          ? 'cursor-default'
                           : day.isPast
-                          ? 'text-gray-300 cursor-not-allowed'
+                          ? 'cursor-not-allowed'
                           : day.isClosed
-                          ? 'text-gray-400 cursor-not-allowed line-through'
+                          ? 'cursor-not-allowed line-through'
                           : day.isSelected
-                          ? 'bg-[#FF7043]/5 !border !border-[#FF7043] text-[#FF7043] font-medium'
-                          : 'text-black hover:bg-[#FF7043]/5 hover:border hover:border-[#FF7043] cursor-pointer'
+                          ? 'font-medium cursor-pointer'
+                          : 'cursor-pointer'
                         }
                       `}
                       title={day.isClosed ? 'Restaurant fermé' : ''}
+                      style={{
+                        backgroundColor: 'transparent',
+                        color: (!day.isCurrentMonth || day.isPast || day.isClosed)
+                          ? 'rgba(239, 230, 210, 0.1)'
+                          : day.isSelected
+                          ? '#EFE6D2'
+                          : '#EFE6D2',
+                        border: day.isSelected ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                      }}
                     >
                       {day.day}
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -292,6 +322,9 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
   }, [isOpen, onToggle]);
 
   const formatDisplayTime = () => {
+    if (value) {
+      return value;
+    }
     return "Heure";
   };
 
@@ -370,27 +403,33 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
         }`}>
           <div className="bg-white">
             <div className="py-4">
-              {/* Time slots in tag layout */}
-              <div className="flex flex-wrap gap-2 px-4">
-                {timeSlots.map(time => (
-                  <button
-                    key={time}
-                    type="button"
-                    onClick={() => !disabled && onChange(time)}
-                    disabled={disabled}
-                    className={`
-                      px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                      border whitespace-nowrap flex-shrink-0
-                      ${value === time
-                        ? '!border-[#FF7043] bg-[#FF7043] text-white' 
-                        : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
-                      }
-                      ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                    `}
-                  >
-                    {time}
-                  </button>
-                ))}
+              {/* Time slots in grid layout */}
+              <div className="px-4">
+                <div className="border border-white/30 rounded-[8px] p-[6px]">
+                  <div className="grid grid-cols-3 gap-1">
+                    {timeSlots.map(time => (
+                      <div
+                        key={time}
+                        onClick={() => !disabled && onChange(time)}
+                        className={`
+                          text-[14px] text-center rounded-[6px] transition-all duration-200 py-2 px-4
+                          min-h-[40px] flex items-center justify-center whitespace-nowrap
+                          ${value === time
+                            ? 'text-[#FFD65A]'
+                            : 'text-[#EFE6D2] hover:text-[#FFD65A]'
+                          }
+                          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                        `}
+                        style={{
+                          backgroundColor: 'rgba(239, 230, 210, 0.1)',
+                          border: value === time ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                        }}
+                      >
+                        {time}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -418,7 +457,7 @@ interface GuestsDropdownProps {
 function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false, onToggle }: GuestsDropdownProps) {
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const shortcuts = [1, 2, 3, 4, 5];
+  const shortcuts = [1, 2, 3, 4, 5, 6];
 
   // Initialize after mount to avoid hydration issues
   useEffect(() => {
@@ -536,27 +575,31 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
               {/* Quick shortcuts */}
               <div className="px-4">
                 <div className="text-xs font-medium text-gray-500 mb-2">Sélection rapide</div>
-                <div className="flex flex-wrap gap-2">
-                  {shortcuts.map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => !disabled && onChange(num.toString())}
-                      disabled={disabled}
-                      className={`
-                        px-3 py-2 rounded-2xl text-sm font-medium transition-all duration-200
-                        border min-w-[65px] flex-shrink-0
-                        ${value === num.toString()
-                          ? '!border-[#FF7043] bg-[#FF7043] text-white' 
-                          : '!border-[#F6F1F0] bg-black/[0.03] text-black hover:!border-[#FF7043] hover:bg-[#FF7043]/5'
-                        }
-                        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                      `}
-                    >
-                      <span>{num}</span>
-                      <span className="text-xs"> invités</span>
-                    </button>
-                  ))}
+                <div className="border border-white/30 rounded-[8px] p-[6px]">
+                  <div className="grid grid-cols-3 grid-rows-2 gap-1">
+                    {shortcuts.map(num => (
+                      <div
+                        key={num}
+                        onClick={() => !disabled && onChange(num.toString())}
+                        className={`
+                          text-[14px] text-center rounded-[6px] transition-all duration-200 py-2 px-4
+                          min-h-[40px] flex items-center justify-center whitespace-nowrap
+                          ${value === num.toString()
+                            ? 'text-[#FFD65A]'
+                            : 'text-[#EFE6D2] hover:text-[#FFD65A]'
+                          }
+                          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                        `}
+                        style={{
+                          backgroundColor: 'rgba(239, 230, 210, 0.1)',
+                          border: value === num.toString() ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
+                        }}
+                      >
+                        <span>{num}</span>
+                        <span className="text-xs ml-1">invités</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -656,12 +699,23 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
         {onBack && (
           <div className="mb-6">
-            <button
+            <div
               onClick={onBack}
-              className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+              className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+              style={{
+                backgroundColor: 'rgba(239, 230, 210, 0.1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+              }}
             >
-              ← Retour
-            </button>
+              <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
           </div>
         )}
 
@@ -772,12 +826,23 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
     <div className="bg-popover rounded-2xl p-2 flex flex-col h-full max-h-[90vh] w-full max-w-6xl font-forum">
       {/* Header */}
       <div className="flex items-center mb-6">
-        <button
+        <div
           onClick={handleBackToStep1}
-          className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+          className="w-10 h-10 rounded transition-all duration-200 flex items-center justify-center cursor-pointer"
+          style={{
+            backgroundColor: 'rgba(239, 230, 210, 0.1)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(239, 230, 210, 0.1)';
+          }}
         >
-          ← Retour
-        </button>
+          <svg className="w-4 h-4" fill="none" stroke="#EFE6D2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
       </div>
 
       {submitError && (
@@ -893,7 +958,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Sauvegardez les informations pour mes prochaines réservations.</span>
+                  <span className="text-gray-600">Sauvegardez les informations pour mes prochaines réservations.</span>
                 </label>
                 
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -902,8 +967,8 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                     required
                   />
-                  <span className="text-gray-700">
-                    J'accepte les conditions générales d'utilisation du service. 
+                  <span className="text-gray-600">
+                    J'accepte les conditions générales d'utilisation du service.
                     <span className="text-red-500 ml-1">*</span>
                   </span>
                 </label>
@@ -913,7 +978,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Envoyez-moi des offres et actualités par e-mail.</span>
+                  <span className="text-gray-600">Envoyez-moi des offres et actualités par e-mail.</span>
                 </label>
 
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -921,7 +986,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-700">Envoyez-moi des offres et actualités par SMS.</span>
+                  <span className="text-gray-600">Envoyez-moi des offres et actualités par SMS.</span>
                 </label>
               </div>
             </div>
