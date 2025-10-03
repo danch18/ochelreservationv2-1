@@ -25,7 +25,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex items-center py-3 px-4 border-b-2 font-medium text-sm transition-colors rounded-t-lg',
+                'flex items-center py-3 px-4 border-b-2 font-medium text-sm transition-colors rounded-t-lg cursor-pointer',
                 activeTab === tab.id
                   ? '!border-[#F34A23] text-[#F34A23] bg-[#F34A23]/5'
                   : 'border-transparent text-black/70 hover:text-black hover:!border-[#F34A23]/30 hover:bg-[#F34A23]/5'
@@ -45,7 +45,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex-1 flex flex-col items-center justify-center py-3 px-2 transition-all duration-200',
+                'flex-1 flex flex-col items-center justify-center py-3 px-2 transition-all duration-200 cursor-pointer',
                 activeTab === tab.id
                   ? 'text-[#F34A23] bg-[#F34A23]/5'
                   : 'text-gray-600 hover:text-[#F34A23] hover:bg-[#F34A23]/5'

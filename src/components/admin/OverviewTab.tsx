@@ -241,7 +241,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
             <button
               key={option.key}
               onClick={() => setStatsFilter(option.key)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out cursor-pointer ${
                 statsFilter === option.key
                   ? 'bg-white text-[#F34A23] shadow-sm transform scale-[1.02]'  // Active state: white background with restaurant color text and subtle scale
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:shadow-sm'   // Inactive state: gray text with hover effect

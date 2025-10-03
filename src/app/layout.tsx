@@ -56,6 +56,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js" async></script>
+      </head>
       <body
         className={`${satoshi.variable} ${ebGaramond.variable} ${forum.variable} font-sans antialiased`}
       >

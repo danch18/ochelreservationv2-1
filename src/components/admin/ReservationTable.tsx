@@ -171,7 +171,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
 
         <button
           onClick={toggleSortOrder}
-          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm hover:bg-[#F34A23]/5 hover:border-[#F34A23] transition-colors flex items-center gap-2"
+          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm hover:bg-[#F34A23]/5 hover:border-[#F34A23] transition-colors flex items-center gap-2 cursor-pointer"
           title={sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
         >
           <span className="text-gray-700">

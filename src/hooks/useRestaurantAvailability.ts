@@ -100,7 +100,7 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
 
         const { data: dateData, error: dateError } = await supabase
           .from('closed_dates')
-          .select('date, is_closed, reason, opening_time, closing_time')
+          .select('date, is_closed, reason, opening_time, closing_time, morning_opening, morning_closing, afternoon_opening, afternoon_closing, use_split_hours')
           .gte('date', startDateStr)
           .lte('date', endDateStr);
 
@@ -216,23 +216,31 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
     const slots: string[] = [];
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
-    
+
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
-    
+
+    // Generate consecutive 30-minute slots (e.g., "10:00-10:30", "10:30-11:00")
     for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const min = minutes % 60;
-      const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-      slots.push(timeStr);
+      const startSlot = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+
+      // Calculate end time of this slot (30 minutes later)
+      const endSlotMinutes = minutes + 30;
+      const endSlotHour = Math.floor(endSlotMinutes / 60);
+      const endSlotMin = endSlotMinutes % 60;
+      const endSlot = `${endSlotHour.toString().padStart(2, '0')}:${endSlotMin.toString().padStart(2, '0')}`;
+
+      slots.push(`${startSlot}-${endSlot}`);
     }
-    
+
     return slots;
   };
 
   const getTimeSlots = (date: string): string[] => {
     const status = getDateStatus(date);
-    
+
     // If date is closed, return empty array
     if (status?.is_closed) {
       return [];
@@ -244,17 +252,17 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
       const morningEnd = status.morning_closing || '14:00';
       const afternoonStart = status.afternoon_opening || '19:00';
       const afternoonEnd = status.afternoon_closing || '22:00';
-      
+
       const morningSlots = generateTimeSlots(morningStart, morningEnd);
       const afternoonSlots = generateTimeSlots(afternoonStart, afternoonEnd);
-      
+
       return [...morningSlots, ...afternoonSlots];
     }
 
     // Handle continuous hours
     const openTime = status?.opening_time || '10:00';
     const closeTime = status?.closing_time || '20:00';
-    
+
     return generateTimeSlots(openTime, closeTime);
   };
 
