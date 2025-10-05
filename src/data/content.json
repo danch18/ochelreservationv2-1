@@ -10,8 +10,7 @@
     "images": {
       "interior": "/images/Interior.webp",
       "pasta": "/images/Pasta.webp"
-    },
-    "badge": "DEPUIS 2020"
+    }
   },
   "menu": {
     "subtitle": "Notre Menu",
@@ -39,7 +38,7 @@
     }
   },
   "hours": {
-    "subtitle": "NOTRE CHEF CUISINÉ",
+    "subtitle": "ON VOUS ATTEND",
     "title": "TOUS LES JOURS",
     "hours": "11H - MINUIT",
     "note": "(Sauf Vendredi: 14h - Minuit)",
@@ -64,8 +63,10 @@
         "description": "\"Une expérience culinaire exceptionnelle ! Le service est impeccable et chaque plat est une œuvre d'art. Un restaurant que je recommande vivement.\"",
         "author": {
           "name": "Marie-Claire Dupont",
-          "title": "Critique gastronomique"
-        }
+          "title": "Critique gastronomique",
+          "image": "/images/testimonial/marie-claire.jpg"
+        },
+        "link": "#"
       },
       {
         "rating": 5,
@@ -73,8 +74,10 @@
         "description": "\"Le cadre est magnifique et l'atmosphère très chaleureuse. Les pizzas napolitaines sont authentiques et délicieuses. Une adresse à retenir !\"",
         "author": {
           "name": "Jean-Michel Bernard",
-          "title": "Chef étoilé"
-        }
+          "title": "Chef étoilé",
+          "image": "/images/testimonial/jean-michel.jpg"
+        },
+        "link": "#"
       },
       {
         "rating": 5,
@@ -82,8 +85,10 @@
         "description": "\"Un service attentionné et une cuisine d'exception. Chaque détail est soigné, de l'amuse-bouche au dessert. Une expérience inoubliable.\"",
         "author": {
           "name": "Sophie Martin",
-          "title": "Blogueuse gastronomique"
-        }
+          "title": "Blogueuse gastronomique",
+          "image": "/images/testimonial/sophie.jpg"
+        },
+        "link": "#"
       }
     ]
   }
