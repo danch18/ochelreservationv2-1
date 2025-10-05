@@ -63,6 +63,17 @@ export function ReservationPopup() {
     });
   }, []);
 
+  const handlePopupClose = useCallback(() => {
+    // Reset everything when popup closes
+    requestAnimationFrame(() => {
+      setCurrentView('form');
+      setSubmittedReservation(null);
+      setLookupEmail('');
+      setCurrentFormStep(1);
+      setFormKey(prev => prev + 1); // Force complete form reset
+    });
+  }, []);
+
   const handleStepChange = useCallback((step: 1 | 2) => {
     setCurrentFormStep(step);
   }, []);
@@ -160,7 +171,10 @@ export function ReservationPopup() {
   ]);
 
   return (
-    <FloatingActionButton currentStep={currentView === 'form' ? currentFormStep : 1}>
+    <FloatingActionButton
+      currentStep={currentView === 'form' ? currentFormStep : 1}
+      onClose={handlePopupClose}
+    >
       {renderContent}
     </FloatingActionButton>
   );

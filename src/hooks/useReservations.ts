@@ -12,7 +12,7 @@ export function useReservations() {
 
   const loadReservations = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
-    
+
     try {
       const data = await reservationService.getAllReservations();
       setState({ data, loading: false, error: null });
@@ -26,6 +26,37 @@ export function useReservations() {
 
   useEffect(() => {
     loadReservations();
+
+    // Set up real-time subscription for reservations
+    const setupRealtimeSubscription = async () => {
+      const { supabase } = await import('@/lib/supabase');
+
+      const channel = supabase
+        .channel('reservations-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Listen to all events: INSERT, UPDATE, DELETE
+            schema: 'public',
+            table: 'reservations'
+          },
+          (payload) => {
+            // Refresh reservations when any change occurs
+            loadReservations();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    };
+
+    const cleanup = setupRealtimeSubscription();
+
+    return () => {
+      cleanup.then(fn => fn && fn());
+    };
   }, [loadReservations]);
 
   return {

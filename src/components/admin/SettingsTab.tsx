@@ -226,13 +226,41 @@ interface WeeklyScheduleTabsProps {
 
 function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeeklySchedule, dayNames }: WeeklyScheduleTabsProps) {
   const [activeTab, setActiveTab] = useState(0);
+  const [localSchedule, setLocalSchedule] = useState<WeeklySchedule | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const daySchedule = weeklySchedule[activeTab];
   const isUpdating = updatingWeeklySchedule === activeTab;
 
-  if (!daySchedule) {
+  // Initialize local schedule when tab changes or schedule updates
+  useEffect(() => {
+    setLocalSchedule(daySchedule);
+    setHasChanges(false);
+  }, [activeTab, daySchedule]);
+
+  if (!daySchedule || !localSchedule) {
     return null;
   }
+
+  // Update local state only
+  const updateLocalSchedule = (updates: Partial<WeeklySchedule>) => {
+    setLocalSchedule(prev => prev ? { ...prev, ...updates } : null);
+    setHasChanges(true);
+  };
+
+  // Save changes to database
+  const handleSave = async () => {
+    if (localSchedule && hasChanges) {
+      await updateWeeklySchedule(activeTab, localSchedule);
+      setHasChanges(false);
+    }
+  };
+
+  // Discard changes
+  const handleDiscard = () => {
+    setLocalSchedule(daySchedule);
+    setHasChanges(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -268,22 +296,22 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Statut :</label>
             <button
-              onClick={() => updateWeeklySchedule(activeTab, {
-                is_open: !daySchedule.is_open
+              onClick={() => updateLocalSchedule({
+                is_open: !localSchedule.is_open
               })}
               disabled={isUpdating}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                daySchedule.is_open
+                localSchedule.is_open
                   ? 'bg-green-100 text-green-700 hover:bg-green-200'
                   : 'bg-red-100 text-red-700 hover:bg-red-200'
               }`}
             >
-              {daySchedule.is_open ? 'Ouvert' : 'Fermé'}
+              {localSchedule.is_open ? 'Ouvert' : 'Fermé'}
             </button>
           </div>
 
           {/* Hours Configuration */}
-          {daySchedule.is_open && (
+          {localSchedule.is_open && (
             <>
               {/* Split Hours Toggle */}
               <div className="flex items-center gap-4">
@@ -291,37 +319,37 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                 <button
                   className="cursor-pointer"
                   onClick={() => {
-                    const newSplitHours = !daySchedule.use_split_hours;
+                    const newSplitHours = !localSchedule.use_split_hours;
                     const updateData: Partial<WeeklySchedule> = {
                       use_split_hours: newSplitHours
                     };
-                    
+
                     // When switching to split hours, ensure all split hour fields are initialized
                     if (newSplitHours) {
-                      updateData.morning_opening = daySchedule.morning_opening || '10:00';
-                      updateData.morning_closing = daySchedule.morning_closing || '14:00';
-                      updateData.afternoon_opening = daySchedule.afternoon_opening || '19:00';
-                      updateData.afternoon_closing = daySchedule.afternoon_closing || '22:00';
+                      updateData.morning_opening = localSchedule.morning_opening || '10:00';
+                      updateData.morning_closing = localSchedule.morning_closing || '14:00';
+                      updateData.afternoon_opening = localSchedule.afternoon_opening || '19:00';
+                      updateData.afternoon_closing = localSchedule.afternoon_closing || '22:00';
                     } else {
                       // When switching to continuous hours, ensure single hour fields are initialized
-                      updateData.single_opening = daySchedule.single_opening || '10:00';
-                      updateData.single_closing = daySchedule.single_closing || '20:00';
+                      updateData.single_opening = localSchedule.single_opening || '10:00';
+                      updateData.single_closing = localSchedule.single_closing || '20:00';
                     }
-                    
-                    updateWeeklySchedule(activeTab, updateData);
+
+                    updateLocalSchedule(updateData);
                   }}
                   disabled={isUpdating}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    daySchedule.use_split_hours
+                    localSchedule.use_split_hours
                       ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {daySchedule.use_split_hours ? 'Horaires coupés' : 'Horaire continu'}
+                  {localSchedule.use_split_hours ? 'Horaires coupés' : 'Horaire continu'}
                 </button>
               </div>
 
-              {daySchedule.use_split_hours ? (
+              {localSchedule.use_split_hours ? (
                 // Split hours (morning + afternoon)
                 <div className="space-y-6 md:space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -332,9 +360,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                       <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                         <Input
                           type="time"
-                          value={daySchedule.morning_opening || '10:00'}
-                          onChange={(e) => updateWeeklySchedule(activeTab, { 
-                            morning_opening: e.target.value 
+                          value={localSchedule.morning_opening || '10:00'}
+                          onChange={(e) => updateLocalSchedule({
+                            morning_opening: e.target.value
                           })}
                           disabled={isUpdating}
                           className="w-full sm:w-42 sm:flex-1"
@@ -342,16 +370,16 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
                           type="time"
-                          value={daySchedule.morning_closing || '14:00'}
-                          onChange={(e) => updateWeeklySchedule(activeTab, { 
-                            morning_closing: e.target.value 
+                          value={localSchedule.morning_closing || '14:00'}
+                          onChange={(e) => updateLocalSchedule({
+                            morning_closing: e.target.value
                           })}
                           disabled={isUpdating}
                           className="w-full sm:w-42 sm:flex-1"
                         />
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <label className="block text-sm font-medium text-gray-700">
                         Service Soir
@@ -359,9 +387,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                       <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                         <Input
                           type="time"
-                          value={daySchedule.afternoon_opening || '19:00'}
-                          onChange={(e) => updateWeeklySchedule(activeTab, { 
-                            afternoon_opening: e.target.value 
+                          value={localSchedule.afternoon_opening || '19:00'}
+                          onChange={(e) => updateLocalSchedule({
+                            afternoon_opening: e.target.value
                           })}
                           disabled={isUpdating}
                           className="w-full sm:w-42 sm:flex-1"
@@ -369,9 +397,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                         <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                         <Input
                           type="time"
-                          value={daySchedule.afternoon_closing || '22:00'}
-                          onChange={(e) => updateWeeklySchedule(activeTab, { 
-                            afternoon_closing: e.target.value 
+                          value={localSchedule.afternoon_closing || '22:00'}
+                          onChange={(e) => updateLocalSchedule({
+                            afternoon_closing: e.target.value
                           })}
                           disabled={isUpdating}
                           className="w-full sm:w-42 sm:flex-1"
@@ -389,9 +417,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
                     <Input
                       type="time"
-                      value={daySchedule.single_opening || '10:00'}
-                      onChange={(e) => updateWeeklySchedule(activeTab, { 
-                        single_opening: e.target.value 
+                      value={localSchedule.single_opening || '10:00'}
+                      onChange={(e) => updateLocalSchedule({
+                        single_opening: e.target.value
                       })}
                       disabled={isUpdating}
                       className="w-full sm:w-42"
@@ -399,9 +427,9 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                     <span className="text-gray-500 font-medium text-center py-1 sm:py-0">à</span>
                     <Input
                       type="time"
-                      value={daySchedule.single_closing || '20:00'}
-                      onChange={(e) => updateWeeklySchedule(activeTab, { 
-                        single_closing: e.target.value 
+                      value={localSchedule.single_closing || '20:00'}
+                      onChange={(e) => updateLocalSchedule({
+                        single_closing: e.target.value
                       })}
                       disabled={isUpdating}
                       className="w-full sm:w-42"
@@ -412,6 +440,27 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
             </>
           )}
         </div>
+
+        {/* Save/Discard Buttons */}
+        {hasChanges && (
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDiscard}
+              disabled={isUpdating}
+            >
+              Annuler
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Sauvegarde...' : 'Sauvegarder'}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -524,7 +573,8 @@ export function SettingsTab() {
   // Toggle date status (open/closed) using direct Supabase call
   const toggleDateStatus = async (day: number) => {
     const dateStr = formatDate(currentYear, currentMonth, day);
-    const currentStatus = dateStatuses[dateStr];
+    const currentStatus = getDateStatus(day); // Use computed status (includes weekly schedule)
+    const specificDateStatus = dateStatuses[dateStr]; // Only specific overrides
     const newStatus = !currentStatus?.is_closed;
 
     try {
@@ -534,86 +584,17 @@ export function SettingsTab() {
       const { supabase } = await import('@/lib/supabase');
 
       if (newStatus) {
-        // Setting to closed - check if record exists and update accordingly
-        const { data: existingRecord } = await supabase
-          .from('closed_dates')
-          .select('*')
-          .eq('date', dateStr)
-          .single();
+        // Setting to closed
 
-        let data, error;
+        // Check if weekly schedule says this day should be closed
+        const date = new Date(currentYear, currentMonth, day);
+        const dayOfWeek = date.getDay();
+        const weeklyScheduleForDay = weeklySchedule[dayOfWeek];
+        const isClosedInWeeklySchedule = weeklyScheduleForDay && !weeklyScheduleForDay.is_open;
 
-        if (existingRecord) {
-          // Update existing record to closed
-          const result = await supabase
-            .from('closed_dates')
-            .update({
-              is_closed: true,
-              reason: 'Fermé manuellement',
-              opening_time: currentStatus?.opening_time || '10:00',
-              closing_time: currentStatus?.closing_time || '20:00',
-              updated_at: new Date().toISOString(),
-            })
-            .eq('date', dateStr)
-            .select()
-            .single();
-          
-          data = result.data;
-          error = result.error;
-        } else {
-          // Create new record
-          const result = await supabase
-            .from('closed_dates')
-            .insert({
-              date: dateStr,
-              is_closed: true,
-              reason: 'Fermé manuellement',
-              opening_time: currentStatus?.opening_time || '10:00',
-              closing_time: currentStatus?.closing_time || '20:00',
-            })
-            .select()
-            .single();
-          
-          data = result.data;
-          error = result.error;
-        }
-
-        if (error) {
-          throw new Error(`Erreur Supabase lors de la fermeture: ${error.message} (code: ${error.code})`);
-        }
-
-        setDateStatuses(prev => ({
-          ...prev,
-          [dateStr]: data,
-        }));
-      } else {
-        // Setting to open - either update to false or delete if default hours
-        const hasCustomHours = 
-          (currentStatus?.opening_time && currentStatus.opening_time !== '10:00') ||
-          (currentStatus?.closing_time && currentStatus.closing_time !== '20:00');
-
-        if (hasCustomHours) {
-          // Keep record but set is_closed to false
-          const { data, error } = await supabase
-            .from('closed_dates')
-            .update({
-              is_closed: false,
-              reason: null,
-            })
-            .eq('date', dateStr)
-            .select()
-            .single();
-
-          if (error) {
-            throw new Error(`Erreur Supabase lors de l'ouverture: ${error.message} (code: ${error.code})`);
-          }
-
-          setDateStatuses(prev => ({
-            ...prev,
-            [dateStr]: data,
-          }));
-        } else {
-          // Delete record (default open state)
+        if (isClosedInWeeklySchedule && specificDateStatus) {
+          // Day is closed in weekly schedule AND has an override (was opened exceptionally)
+          // Delete the override to revert to weekly schedule
           const { error } = await supabase
             .from('closed_dates')
             .delete()
@@ -628,6 +609,129 @@ export function SettingsTab() {
             delete newState[dateStr];
             return newState;
           });
+        } else {
+          // Either day is normally open OR we're creating a specific closure
+          const { data: existingRecord } = await supabase
+            .from('closed_dates')
+            .select('*')
+            .eq('date', dateStr)
+            .single();
+
+          let data, error;
+
+          if (existingRecord) {
+            // Update existing record to closed
+            const result = await supabase
+              .from('closed_dates')
+              .update({
+                is_closed: true,
+                reason: 'Fermé manuellement',
+                opening_time: specificDateStatus?.opening_time || currentStatus?.opening_time || '10:00',
+                closing_time: specificDateStatus?.closing_time || currentStatus?.closing_time || '20:00',
+                updated_at: new Date().toISOString(),
+              })
+              .eq('date', dateStr)
+              .select()
+              .single();
+
+            data = result.data;
+            error = result.error;
+          } else {
+            // Create new record (specific closure for normally-open day)
+            const result = await supabase
+              .from('closed_dates')
+              .insert({
+                date: dateStr,
+                is_closed: true,
+                reason: 'Fermé manuellement',
+                opening_time: currentStatus?.opening_time || '10:00',
+                closing_time: currentStatus?.closing_time || '20:00',
+              })
+              .select()
+              .single();
+
+            data = result.data;
+            error = result.error;
+          }
+
+          if (error) {
+            throw new Error(`Erreur Supabase lors de la fermeture: ${error.message} (code: ${error.code})`);
+          }
+
+          setDateStatuses(prev => ({
+            ...prev,
+            [dateStr]: data,
+          }));
+        }
+      } else {
+        // Setting to open
+
+        if (specificDateStatus) {
+          // Record exists - either update or delete
+          const hasCustomHours =
+            (specificDateStatus.opening_time && specificDateStatus.opening_time !== '10:00') ||
+            (specificDateStatus.closing_time && specificDateStatus.closing_time !== '20:00') ||
+            specificDateStatus.use_split_hours;
+
+          if (hasCustomHours) {
+            // Keep record but set is_closed to false (has custom hours)
+            const { data, error } = await supabase
+              .from('closed_dates')
+              .update({
+                is_closed: false,
+                reason: null,
+              })
+              .eq('date', dateStr)
+              .select()
+              .single();
+
+            if (error) {
+              throw new Error(`Erreur Supabase lors de l'ouverture: ${error.message} (code: ${error.code})`);
+            }
+
+            setDateStatuses(prev => ({
+              ...prev,
+              [dateStr]: data,
+            }));
+          } else {
+            // No custom hours, delete the record (revert to weekly schedule)
+            const { error } = await supabase
+              .from('closed_dates')
+              .delete()
+              .eq('date', dateStr);
+
+            if (error) {
+              throw new Error(`Erreur Supabase lors de la suppression: ${error.message} (code: ${error.code})`);
+            }
+
+            setDateStatuses(prev => {
+              const newState = { ...prev };
+              delete newState[dateStr];
+              return newState;
+            });
+          }
+        } else {
+          // No existing record - need to CREATE one to override weekly schedule closure
+          const { data, error } = await supabase
+            .from('closed_dates')
+            .insert({
+              date: dateStr,
+              is_closed: false,
+              reason: 'Ouvert exceptionnellement',
+              opening_time: currentStatus?.opening_time || '10:00',
+              closing_time: currentStatus?.closing_time || '20:00',
+            })
+            .select()
+            .single();
+
+          if (error) {
+            throw new Error(`Erreur Supabase lors de la création: ${error.message} (code: ${error.code})`);
+          }
+
+          setDateStatuses(prev => ({
+            ...prev,
+            [dateStr]: data,
+          }));
         }
       }
 
@@ -1035,7 +1139,6 @@ export function SettingsTab() {
             try {
               const dayConfig = JSON.parse(setting.setting_value);
               schedule[dayOfWeek] = { ...schedule[dayOfWeek], ...dayConfig };
-              console.log(`🏠 ADMIN - Loaded day ${dayOfWeek} (${dayNames[dayOfWeek]}):`, schedule[dayOfWeek]);
             } catch (parseError) {
               console.error(`Error parsing weekly schedule for day ${dayOfWeek}:`, parseError);
             }
@@ -1074,11 +1177,10 @@ export function SettingsTab() {
       setUpdatingWeeklySchedule(dayOfWeek);
       setError(null);
       const { supabase } = await import('@/lib/supabase');
-      
+
       const updatedSchedule = { ...weeklySchedule[dayOfWeek], ...scheduleData };
       const settingKey = `weekly_schedule_${dayOfWeek}`;
-      
-      
+
       // Check if record exists and update accordingly
       const { data: existingRecord } = await supabase
         .from('restaurant_settings')
@@ -1090,7 +1192,6 @@ export function SettingsTab() {
 
       if (existingRecord) {
         // Update existing record
-        console.log(`Updating existing weekly schedule record for day ${dayOfWeek}`);
         const result = await supabase
           .from('restaurant_settings')
           .update({
@@ -1101,12 +1202,11 @@ export function SettingsTab() {
           .eq('setting_key', settingKey)
           .select()
           .single();
-        
+
         data = result.data;
         error = result.error;
       } else {
         // Create new record
-        console.log(`Creating new weekly schedule record for day ${dayOfWeek}`);
         const result = await supabase
           .from('restaurant_settings')
           .insert({
@@ -1116,7 +1216,7 @@ export function SettingsTab() {
           })
           .select()
           .single();
-        
+
         data = result.data;
         error = result.error;
       }
@@ -1124,8 +1224,6 @@ export function SettingsTab() {
       if (error) {
         throw new Error(`Erreur base de données: ${error.message} (code: ${error.code})`);
       }
-
-      console.log(`Successfully updated weekly schedule for day ${dayOfWeek}:`, data);
 
       // Update local state
       setWeeklySchedule(prev => ({
