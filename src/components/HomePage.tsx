@@ -110,29 +110,6 @@ export default function HomePage() {
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
-
-              {/* Badge */}
-              <div style={{
-                display: 'flex',
-                padding: '0.9375rem 1rem 1rem 1rem',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '0.625rem',
-                alignSelf: 'stretch',
-                borderRadius: '0.75rem',
-                border: '1px solid rgba(255, 255, 255, 0.10)',
-                background: '#101010'
-              }}>
-                <p style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.375rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}>{content.experience.badge}</p>
-              </div>
             </div>
           </div>
         </div>
@@ -160,23 +137,25 @@ export default function HomePage() {
 
           {/* View Menu Button */}
           <div className="flex justify-center mt-6">
-            <button style={{
-              display: 'flex',
-              height: '2.5rem',
-              padding: '0 3rem',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: '0.625rem',
-              background: '#FFF2CC',
-              color: '#000',
-              fontFamily: 'Forum',
-              fontSize: '1rem',
-              fontWeight: 400,
-              border: 'none',
-              cursor: 'pointer'
-            }}>
-              {content.menu.button.text}
-            </button>
+            <Link href="/menu">
+              <button style={{
+                display: 'flex',
+                height: '2.5rem',
+                padding: '0 3rem',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '0.625rem',
+                background: '#FFF2CC',
+                color: '#000',
+                fontFamily: 'Forum',
+                fontSize: '1rem',
+                fontWeight: 400,
+                border: 'none',
+                cursor: 'pointer'
+              }}>
+                {content.menu.button.text}
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -318,6 +297,7 @@ export default function HomePage() {
                 title={testimonial.title}
                 description={testimonial.description}
                 author={testimonial.author}
+                link={testimonial.link}
               />
             ))}
           </div>

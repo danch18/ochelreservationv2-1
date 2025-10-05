@@ -43,7 +43,7 @@ export function PublicFooter() {
         socialLinks={[
           { label: 'Instagram', href: '#', icon: 'instagram' },
           { label: 'Facebook', href: '#', icon: 'facebook' },
-          { label: 'Twitter', href: '#', icon: 'twitter' },
+          { label: 'TikTok', href: '#', icon: 'tiktok' },
         ]}
         copyright="© 2025 Magnifiko. All rights reserved"
       />

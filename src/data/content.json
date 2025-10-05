@@ -55,13 +55,13 @@
     "image": "/images/Secrets de Saveur.webp"
   },
   "testimonials": {
-    "subtitle": "Nos Témoignages",
+    "subtitle": "The food was tasty",
     "title": "CE QUE DISENT NOS CLIENTS",
     "items": [
       {
         "rating": 5,
-        "title": "UN COUP DE CŒUR",
-        "description": "\"Une expérience culinaire exceptionnelle ! Le service est impeccable et chaque plat est une œuvre d'art. Un restaurant que je recommande vivement.\"",
+        "title": "The food was tasty",
+        "description": "\"The waiters were incredibly polite and professional. The food was tasty, and everything was prepared on time.\"",
         "author": {
           "name": "Marie-Claire Dupont",
           "title": "Critique gastronomique"
