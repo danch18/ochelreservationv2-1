@@ -574,115 +574,87 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
       <title>Reservation Cancelled</title>
       <style>
         body {
-          font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Forum', Georgia, serif;
           line-height: 1.6;
-          color: #2c3e50;
+          color: #EFE6D2;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+          background: #000000;
           min-height: 100vh;
         }
         .email-container {
-          background: #ffffff;
-          border-radius: 20px;
+          background: #101010;
+          border-radius: 0.25rem;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .header {
-          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-          color: #ffffff;
+          background: #1a1a1a;
+          color: #FFF2CC;
           padding: 40px 24px;
           text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        .header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-          animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
-          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+          border-bottom: 1px solid rgba(255, 255, 255, 0.10);
         }
         .logo {
-          font-size: 2.8em;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          position: relative;
-          z-index: 1;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 32px;
+          font-weight: 400;
+          color: #FFF2CC;
+          margin-bottom: 8px;
+          letter-spacing: 0.5px;
+          line-height: normal;
         }
-        .logo::before {
-          content: '🍽️';
-          font-size: 0.8em;
-          margin-right: 8px;
-        }
-        .cancellation-icon {
-          font-size: 4em;
-          color: #e74c3c;
-          margin: 20px 0;
-          animation: shake 1s ease-in-out infinite;
-        }
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
+        .tagline {
+          color: #FFD65A;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .content {
           padding: 40px 32px;
-          background: #ffffff;
-          color: #2c3e50;
+          background: #101010;
+          color: #EFE6D2;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .greeting {
-          font-size: 1.3em;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 16px;
           margin-bottom: 24px;
-          color: #2c3e50;
-          font-weight: 600;
+          color: #FFF2CC;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .cancellation-message {
-          background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-          border-left: 4px solid #e74c3c;
+          background: rgba(255, 100, 100, 0.1);
+          border-left: 4px solid #ff6464;
           padding: 20px;
           margin: 24px 0;
-          border-radius: 8px;
-          font-size: 1.1em;
-          color: #721c24;
-          font-weight: 500;
+          border-radius: 0.25rem;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          color: #EFE6D2;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .cancelled-details {
-          background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
           padding: 32px;
           margin: 32px 0;
-          border: 2px solid #e74c3c;
-          box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
-          position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
-        .cancelled-details::before {
-          content: '❌';
-          position: absolute;
-          top: -15px;
-          left: 30px;
-          background: #e74c3c;
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 1.2em;
-          box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        .cancelled-details h3 {
+          color: #FFF2CC;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 24px;
+          font-weight: 400;
+          line-height: normal;
+          margin-top: 0;
+          margin-bottom: 24px;
         }
         .detail-row {
           display: flex;
@@ -690,120 +662,104 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
           align-items: center;
           margin-bottom: 16px;
           padding: 12px 0;
-          border-bottom: 1px solid rgba(231, 76, 60, 0.2);
-          transition: all 0.3s ease;
-        }
-        .detail-row:hover {
-          background: rgba(231, 76, 60, 0.05);
-          border-radius: 8px;
-          padding-left: 12px;
-          padding-right: 12px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .detail-row:last-child {
           border-bottom: none;
           margin-bottom: 0;
         }
         .detail-label {
-          font-weight: 700;
-          color: #e74c3c;
-          font-size: 1.05em;
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          font-family: 'Forum', Georgia, serif;
+          font-weight: 400;
+          color: #FFD65A;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .detail-value {
-          color: #2c3e50;
+          font-family: 'Forum', Georgia, serif;
+          color: #EFE6D2;
           text-align: right;
-          font-weight: 600;
-          font-size: 1.05em;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .contact-info {
-          background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
           padding: 32px;
           margin: 32px 0;
           text-align: center;
-          border: 2px solid #17a2b8;
-          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
-          position: relative;
-        }
-        .contact-info::before {
-          content: '📞';
-          position: absolute;
-          top: -15px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #17a2b8;
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 1.2em;
-          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .contact-info h4 {
-          color: #17a2b8;
+          color: #FFD65A;
           margin-top: 0;
           margin-bottom: 20px;
-          font-size: 1.2em;
-          font-weight: 700;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: normal;
         }
         .contact-info p {
-          color: #495057;
+          color: #EFE6D2;
           margin: 12px 0;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
           line-height: 1.6;
-          font-weight: 500;
+          font-weight: 400;
         }
         .footer {
-          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          background: #1a1a1a;
           padding: 32px 24px;
           text-align: center;
-          color: #ecf0f1;
-          font-size: 0.95em;
+          color: #EFE6D2;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          border-top: 1px solid rgba(255, 255, 255, 0.10);
         }
         .footer p {
           margin: 12px 0;
-          font-weight: 500;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .highlight {
-          color: #e74c3c;
-          font-weight: 700;
+          color: #FFD65A;
+          font-weight: 400;
         }
         .reservation-button {
           display: inline-block;
-          background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-          color: #ffffff;
+          background: #FFD65A;
+          color: #000000;
           text-decoration: none;
-          padding: 18px 40px;
-          border-radius: 50px;
-          font-weight: 700;
-          font-size: 18px;
-          margin: 32px 0;
+          padding: 16px 32px;
+          border-radius: 0.25rem;
+          font-family: 'Forum', Georgia, serif;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 1.6;
+          margin: 24px 0;
           border: none;
-          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
           transition: all 0.3s ease;
           text-align: center;
-          min-width: 250px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
+          min-width: 200px;
         }
         .reservation-button:hover {
-          background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
-          transform: translateY(-3px);
-          box-shadow: 0 12px 35px rgba(23, 162, 184, 0.5);
+          background: #EFE6D2;
         }
         .button-container {
           text-align: center;
-          margin: 40px 0 32px 0;
-          padding: 32px 0;
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          border-radius: 16px;
-          border: 2px solid #dee2e6;
+          margin: 32px 0;
+          padding: 24px 0;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .divider {
-          height: 2px;
-          background: linear-gradient(90deg, transparent 0%, #e74c3c 50%, transparent 100%);
+          height: 1px;
+          background: rgba(255, 255, 255, 0.3);
           margin: 32px 0;
-          border-radius: 1px;
         }
         @media (max-width: 640px) {
           body {
@@ -816,7 +772,7 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
             padding: 32px 20px;
           }
           .logo {
-            font-size: 2.2em;
+            font-size: 24px;
           }
           .cancelled-details, .contact-info {
             padding: 24px 20px;
@@ -836,64 +792,61 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
       <div class="email-container">
         <div class="header">
           <div class="logo">Magnifiko Réservez</div>
+          <div class="tagline">Reservation Cancelled</div>
         </div>
-        
+
         <div class="content">
-          <div style="text-align: center;">
-            <div class="cancellation-icon">❌</div>
-          </div>
-          
           <div class="greeting">
             Dear ${reservation.name},
           </div>
-          
+
           <div class="cancellation-message">
-            😔 This email confirms that your reservation has been <strong style="color: #e74c3c;">cancelled</strong>. We're sorry to see you won't be joining us.
+            This email confirms that your reservation has been <span class="highlight">cancelled</span>. We're sorry to see you won't be joining us.
           </div>
-          
+
           <div class="cancelled-details">
-            <h3 style="margin-top: 20px; color: #e74c3c; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Cancelled Reservation</h3>
+            <h3>Cancelled Reservation</h3>
             <div class="detail-row">
-              <span class="detail-label">🆔 Confirmation ID:</span>
+              <span class="detail-label">Confirmation ID:</span>
               <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">📅 Date:</span>
+              <span class="detail-label">Date:</span>
               <span class="detail-value">${formattedDate}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">🕐 Time:</span>
+              <span class="detail-label">Time:</span>
               <span class="detail-value">${reservation.reservation_time}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">👥 Party Size:</span>
+              <span class="detail-label">Party Size:</span>
               <span class="detail-value">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</span>
             </div>
           </div>
-          
+
           <div class="divider"></div>
-          
-          <p style="font-size: 1.1em; color: #495057; text-align: center; margin: 24px 0;">
-            💝 We hope you'll consider dining with us in the future. If you'd like to make a new reservation, please visit our website or contact us directly.
+
+          <p style="font-family: 'Forum', Georgia, serif; font-size: 14px; color: #EFE6D2; text-align: center; margin: 24px 0; line-height: 1.6;">
+            We hope you'll consider dining with us in the future. If you'd like to make a new reservation, please visit our website or contact us directly.
           </p>
-          
+
           <div class="contact-info">
             <h4>Ready to Book Again?</h4>
-            <p>📞 (555) 123-4567</p>
-            <p>📧 info@ochel.com</p>
-            <p>📍 123 Fine Dining Street, Downtown</p>
-            <p>🕒 Open Tuesday-Sunday, 5:00 PM - 11:00 PM</p>
+            <p>01 49 59 00 94</p>
+            <p>compte.magnifiko@gmail.com</p>
+            <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
+            <p>Lundi - Dimanche, 11h00 - 00h00 (Service continu)</p>
           </div>
-          
+
           <div class="button-container">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}" class="reservation-button">
               Make Another Reservation
             </a>
           </div>
         </div>
-        
+
         <div class="footer">
-          <p>🌟 We hope to see you at <span class="highlight">Magnifiko Réservez</span> soon! 🌟</p>
+          <p>We hope to see you at <span class="highlight">Magnifiko Réservez</span> soon!</p>
           <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
             This is an automated cancellation email. Please do not reply to this email.
           </p>
@@ -945,9 +898,6 @@ function generateSubmissionEmailHTML(reservation: Reservation): string {
     ? "Your reservation request is being reviewed by our team. You'll receive a confirmation email once it's approved."
     : "Your reservation has been automatically confirmed!";
 
-  const statusColor = reservation.status === 'pending' ? '#f39c12' : '#27ae60';
-  const statusIcon = reservation.status === 'pending' ? '⏳' : '✅';
-
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -957,79 +907,43 @@ function generateSubmissionEmailHTML(reservation: Reservation): string {
       <title>Reservation Request Received</title>
       <style>
         body {
-          font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Forum', Georgia, serif;
           line-height: 1.6;
-          color: #2c3e50;
+          color: #EFE6D2;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #000000;
           min-height: 100vh;
         }
         .email-container {
-          background: #ffffff;
-          border-radius: 20px;
+          background: #101010;
+          border-radius: 0.25rem;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .header {
-          background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-          color: #ffffff;
+          background: #1a1a1a;
+          color: #FFF2CC;
           padding: 40px 24px;
           text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        .header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-          animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
-          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+          border-bottom: 1px solid rgba(255, 255, 255, 0.10);
         }
         .logo {
-          font-size: 2.8em;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          position: relative;
-          z-index: 1;
-        }
-        .logo::before {
-          content: '🍽️';
-          font-size: 0.8em;
-          margin-right: 8px;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 32px;
+          font-weight: 400;
+          color: #FFF2CC;
+          margin-bottom: 8px;
+          letter-spacing: 0.5px;
+          line-height: normal;
         }
         .tagline {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 1.1em;
-          font-weight: 300;
-          position: relative;
-          z-index: 1;
-        }
-        .submission-icon {
-          font-size: 4em;
-          color: #17a2b8;
-          margin: 20px 0;
-          animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+          color: #FFD65A;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .content {
           padding: 40px 32px;
