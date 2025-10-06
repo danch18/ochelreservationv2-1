@@ -1,0 +1,206 @@
+{
+  "categories": [
+    {
+      "title": "Entrées",
+      "text": "Commencez votre repas avec nos délicieuses entrées",
+      "status": "active"
+    },
+    {
+      "title": "Plats Principaux",
+      "text": "Découvrez nos plats signatures",
+      "status": "active"
+    },
+    {
+      "title": "Desserts",
+      "text": "Terminez sur une note sucrée",
+      "status": "active"
+    },
+    {
+      "title": "Boissons",
+      "text": "Une sélection de boissons raffinées",
+      "status": "active"
+    }
+  ],
+  "subcategories": [
+    {
+      "category_title": "Entrées",
+      "title": "Salades",
+      "text": "Fraîches et savoureuses",
+      "status": "active"
+    },
+    {
+      "category_title": "Entrées",
+      "title": "Soupes",
+      "text": "Chaudes et réconfortantes",
+      "status": "active"
+    },
+    {
+      "category_title": "Plats Principaux",
+      "title": "Viandes",
+      "text": "Viandes de qualité supérieure",
+      "status": "active"
+    },
+    {
+      "category_title": "Plats Principaux",
+      "title": "Poissons",
+      "text": "Fraîcheur de la mer",
+      "status": "active"
+    },
+    {
+      "category_title": "Desserts",
+      "title": "Pâtisseries",
+      "text": "Créations de nos chefs pâtissiers",
+      "status": "active"
+    },
+    {
+      "category_title": "Boissons",
+      "title": "Vins",
+      "text": "Une cave exceptionnelle",
+      "status": "active"
+    }
+  ],
+  "menu_items": [
+    {
+      "subcategory_title": "Salades",
+      "title": "Salade César",
+      "text": "Classique",
+      "description": "Laitue romaine, croûtons, parmesan, sauce César maison",
+      "price": 12.50,
+      "is_special": false,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Salades",
+      "title": "Salade de Chèvre Chaud",
+      "text": "Signature",
+      "description": "Mesclun, fromage de chèvre chaud, miel, noix",
+      "price": 14.00,
+      "is_special": true,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Soupes",
+      "title": "Soupe à l'Oignon",
+      "text": "Traditionnelle",
+      "description": "Gratinée au fromage, croûtons dorés",
+      "price": 9.50,
+      "is_special": false,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Viandes",
+      "title": "Bœuf Bourguignon",
+      "text": "Spécialité",
+      "description": "Bœuf mijoté au vin rouge, légumes de saison",
+      "price": 28.00,
+      "is_special": true,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Viandes",
+      "title": "Côte de Bœuf",
+      "text": "Premium",
+      "description": "300g, sauce au poivre, frites maison",
+      "price": 32.00,
+      "is_special": true,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Poissons",
+      "title": "Saumon Grillé",
+      "text": "Fraîcheur",
+      "description": "Pavé de saumon, légumes grillés, sauce citron",
+      "price": 26.00,
+      "is_special": false,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Pâtisseries",
+      "title": "Tarte Tatin",
+      "text": "Classique",
+      "description": "Pommes caramélisées, glace vanille",
+      "price": 8.50,
+      "is_special": false,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    },
+    {
+      "subcategory_title": "Pâtisseries",
+      "title": "Crème Brûlée",
+      "text": "Signature",
+      "description": "Crème onctueuse, sucre caramélisé",
+      "price": 9.00,
+      "is_special": true,
+      "status": "active",
+      "image_path": null,
+      "model_3d_url": null,
+      "redirect_3d_url": null,
+      "additional_image_url": null
+    }
+  ],
+  "addons": [
+    {
+      "category_title": "Plats Principaux",
+      "subcategory_title": null,
+      "title": "Frites Maison",
+      "description": "Portion de frites fraîches",
+      "price": 4.50,
+      "status": "active",
+      "image_path": null
+    },
+    {
+      "category_title": "Plats Principaux",
+      "subcategory_title": null,
+      "title": "Légumes Grillés",
+      "description": "Assortiment de légumes de saison",
+      "price": 5.00,
+      "status": "active",
+      "image_path": null
+    },
+    {
+      "category_title": "Boissons",
+      "subcategory_title": "Vins",
+      "title": "Vin Rouge - Verre",
+      "description": "Sélection du sommelier",
+      "price": 6.00,
+      "status": "active",
+      "image_path": null
+    },
+    {
+      "category_title": "Boissons",
+      "subcategory_title": "Vins",
+      "title": "Vin Blanc - Verre",
+      "description": "Sélection du sommelier",
+      "price": 6.00,
+      "status": "active",
+      "image_path": null
+    }
+  ]
+}
