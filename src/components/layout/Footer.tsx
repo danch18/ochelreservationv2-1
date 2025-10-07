@@ -6,6 +6,7 @@ import Image from 'next/image';
 export interface FooterSection {
   title: string;
   items: Array<{
+    icon?: string,
     label: string;
     href?: string;
     text?: string;
@@ -101,7 +102,7 @@ export default function Footer({
 }: FooterProps) {
   return (
     <footer className={`${backgroundColor} py-16 w-full overflow-hidden ${className}`}>
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-[1420px] mx-auto px-6">
         <div className="grid md:grid-cols-5 gap-12">
           {/* Brand Section */}
           {(brandInfo || logo) && (
@@ -164,12 +165,27 @@ export default function Footer({
                   }
                   
                   return (
-                    <p 
-                      key={itemIndex} 
-                      className={item.highlight ? 'text-[#d4af37] mt-4' : ''}
+                    <div
+                      key={itemIndex}
+                      className='flex items-start gap-2'
                     >
-                      {item.text || item.label}
-                    </p>
+                      {item.icon && (
+                        <div className="w-5 h-5 flex-shrink-0 relative mt-0.5">
+                          <Image
+                            src={item.icon}
+                            alt={"footer-icon"}
+                            width={20}
+                            height={20}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      )}
+                      <p
+                        className={`flex-1 ${item.highlight ? 'text-[#d4af37] mt-4' : ''}`}
+                      >
+                        {item.text || item.label}
+                      </p>
+                    </div>
                   );
                 })}
               </div>

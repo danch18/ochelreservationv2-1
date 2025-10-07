@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface TestimonialCardProps {
   rating: number;
@@ -8,11 +10,13 @@ interface TestimonialCardProps {
     name: string;
     title: string;
     avatar?: string;
+    image?: string;
   };
+  link?: string;
 }
 
-export default function TestimonialCard({ rating, title, description, author }: TestimonialCardProps) {
-  return (
+export default function TestimonialCard({ rating, title, description, author, link }: TestimonialCardProps) {
+  const CardContent = () => (
     <div style={{
       display: 'flex',
       padding: '1rem',
@@ -52,7 +56,16 @@ export default function TestimonialCard({ rating, title, description, author }: 
       </p>
       <div style={{ width: '100%', height: '1px', backgroundColor: '#272727', margin: '0.5rem 0' }}></div>
       <div className="flex items-center justify-center">
-        <div className="w-12 h-12 bg-[#4a3f35] rounded-full mr-3"></div>
+        <div className="w-12 h-12 bg-[#4a3f35] rounded-full mr-3 overflow-hidden relative">
+          {author.image ? (
+            <Image
+              src={author.image}
+              alt={author.name}
+              fill
+              className="object-cover"
+            />
+          ) : null}
+        </div>
         <div>
           <p className="font-eb-garamond text-sm tracking-wider">{author.name}</p>
           <p className="font-forum text-[#8a7a68] text-xs">{author.title}</p>
@@ -60,4 +73,14 @@ export default function TestimonialCard({ rating, title, description, author }: 
       </div>
     </div>
   );
+
+  if (link) {
+    return (
+      <Link href={link} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
+        <CardContent />
+      </Link>
+    );
+  }
+
+  return <CardContent />;
 }

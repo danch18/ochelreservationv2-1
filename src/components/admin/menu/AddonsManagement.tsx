@@ -143,8 +143,19 @@ function AddonModal({ addon, categories, subcategories, onSave, onClose }: Addon
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleBackdropClick}>
-      <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={handleBackdropClick}>
+      <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          aria-label="Close"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         <h3 className="text-base md:text-lg font-semibold mb-4">
           {addon ? 'Modifier l\'add-on' : 'Nouvel add-on'}
         </h3>
@@ -599,7 +610,7 @@ export function AddonsManagement() {
                         </div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{addon.price.toFixed(2)} €</div>
+                        <div className="text-sm font-medium text-gray-900">{addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

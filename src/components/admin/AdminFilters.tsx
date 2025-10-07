@@ -74,9 +74,9 @@ export function AdminFilters({ filters, onFiltersChange, reservations, onExportC
             onClick={onExportCSV}
             disabled={isExporting}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
-              isExporting 
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300 hover:shadow-sm transform hover:scale-[1.02] active:scale-[0.98]'
+              isExporting
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300 hover:shadow-sm transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
             }`}
           >
             {isExporting ? (
@@ -138,10 +138,10 @@ export function AdminFilters({ filters, onFiltersChange, reservations, onExportC
             className="transition-all duration-200 focus:ring-2 focus:ring-[#F34A23]/20 focus:border-[#F34A23]"
           >
             <option value="">Tous les statuts</option>
-            <option value="confirmed">Confirmé</option>
+            <option value="confirmed">Confirmée</option>
             <option value="pending">En attente</option>      {/* New pending status */}
-            <option value="cancelled">Annulé</option>
-            <option value="completed">Terminé</option>
+            <option value="cancelled">Annulée</option>
+            <option value="completed">Terminée</option>
           </Select>
         </div>
         
@@ -171,7 +171,7 @@ export function AdminFilters({ filters, onFiltersChange, reservations, onExportC
           {/* Reset all filters button */}
           <button
             onClick={() => onFiltersChange({ status: '', date: '', search: '' })}
-            className="text-sm text-[#F34A23] hover:underline font-medium transition-all duration-200 hover:text-[#d63e1e] hover:scale-105 active:scale-95"
+            className="text-sm text-[#F34A23] hover:underline font-medium transition-all duration-200 hover:text-[#d63e1e] hover:scale-105 active:scale-95 cursor-pointer"
           >
             Effacer tous les filtres
           </button>

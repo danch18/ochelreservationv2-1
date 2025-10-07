@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui';
-import type { Reservation } from '@/types';
+import { Button, Input, LoadingSpinner } from '@/components/ui';
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
+import { reservationService } from '@/services';
+import type { Reservation, ArrivalStatus } from '@/types';
 
 interface ManageReservationTabProps {
   reservations: Reservation[];
@@ -10,21 +12,23 @@ interface ManageReservationTabProps {
   onReservationsUpdate: () => void;
 }
 
-export function ManageReservationTab({ reservations, isLoading, onReservationsUpdate }: ManageReservationTabProps) {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [dateFilter, setDateFilter] = useState('today');
-  
-  // Update current time every minute for real-time status
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000); // Update every minute
+type DateFilterType = 'prev7days' | 'prev3days' | 'today';
+type StatusFilterType = 'all' | 'arrived' | 'no_show' | 'unmarked';
 
-    return () => clearInterval(timer);
-  }, []);
+export function ManageReservationTab({ reservations, isLoading, onReservationsUpdate }: ManageReservationTabProps) {
+  const [dateFilter, setDateFilter] = useState<DateFilterType>('today');
+  const [statusFilter, setStatusFilter] = useState<StatusFilterType>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [modalAction, setModalAction] = useState<{ type: ArrivalStatus; reservation: Reservation } | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   /**
-   * Get date in YYYY-MM-DD format
+   * Get date string in YYYY-MM-DD format
    */
   const getDateString = (date: Date) => {
     return date.toISOString().split('T')[0];
@@ -35,337 +39,397 @@ export function ManageReservationTab({ reservations, isLoading, onReservationsUp
    */
   const getFilteredDateRange = () => {
     const today = new Date();
-    const startDate = getDateString(today);
-    
-    let endDate: string;
+    today.setHours(0, 0, 0, 0);
+
+    let startDate: string;
+    let endDate: string = getDateString(today);
+
     switch (dateFilter) {
       case 'today':
-        endDate = startDate;
+        startDate = endDate;
         break;
-      case 'next3days':
-        const next3Days = new Date(today);
-        next3Days.setDate(today.getDate() + 2);
-        endDate = getDateString(next3Days);
+      case 'prev3days':
+        const prev3Days = new Date(today);
+        prev3Days.setDate(today.getDate() - 3);
+        startDate = getDateString(prev3Days);
         break;
-      case 'next7days':
-        const next7Days = new Date(today);
-        next7Days.setDate(today.getDate() + 6);
-        endDate = getDateString(next7Days);
+      case 'prev7days':
+        const prev7Days = new Date(today);
+        prev7Days.setDate(today.getDate() - 7);
+        startDate = getDateString(prev7Days);
         break;
       default:
-        endDate = startDate;
+        startDate = endDate;
     }
-    
+
     return { startDate, endDate };
   };
 
   /**
-   * Filter reservations based on selected date range
+   * Filter reservations
    */
-  const filteredReservations = reservations.filter(reservation => {
+  const getFilteredReservations = () => {
     const { startDate, endDate } = getFilteredDateRange();
-    return reservation.reservation_date >= startDate && reservation.reservation_date <= endDate;
-  }).sort((a, b) => {
-    // Sort by date first, then by time
-    if (a.reservation_date !== b.reservation_date) {
-      return a.reservation_date.localeCompare(b.reservation_date);
-    }
-    return a.reservation_time.localeCompare(b.reservation_time);
-  });
+
+    return reservations.filter(reservation => {
+      // Only show confirmed reservations
+      if (reservation.status !== 'confirmed') return false;
+
+      // Date filter
+      if (reservation.reservation_date < startDate || reservation.reservation_date > endDate) {
+        return false;
+      }
+
+      // Status filter
+      if (statusFilter !== 'all') {
+        if (statusFilter === 'arrived' && reservation.arrival_status !== 'arrived') return false;
+        if (statusFilter === 'no_show' && reservation.arrival_status !== 'no_show') return false;
+        if (statusFilter === 'unmarked' && reservation.arrival_status != null) return false;
+      }
+
+      // Search filter
+      if (searchTerm) {
+        const search = searchTerm.toLowerCase();
+        return (
+          reservation.name.toLowerCase().includes(search) ||
+          reservation.email.toLowerCase().includes(search) ||
+          reservation.phone.toLowerCase().includes(search)
+        );
+      }
+
+      return true;
+    }).sort((a, b) => {
+      // Sort by date first (descending), then by time
+      if (a.reservation_date !== b.reservation_date) {
+        return b.reservation_date.localeCompare(a.reservation_date);
+      }
+      return a.reservation_time.localeCompare(b.reservation_time);
+    });
+  };
+
+  const filteredReservations = getFilteredReservations();
 
   /**
-   * Calculate if reservation is late and by how many minutes
+   * Calculate stats
    */
-  const getReservationStatus = (reservation: Reservation) => {
-    const reservationDateTime = new Date(`${reservation.reservation_date}T${reservation.reservation_time}`);
-    const diffMs = currentTime.getTime() - reservationDateTime.getTime();
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    
-    if (diffMinutes > 0) {
-      return {
-        isLate: true,
-        minutesLate: diffMinutes,
-        status: 'late'
-      };
-    } else if (diffMinutes > -15) {
-      return {
-        isLate: false,
-        minutesLate: 0,
-        status: 'upcoming'
-      };
-    } else {
-      return {
-        isLate: false,
-        minutesLate: 0,
-        status: 'scheduled'
-      };
-    }
+  const stats = {
+    arrived: filteredReservations.filter(r => r.arrival_status === 'arrived').length,
+    noShow: filteredReservations.filter(r => r.arrival_status === 'no_show').length,
+    unmarked: filteredReservations.filter(r => !r.arrival_status).length,
   };
 
   /**
-   * Handle customer arrived action
+   * Pagination
    */
-  const handleCustomerArrived = async (reservationId: string) => {
-    // TODO: Connect to database to update reservation status to 'completed'
-    console.log('Customer arrived for reservation:', reservationId);
-    // This will be replaced with actual API call:
-    // await updateReservationStatus(reservationId, 'completed');
-    // onReservationsUpdate();
-  };
+  const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedReservations = filteredReservations.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFilter, statusFilter, searchTerm]);
 
   /**
-   * Handle no-show action
+   * Handle mark arrival status
    */
-  const handleNoShow = async (reservationId: string) => {
-    // TODO: Connect to database to update reservation status to 'cancelled' with no-show flag
-    console.log('No-show for reservation:', reservationId);
-    // This will be replaced with actual API call:
-    // await updateReservationStatus(reservationId, 'cancelled', { isNoShow: true });
-    // onReservationsUpdate();
+  const handleMarkStatus = (type: ArrivalStatus, reservation: Reservation) => {
+    setModalAction({ type, reservation });
+    setShowConfirmModal(true);
   };
 
-  /**
-   * Get status badge styling
-   */
-  const getStatusBadge = (reservation: Reservation) => {
-    const status = getReservationStatus(reservation);
-    
-    if (reservation.status === 'completed') {
-      return 'bg-green-100 text-green-800 border-green-200';
-    } else if (reservation.status === 'cancelled') {
-      return 'bg-red-100 text-red-800 border-red-200';
-    } else if (status.isLate) {
-      return 'bg-orange-100 text-orange-800 border-orange-200';
-    } else if (status.status === 'upcoming') {
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    } else {
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+  const confirmMarkStatus = async () => {
+    if (!modalAction) return;
 
-  /**
-   * Get status text
-   */
-  const getStatusText = (reservation: Reservation) => {
-    const status = getReservationStatus(reservation);
-    
-    if (reservation.status === 'completed') {
-      return 'Arrivé';
-    } else if (reservation.status === 'cancelled') {
-      return 'No-show';
-    } else if (status.isLate) {
-      return `-${status.minutesLate} min`;
-    } else if (status.status === 'upcoming') {
-      return 'Bientôt';
-    } else {
-      return 'Programmé';
+    const { type, reservation } = modalAction;
+
+    try {
+      setUpdating(true);
+
+      // Update arrival_status in database
+      const { supabase } = await import('@/lib/supabase');
+      const { error } = await supabase
+        .from('reservations')
+        .update({
+          arrival_status: type,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', reservation.id);
+
+      if (error) throw error;
+
+      await onReservationsUpdate();
+      setShowConfirmModal(false);
+      setModalAction(null);
+    } catch (error) {
+      console.error('Failed to update arrival status:', error);
+      alert('Échec de la mise à jour du statut. Veuillez réessayer.');
+    } finally {
+      setUpdating(false);
     }
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F34A23]"></div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6 font-forum">
-
-      {/* Statistics Cards - Same style as overview page */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-3 md:p-6">
-            <h3 className="text-sm md:text-lg font-semibold text-black mb-1 md:mb-2">
-              Arrivés
-            </h3>
-            <p className="text-xl md:text-3xl font-bold text-green-600">
-              {filteredReservations.filter(r => r.status === 'completed').length}
-            </p>
-            <p className="text-xs md:text-sm text-gray-600">clients présents</p>
-          </div>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-black mb-2">Arrivés</h3>
+          <p className="text-3xl font-bold text-green-600">{stats.arrived}</p>
+          <p className="text-sm text-gray-600">clients présents</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-3 md:p-6">
-            <h3 className="text-sm md:text-lg font-semibold text-black mb-1 md:mb-2">
-              En retard
-            </h3>
-            <p className="text-xl md:text-3xl font-bold text-orange-600">
-              {filteredReservations.filter(r => {
-                const status = getReservationStatus(r);
-                return status.isLate && (r.status === 'confirmed' || r.status === 'pending');
-              }).length}
-            </p>
-            <p className="text-xs md:text-sm text-gray-600">attendent encore</p>
-          </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-black mb-2">No-show</h3>
+          <p className="text-3xl font-bold text-red-600">{stats.noShow}</p>
+          <p className="text-sm text-gray-600">absences</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-3 md:p-6">
-            <h3 className="text-sm md:text-lg font-semibold text-black mb-1 md:mb-2">
-              No-shows
-            </h3>
-            <p className="text-xl md:text-3xl font-bold text-red-600">
-              {filteredReservations.filter(r => r.status === 'cancelled').length}
-            </p>
-            <p className="text-xs md:text-sm text-gray-600">absences</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-3 md:p-6">
-            <h3 className="text-sm md:text-lg font-semibold text-black mb-1 md:mb-2">
-              En attente
-            </h3>
-            <p className="text-xl md:text-3xl font-bold text-blue-600">
-              {filteredReservations.filter(r => r.status === 'confirmed' || r.status === 'pending').length}
-            </p>
-            <p className="text-xs md:text-sm text-gray-600">à traiter</p>
-          </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-black mb-2">Non marqués</h3>
+          <p className="text-3xl font-bold text-blue-600">{stats.unmarked}</p>
+          <p className="text-sm text-gray-600">à traiter</p>
         </div>
       </div>
 
-      {/* Date Range Filter Buttons - Same style as overview stats filter */}
-      <div className="flex justify-end mb-4">
-        <div className="flex bg-gray-100 rounded-lg p-1">
-          {[
-            { key: 'today' as const, label: "Aujourd'hui" },
-            { key: 'next3days' as const, label: '3 prochains jours' },
-            { key: 'next7days' as const, label: '7 prochains jours' }
-          ].map(option => (
-            <button
-              key={option.key}
-              onClick={() => setDateFilter(option.key)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-out ${
-                dateFilter === option.key
-                  ? 'bg-white text-[#F34A23] shadow-sm transform scale-[1.02]'  // Active state: white background with restaurant color text and subtle scale
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:shadow-sm'   // Inactive state: gray text with hover effect
-              }`}
+      {/* Filters and Search */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          {/* Date Filter Buttons */}
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            {[
+              { key: 'prev7days' as const, label: '7 jours précédents' },
+              { key: 'prev3days' as const, label: '3 jours précédents' },
+              { key: 'today' as const, label: "Aujourd'hui" },
+            ].map(option => (
+              <button
+                key={option.key}
+                onClick={() => setDateFilter(option.key)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+                  dateFilter === option.key
+                    ? 'bg-white text-[#F34A23] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Status Filter and Search */}
+          <div className="flex gap-3 w-full lg:w-auto">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilterType)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#F34A23]"
             >
-              {option.label}
-            </button>
-          ))}
+              <option value="all">Tous</option>
+              <option value="arrived">Client arrivé</option>
+              <option value="no_show">No-show</option>
+              <option value="unmarked">Non marqués</option>
+            </select>
+
+            <Input
+              type="text"
+              placeholder="Rechercher..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full lg:w-64"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Reservations */}
-      <div className="bg-white rounded-2xl border border-[#F6F1F0] shadow-md">
+      {/* Reservations Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-black mb-2">
-            Réservations ({filteredReservations.length})
+          <h3 className="text-lg font-semibold text-black">
+            Réservations confirmées ({filteredReservations.length})
           </h3>
-          <p className="text-sm text-gray-600">
-            Cliquez sur les actions pour confirmer l'arrivée ou signaler une absence
-          </p>
         </div>
 
-        <div className="p-6">
-          {filteredReservations.length === 0 ? (
+        <div className="overflow-x-auto">
+          {paginatedReservations.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-4xl mb-4">📅</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {dateFilter === 'today' ? 'Aucune réservation aujourd\'hui' : 
-                 dateFilter === 'next3days' ? 'Aucune réservation dans les 3 prochains jours' :
-                 'Aucune réservation dans les 7 prochains jours'}
-              </h3>
-              <p className="text-gray-600">
-                {dateFilter === 'today' ? 'Il n\'y a pas de réservations prévues pour aujourd\'hui.' :
-                 dateFilter === 'next3days' ? 'Il n\'y a pas de réservations prévues dans les 3 prochains jours.' :
-                 'Il n\'y a pas de réservations prévues dans les 7 prochains jours.'}
-              </p>
+              <p className="text-gray-600">Aucune réservation trouvée</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {filteredReservations.map((reservation) => {
-                const status = getReservationStatus(reservation);
-                const isActionable = reservation.status === 'confirmed' || reservation.status === 'pending';
-                
-                return (
-                  <div
-                    key={reservation.id}
-                    className={`border rounded-lg p-4 max-sm:p-3 transition-all duration-200 ${
-                      status.isLate && isActionable 
-                        ? 'border-orange-300 bg-orange-50/50' 
-                        : 'border-gray-200 bg-white hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-                      {/* Reservation Info */}
-                      <div className="flex-1">
-                        {/* First Row - Time, Status, and Guests */}
-                        <div className="flex flex-wrap items-center gap-2 mb-2 max-sm:mb-1">
-                          {dateFilter !== 'today' && (
-                            <span className="text-xs max-sm:text-[10px] font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
-                              {new Date(reservation.reservation_date + 'T00:00:00').toLocaleDateString('fr-FR', { 
-                                weekday: 'short', 
-                                day: 'numeric', 
-                                month: 'short' 
-                              })}
-                            </span>
-                          )}
-                          <span className="font-semibold text-lg max-sm:text-base">
-                            {reservation.reservation_time}
-                          </span>
-                          <span 
-                            className={`px-2 py-1 rounded-full text-xs max-sm:text-[10px] font-medium border ${getStatusBadge(reservation)}`}
-                          >
-                            {getStatusText(reservation)}
-                          </span>
-                          <span className="text-sm max-sm:text-xs text-gray-600">
-                            {reservation.guests} invité{reservation.guests > 1 ? 's' : ''}
-                          </span>
+            <>
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date & Heure
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Client
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Invités
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {paginatedReservations.map((reservation) => (
+                    <tr key={reservation.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {new Date(reservation.reservation_date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short',
+                          })}
                         </div>
-                        
-                        {/* Second Row - Contact Info (Stack on mobile, horizontal on desktop) */}
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 text-sm max-sm:text-xs text-gray-700">
-                          <div className="font-medium">{reservation.name}</div>
-                          <div className="max-sm:text-[11px] max-sm:text-gray-600">{reservation.email}</div>
-                          <div className="max-sm:text-[11px] max-sm:text-gray-600">{reservation.phone}</div>
+                        <div className="text-sm text-gray-700 font-medium">
+                          {reservation.reservation_time}
                         </div>
-                        
-                        {/* Special Requests */}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-black">
+                          {reservation.name}
+                        </div>
                         {reservation.special_requests && (
-                          <div className="mt-2 text-xs max-sm:text-[10px] text-gray-600 bg-gray-50 rounded px-2 py-1">
-                            <span className="font-medium">Note:</span> {reservation.special_requests}
+                          <div className="text-xs text-gray-500 mt-1">
+                            Note: {reservation.special_requests}
                           </div>
                         )}
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-2 max-sm:gap-1 flex-shrink-0">
-                        {isActionable ? (
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-700">{reservation.email}</div>
+                        <div className="text-sm text-gray-700">{reservation.phone}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                        {reservation.guests}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {reservation.arrival_status === 'arrived' ? (
+                          <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Client arrivé
+                          </span>
+                        ) : reservation.arrival_status === 'no_show' ? (
+                          <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            No-show
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            Non marqué
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                        {!reservation.arrival_status ? (
                           <>
                             <Button
-                              onClick={() => handleCustomerArrived(reservation.id)}
-                              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 max-sm:px-2 max-sm:py-1 text-xs max-sm:text-[10px] whitespace-nowrap"
+                              size="sm"
+                              onClick={() => handleMarkStatus('arrived', reservation)}
+                              className="bg-green-600 hover:bg-green-700 text-white"
                             >
-                              Client Arrivé
+                              Client arrivé
                             </Button>
                             <Button
-                              onClick={() => handleNoShow(reservation.id)}
+                              size="sm"
                               variant="outline"
-                              className="border-red-300 text-red-600 hover:bg-red-50 px-3 py-1.5 max-sm:px-2 max-sm:py-1 text-xs max-sm:text-[10px] whitespace-nowrap"
+                              onClick={() => handleMarkStatus('no_show', reservation)}
+                              className="border-red-300 text-red-600 hover:bg-red-50"
                             >
                               No-show
                             </Button>
                           </>
                         ) : (
-                          <div className="text-xs max-sm:text-[10px] text-gray-500 font-medium">
-                            {reservation.status === 'completed' ? 'Traité' : 'Annulé'}
-                          </div>
+                          <span className="text-gray-500 text-xs">
+                            {reservation.arrival_status === 'arrived' ? 'Marqué comme arrivé' : 'Marqué comme absent'}
+                          </span>
                         )}
-                      </div>
-                    </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Affichage de {startIndex + 1} à {Math.min(endIndex, filteredReservations.length)} sur {filteredReservations.length} réservations
                   </div>
-                );
-              })}
-            </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Précédent
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-1 rounded text-sm cursor-pointer ${
+                            currentPage === page
+                              ? 'bg-[#F34A23] text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Suivant
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
+      {/* Confirmation Modal */}
+      {showConfirmModal && modalAction && (
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          onClose={() => {
+            setShowConfirmModal(false);
+            setModalAction(null);
+          }}
+          onConfirm={confirmMarkStatus}
+          title={modalAction.type === 'arrived' ? 'Confirmer l\'arrivée' : 'Confirmer l\'absence'}
+          message={
+            modalAction.type === 'arrived'
+              ? `Voulez-vous marquer cette réservation comme "Client arrivé" ?\n\nClient: ${modalAction.reservation.name}\nDate: ${new Date(modalAction.reservation.reservation_date + 'T00:00:00').toLocaleDateString('fr-FR')}\nHeure: ${modalAction.reservation.reservation_time}`
+              : `Voulez-vous marquer cette réservation comme "No-show" ?\n\nClient: ${modalAction.reservation.name}\nDate: ${new Date(modalAction.reservation.reservation_date + 'T00:00:00').toLocaleDateString('fr-FR')}\nHeure: ${modalAction.reservation.reservation_time}`
+          }
+          confirmText="Confirmer"
+          cancelText="Annuler"
+          isLoading={updating}
+        />
+      )}
     </div>
   );
 }

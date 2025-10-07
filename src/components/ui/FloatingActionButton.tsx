@@ -8,10 +8,12 @@ interface FloatingActionButtonProps {
   children: React.ReactNode;
   className?: string;
   currentStep?: 1 | 2;
+  onClose?: () => void;
 }
 
-function FloatingActionButtonContent({ children, className, currentStep = 1 }: FloatingActionButtonProps) {
+function FloatingActionButtonContent({ children, className, currentStep = 1, onClose }: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -19,8 +21,39 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
   const popupWidth = currentStep === 2 ? 1035 : 414;  // 2.5x width for step 2 (414 * 2.5 = 1035)
   const popupHeight = currentStep === 2 ? 700 : 600; // Slightly taller for step 2
 
+  // Ensure component only renders on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+
+    // Notify parent component that popup is closing
+    if (onClose) {
+      onClose();
+    }
+
+    // Send message to parent window about popup closing
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'popupResize',
+        isOpen: false,
+        width: 220,
+        height: 80
+      }, '*');
+    }
+  };
+
   const handleToggle = () => {
     const newIsOpen = !isOpen;
+
+    if (!newIsOpen) {
+      // Closing the popup
+      handleClose();
+      return;
+    }
+
     setIsOpen(newIsOpen);
     
     // Send message to parent window about popup state change
@@ -44,17 +77,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
         !popupRef.current.contains(event.target as Node) &&
         !buttonRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
-        
-        // Send message to parent window about popup closing
-        if (window.parent !== window) {
-          window.parent.postMessage({
-            type: 'popupResize',
-            isOpen: false,
-            width: 220,
-            height: 80
-          }, '*');
-        }
+        handleClose();
       }
     };
 
@@ -62,7 +85,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   // Handle step changes and resize popup accordingly
   useEffect(() => {
@@ -76,12 +99,15 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
     }
   }, [currentStep, isOpen, popupWidth, popupHeight]);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <>
-      {/* Clickable zones - only these areas capture pointer events */}
-      
+    <div>
       {/* FAB Button Zone */}
-      <div 
+      <div
         className="fixed bottom-2 right-2 z-[9999] pointer-events-auto flex items-end justify-end"
         style={{ width: '216px', height: '76px' }}
       >
@@ -116,7 +142,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
 
       {/* Popup Zone - only visible when open */}
       {isOpen && (
-        <div 
+        <div
           className="fixed bottom-20 right-2 z-[9998] pointer-events-auto"
           style={{ width: `${popupWidth}px`, height: `${popupHeight}px` }}
         />
@@ -151,7 +177,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
             <span className="font-semibold max-sm:text-sm text-[#FFF2CC]">Magnifiko</span>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             className="text-white hover:text-[#d4af37] transition-colors"
             style={{ fontSize: '1.75rem', lineHeight: 1 }}
           >
@@ -312,13 +338,13 @@ function FloatingActionButtonContent({ children, className, currentStep = 1 }: F
           }
         `
       }} />
-    </>
+    </div>
   );
 }
 
-export function FloatingActionButton({ children, className, currentStep }: FloatingActionButtonProps) {
+export function FloatingActionButton({ children, className, currentStep, onClose }: FloatingActionButtonProps) {
   return (
-    <FloatingActionButtonContent className={className} currentStep={currentStep}>
+    <FloatingActionButtonContent className={className} currentStep={currentStep} onClose={onClose}>
       {children}
     </FloatingActionButtonContent>
   );

@@ -4,14 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 interface MenuItemCardProps {
-  image: string;
+  image?: string;
   title: string;
   subtitle?: string;
   price: string;
-  hasCamera?: boolean;
   has3D?: boolean;
-  model3DUrl?: string;
-  additionalImageUrl?: string;
+  model3DGlbUrl?: string;
+  model3DUsdzUrl?: string;
   variant?: 'regular' | 'special';
 }
 
@@ -22,10 +21,9 @@ export default function MenuItemCard({
   title,
   subtitle,
   price,
-  hasCamera = false,
   has3D = false,
-  model3DUrl,
-  additionalImageUrl,
+  model3DGlbUrl,
+  model3DUsdzUrl,
   variant = 'regular'
 }: MenuItemCardProps) {
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -33,22 +31,18 @@ export default function MenuItemCard({
   const [isOpening, setIsOpening] = useState(false);
 
   const handleCardClick = () => {
-    // Open image modal when card is clicked
-    setIsOpening(true);
-    setModalType('image');
-    setTimeout(() => setIsOpening(false), 50);
-  };
-
-  const handleCameraClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    setIsOpening(true);
-    setModalType('image');
-    setTimeout(() => setIsOpening(false), 50);
+    // Only open image modal if image exists
+    if (image) {
+      setIsOpening(true);
+      setModalType('image');
+      setTimeout(() => setIsOpening(false), 50);
+    }
   };
 
   const handle3DClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    if (model3DUrl) {
+    if (model3DGlbUrl || model3DUsdzUrl) {
+      console.log('3D URLs:', { model3DGlbUrl, model3DUsdzUrl });
       setIsOpening(true);
       setModalType('3d');
       setTimeout(() => setIsOpening(false), 50);
@@ -63,9 +57,16 @@ export default function MenuItemCard({
     }, 300); // Match animation duration
   };
 
-  const handleRedirect3D = () => {
-    if (model3DUrl) {
-      window.open(model3DUrl, '_blank');
+  const handleARClick = () => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    if (isIOS && model3DUsdzUrl) {
+      // iOS opens USDZ automatically in AR Quick Look
+      window.location.href = model3DUsdzUrl;
+    } else if (model3DGlbUrl) {
+      // Android opens GLB in Scene Viewer
+      const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model3DGlbUrl)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+      window.location.href = intent;
     }
   };
 
@@ -75,24 +76,28 @@ export default function MenuItemCard({
     <>
       <div
         onClick={handleCardClick}
-        className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg cursor-pointer transition-opacity hover:opacity-90 ${
+        className={`flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg transition-opacity hover:opacity-90 ${
+          image ? 'cursor-pointer' : 'cursor-default'
+        } ${
           isSpecial
             ? 'bg-[#EFE6D2] text-black'
             : 'bg-[#101010] border border-white/10 text-white'
         }`}
       >
-        {/* Image */}
-        <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 ${
-          isSpecial ? 'border-[3px] border-[#FFD65A]' : 'border-2 border-white/30'
-        }`}>
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
+        {/* Image - Only render if image exists */}
+        {image && (
+          <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 ${
+            isSpecial ? 'border-[3px] border-[#FFD65A]' : 'border-2 border-white/30'
+          }`}>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -102,36 +107,20 @@ export default function MenuItemCard({
             }`}>{title}</h3>
 
             {/* Icons */}
-            <div className="flex gap-1 ml-1 sm:ml-2">
-              {has3D && (
-                <button
-                  onClick={handle3DClick}
-                  className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <Image
-                    src="/icons/3d.svg"
-                    alt="3D View"
-                    width={24}
-                    height={24}
-                    className="w-full h-full cursor-pointer"
-                  />
-                </button>
-              )}
-              {hasCamera && (
-                <button
-                  onClick={handleCameraClick}
-                  className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  <Image
-                    src="/icons/camera.svg"
-                    alt="View Image"
-                    width={24}
-                    height={24}
-                    className="w-full h-full cursor-pointer"
-                  />
-                </button>
-              )}
-            </div>
+            {has3D && (
+              <button
+                onClick={handle3DClick}
+                className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer ml-1 sm:ml-2"
+              >
+                <Image
+                  src="/icons/3d.svg"
+                  alt="3D View"
+                  width={24}
+                  height={24}
+                  className="w-full h-full cursor-pointer"
+                />
+              </button>
+            )}
           </div>
 
           {subtitle && (
@@ -161,48 +150,62 @@ export default function MenuItemCard({
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer"
+              className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer bg-white rounded-full w-8 h-8 flex items-center justify-center"
+              aria-label="Close"
             >
-              ✕
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
 
             {/* Content Area */}
             <div className="w-full h-full p-4 flex flex-col">
-              {modalType === '3d' && model3DUrl ? (
+              {modalType === '3d' && (model3DGlbUrl || model3DUsdzUrl) ? (
                 <>
-                  {/* 3D Model Embed */}
+                  {/* 3D Model Viewer */}
                   <div className="flex-1 mb-4">
-                    <iframe
-                      src={model3DUrl}
-                      className="w-full h-full rounded-lg"
-                      title="3D Model View"
-                      allowFullScreen
+                    <model-viewer
+                      src={model3DGlbUrl || ''}
+                      ios-src={model3DUsdzUrl || ''}
+                      camera-controls
+                      touch-action="pan-y"
+                      exposure="1"
+                      shadow-intensity="1"
+                      alt={title}
+                      interaction-prompt="auto"
+                      interaction-prompt-threshold="0"
+                      interaction-prompt-style="basic"
+                      auto-rotate
+                      auto-rotate-delay="1000"
+                      style={{ width: '100%', height: '100%', minHeight: '300px', background: '#fff', borderRadius: '0.5rem' }}
                     />
                   </div>
 
-                  {/* Redirect Button */}
+                  {/* AR Button */}
                   <div className="flex justify-center pb-2">
                     <button
-                      onClick={handleRedirect3D}
+                      onClick={handleARClick}
                       className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
                     >
-                      Open in New Tab
+                      View in AR
                     </button>
                   </div>
                 </>
               ) : (
                 /* Image Display */
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={additionalImageUrl || image}
-                      alt={title}
-                      fill
-                      className="object-contain"
-                      unoptimized
-                    />
+                image && (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
                   </div>
-                </div>
+                )
               )}
             </div>
           </div>

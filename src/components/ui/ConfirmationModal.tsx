@@ -72,19 +72,25 @@ export function ConfirmationModal({
   const style = variantStyles[variant];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
-      />
-
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 overflow-y-auto" onClick={onClose}>
       {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex min-h-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
         <div
           className="relative bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            aria-label="Close"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           {/* Content */}
           <div className="p-6">
             {/* Icon */}
@@ -117,9 +123,6 @@ export function ConfirmationModal({
                 loading={isLoading}
                 disabled={isLoading}
                 className={`flex-1 font-forum ${style.confirmButton}`}
-                style={{
-                  backgroundColor: variant === 'danger' ? '#dc2626' : variant === 'warning' ? '#d97706' : '#2563eb'
-                }}
               >
                 {confirmText}
               </Button>

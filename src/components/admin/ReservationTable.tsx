@@ -16,6 +16,24 @@ interface ReservationTableProps {
 type SortField = 'created_at' | 'reservation_date' | 'guests';
 type SortOrder = 'asc' | 'desc';
 
+// Helper function to translate status to French
+const translateStatus = (status: string | undefined) => {
+  if (!status) return 'Confirmée';
+
+  switch (status) {
+    case 'confirmed':
+      return 'Confirmée';
+    case 'pending':
+      return 'En attente';
+    case 'cancelled':
+      return 'Annulée';
+    case 'completed':
+      return 'Terminée';
+    default:
+      return status;
+  }
+};
+
 export function ReservationTable({ reservations, isLoading, onReservationsUpdate }: ReservationTableProps) {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
@@ -171,7 +189,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
 
         <button
           onClick={toggleSortOrder}
-          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm hover:bg-[#F34A23]/5 hover:border-[#F34A23] transition-colors flex items-center gap-2"
+          className="px-3 py-2 border border-[#F6F1F0] rounded-lg text-sm hover:bg-[#F34A23]/5 hover:border-[#F34A23] transition-colors flex items-center gap-2 cursor-pointer"
           title={sortOrder === 'asc' ? 'Croissant' : 'Décroissant'}
         >
           <span className="text-gray-700">
@@ -239,10 +257,10 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1 w-fit">
                       <Badge variant={reservation.status === 'confirmed' ? 'success' : reservation.status === 'pending' ? 'warning' : 'destructive'}>
-                        {reservation.status}
+                        {translateStatus(reservation.status)}
                       </Badge>
                       {reservation.requires_confirmation && reservation.status === 'confirmed' && (
-                        <span className="text-xs text-gray-500">Confirmé par admin</span>
+                        <span className="text-xs text-gray-500">Confirmée par admin</span>
                       )}
                     </div>
                   </td>
@@ -264,7 +282,7 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
                       </Button>
                     )}
                     {reservation.status === 'confirmed' && !reservation.requires_confirmation && (
-                      <span className="text-xs text-green-600 font-medium">Auto-confirmé</span>
+                      <span className="text-xs text-green-600 font-medium">Auto-Confirmée</span>
                     )}
                     {reservation.status !== 'cancelled' && (
                       <Button
@@ -299,13 +317,13 @@ export function ReservationTable({ reservations, isLoading, onReservationsUpdate
               </div>
               <div className="flex flex-col items-end gap-1">
                 <Badge variant={reservation.status === 'confirmed' ? 'success' : reservation.status === 'pending' ? 'warning' : 'destructive'}>
-                  {reservation.status}
+                  {translateStatus(reservation.status)}
                 </Badge>
                 {reservation.requires_confirmation && reservation.status === 'confirmed' && (
-                  <span className="text-xs text-gray-500">Admin confirmé</span>
+                  <span className="text-xs text-gray-500">Admin Confirmée</span>
                 )}
                 {reservation.status === 'confirmed' && !reservation.requires_confirmation && (
-                  <span className="text-xs text-green-600 font-medium">Auto-confirmé</span>
+                  <span className="text-xs text-green-600 font-medium">Auto-Confirmée</span>
                 )}
               </div>
             </div>
