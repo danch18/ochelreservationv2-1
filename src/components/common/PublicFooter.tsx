@@ -13,11 +13,11 @@ export function PublicFooter() {
         backgroundColor="bg-black"
         sections={[
           {
-            title: 'Quick Links',
+            title: 'Liens Rapides',
             items: [
-              { label: 'Home', href: '/' },
+              { label: 'Accueil', href: '/' },
               { label: 'Menu', href: '/menu' },
-              { label: 'About', href: '#about' },
+              { label: 'À Propos', href: '#about' },
               { label: 'Contact', href: '#contact' },
             ],
           },
@@ -31,12 +31,12 @@ export function PublicFooter() {
             ],
           },
           {
-            title: 'Hours',
+            title: 'Horaires',
             items: [
-              { label: 'Open every day', text: 'Open every day' },
-              { label: '11am - Midnight', text: '11am - Midnight' },
-              { label: 'Friday', text: 'Friday' },
-              { label: '2pm - Midnight', text: '2pm - Midnight' },
+              { label: 'Ouvert tous les jours', text: 'Ouvert tous les jours' },
+              { label: '11h - Minuit', text: '11h - Minuit' },
+              { label: 'Vendredi', text: 'Vendredi' },
+              { label: '14h - Minuit', text: '14h - Minuit' },
             ],
           },
         ]}
@@ -45,7 +45,7 @@ export function PublicFooter() {
           { label: 'Facebook', href: '#', icon: 'facebook' },
           { label: 'TikTok', href: '#', icon: 'tiktok' },
         ]}
-        copyright="© 2025 Magnifiko. All rights reserved"
+        copyright="© 2025 Magnifiko. Tous droits réservés"
       />
     </div>
   );

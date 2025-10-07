@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface WeeklySchedule {
   day_of_week: number;
@@ -48,8 +49,6 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
       try {
         setLoading(true);
         setError(null);
-
-        const { supabase } = await import('@/lib/supabase');
 
         // Load weekly schedule
         const { data: weeklyData, error: weeklyError } = await supabase

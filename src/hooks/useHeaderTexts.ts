@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface HeaderTexts {
   headerText1: string;
@@ -26,9 +27,7 @@ export function useHeaderTexts() {
       try {
         setLoading(true);
         setError(null);
-        
-        const { supabase } = await import('@/lib/supabase');
-        
+
         const { data, error } = await supabase
           .from('restaurant_settings')
           .select('setting_key, setting_value')
