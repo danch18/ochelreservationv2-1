@@ -610,7 +610,7 @@ export function AddonsManagement() {
                         </div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{addon.price.toFixed(2)} €</div>
+                        <div className="text-sm font-medium text-gray-900">{addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

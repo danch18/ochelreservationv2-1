@@ -694,7 +694,7 @@ export function MenuItemsManagement() {
                         <div className="text-sm text-gray-700">{getSubcategoryName(item.subcategory_id)}</div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.price.toFixed(2)} €</div>
+                        <div className="text-sm font-medium text-gray-900">{item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap hidden xl:table-cell">
                         {item.is_special && (
