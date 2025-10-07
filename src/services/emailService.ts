@@ -4,7 +4,10 @@ import type { Reservation } from '@/types';
 const EMAIL_CONFIG = {
   from: process.env.NEXT_PUBLIC_EMAIL_FROM || 'shasan1807013@gmail.com',
   replyTo: process.env.NEXT_PUBLIC_EMAIL_REPLY_TO || 'shasan1807013@gmail.com',
-  apiUrl: '/api/send-email' // We'll create this API endpoint
+  // Use absolute URL for server-side requests (cron jobs), relative for client-side
+  apiUrl: typeof window === 'undefined'
+    ? `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/send-email`
+    : '/api/send-email'
 };
 
 export interface EmailData {
