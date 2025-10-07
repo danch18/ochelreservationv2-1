@@ -49,7 +49,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const statusText = status || 'confirmed';
-  
+
   const getVariant = (status: string) => {
     switch (status) {
       case 'confirmed':
@@ -65,9 +65,24 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     }
   };
 
+  const translateStatus = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return 'Confirmée';
+      case 'pending':
+        return 'En attente';
+      case 'cancelled':
+        return 'Annulée';
+      case 'completed':
+        return 'Terminée';
+      default:
+        return status;
+    }
+  };
+
   return (
     <Badge variant={getVariant(statusText)} className={className}>
-      {statusText}
+      {translateStatus(statusText)}
     </Badge>
   );
 }

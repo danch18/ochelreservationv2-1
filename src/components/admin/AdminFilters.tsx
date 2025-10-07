@@ -138,10 +138,10 @@ export function AdminFilters({ filters, onFiltersChange, reservations, onExportC
             className="transition-all duration-200 focus:ring-2 focus:ring-[#F34A23]/20 focus:border-[#F34A23]"
           >
             <option value="">Tous les statuts</option>
-            <option value="confirmed">Confirmé</option>
+            <option value="confirmed">Confirmée</option>
             <option value="pending">En attente</option>      {/* New pending status */}
-            <option value="cancelled">Annulé</option>
-            <option value="completed">Terminé</option>
+            <option value="cancelled">Annulée</option>
+            <option value="completed">Terminée</option>
           </Select>
         </div>
         

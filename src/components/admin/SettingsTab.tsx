@@ -382,7 +382,6 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium text-gray-700">Type d'horaires :</label>
                 <button
-                  className="cursor-pointer"
                   onClick={() => {
                     const newSplitHours = !localSchedule.use_split_hours;
                     const updateData: Partial<WeeklySchedule> = {
@@ -404,13 +403,13 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
                     updateLocalSchedule(updateData);
                   }}
                   disabled={isUpdating}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                     localSchedule.use_split_hours
                       ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {localSchedule.use_split_hours ? 'Horaires coupés' : 'Horaire continu'}
+                  {localSchedule.use_split_hours ? 'Horaires coupées' : 'Horaires continues'}
                 </button>
               </div>
 
