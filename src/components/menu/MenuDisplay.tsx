@@ -139,9 +139,9 @@ export default function MenuDisplay() {
 
       // 1. General subcategory items (non-special) - NO HEADING
       if (generalSubcat) {
-        const generalItems = menuData.menuItems.filter(
-          item => item.subcategory_id === generalSubcat.id && !item.is_special
-        );
+        const generalItems = menuData.menuItems
+          .filter(item => item.subcategory_id === generalSubcat.id && !item.is_special)
+          .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
 
         if (generalItems.length > 0) {
           newSections.push({
@@ -162,14 +162,14 @@ export default function MenuDisplay() {
       }
 
       // 2. Custom subcategories with their items
-      const customSubcats = menuData.subcategories.filter(
-        s => !s.title.toLowerCase().includes('general')
-      );
+      const customSubcats = menuData.subcategories
+        .filter(s => !s.title.toLowerCase().includes('general'))
+        .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
 
       for (const subcat of customSubcats) {
-        const subcatItems = menuData.menuItems.filter(
-          item => item.subcategory_id === subcat.id
-        );
+        const subcatItems = menuData.menuItems
+          .filter(item => item.subcategory_id === subcat.id)
+          .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
 
         if (subcatItems.length > 0) {
           newSections.push({
@@ -190,7 +190,9 @@ export default function MenuDisplay() {
       }
 
       // 3. Special items
-      const specialItems = menuData.menuItems.filter(item => item.is_special);
+      const specialItems = menuData.menuItems
+        .filter(item => item.is_special)
+        .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
 
       if (specialItems.length > 0) {
         newSections.push({
@@ -212,10 +214,14 @@ export default function MenuDisplay() {
 
       // 4. Add-ons (Supplements)
       if (menuData.addons.length > 0) {
+        const sortedAddons = [...menuData.addons].sort((a, b) =>
+          new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()
+        );
+
         newSections.push({
           title: 'Supplements',
           subtitle: null,
-          items: menuData.addons.map(addon => ({
+          items: sortedAddons.map(addon => ({
             id: addon.id,
             image: addon.image_path || undefined,
             title: addon.title,

@@ -129,7 +129,7 @@ export const subcategoryService = {
     const { data, error } = await supabase
       .from('subcategories')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -140,7 +140,7 @@ export const subcategoryService = {
       .from('subcategories')
       .select('*')
       .eq('category_id', categoryId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -199,7 +199,7 @@ export const menuItemService = {
     const { data, error } = await supabase
       .from('menu_items')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -210,7 +210,7 @@ export const menuItemService = {
       .from('menu_items')
       .select('*')
       .eq('subcategory_id', subcategoryId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -360,7 +360,7 @@ export const addonService = {
     const { data, error } = await supabase
       .from('addons')
       .select('*')
-      .order('created_at', { ascending: false});
+      .order('created_at', { ascending: true});
 
     if (error) throw error;
     return data || [];
@@ -382,7 +382,7 @@ export const addonService = {
       .from('addons')
       .select('*')
       .or(`category_id.eq.${categoryId},subcategory_id.in.(${subcategoryIds.join(',')})`)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -393,7 +393,7 @@ export const addonService = {
       .from('addons')
       .select('*')
       .eq('subcategory_id', subcategoryId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
     return data || [];
