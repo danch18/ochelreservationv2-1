@@ -101,7 +101,7 @@ class ReservationServiceClass {
       // Get the current guest limit setting from database
       const guestLimit = await this.getGuestLimit();
       const guestCount = parseInt(reservation.guests.toString()) || 1;
-      
+
       // Determine if this reservation requires admin confirmation based on party size
       const requiresConfirmation = guestCount > guestLimit;
       const initialStatus = requiresConfirmation ? 'pending' : 'confirmed';
@@ -121,19 +121,21 @@ class ReservationServiceClass {
         this.handleError(error, 'Error creating reservation');
       }
 
-      // Send submission acknowledgment email immediately for all reservations
-      try {
-        await emailService.sendReservationSubmission(data);
-      } catch (emailError) {
-        // Log email error but don't fail the reservation
-        if (ENV_CONFIG.isDevelopment) {
-          console.error('Failed to send submission email:', emailError);
+      // Email logic based on guest count and auto-confirm limit:
+      // 1. If guests > limit: Send submission acknowledgment (pending status)
+      // 2. If guests <= limit: Send confirmation email (confirmed status)
+      if (requiresConfirmation) {
+        // Large group: Send submission acknowledgment email
+        try {
+          await emailService.sendReservationSubmission(data);
+        } catch (emailError) {
+          // Log email error but don't fail the reservation
+          if (ENV_CONFIG.isDevelopment) {
+            console.error('Failed to send submission email:', emailError);
+          }
         }
-      }
-
-      // Send confirmation email only if reservation is automatically confirmed
-      // Large groups will receive email after admin approval
-      if (!requiresConfirmation) {
+      } else {
+        // Small group: Send confirmation email immediately
         try {
           await emailService.sendReservationConfirmation(data);
         } catch (emailError) {
