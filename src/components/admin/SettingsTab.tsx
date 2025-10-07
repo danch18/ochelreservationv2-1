@@ -21,6 +21,8 @@ interface DateStatus {
   afternoon_opening?: string;
   afternoon_closing?: string;
   use_split_hours?: boolean;
+  // Manual override tracking
+  is_manual_override?: boolean;
 }
 
 // Weekly schedule management interface
@@ -36,54 +38,58 @@ interface WeeklySchedule {
   use_split_hours: boolean;  // Whether to use split hours or single slot
 }
 
-interface OpeningHoursModalProps {
+interface DateEditModalProps {
   date: string;
-  currentHours: { 
-    opening_time?: string; 
-    closing_time?: string;
-    morning_opening?: string;
-    morning_closing?: string;
-    afternoon_opening?: string;
-    afternoon_closing?: string;
-    use_split_hours?: boolean;
-  };
-  onSave: (hours: { 
-    opening_time: string; 
+  currentStatus: DateStatus | null;
+  onSave: (data: {
+    is_closed: boolean;
+    reason?: string;
+    opening_time: string;
     closing_time: string;
     morning_opening?: string;
     morning_closing?: string;
     afternoon_opening?: string;
     afternoon_closing?: string;
     use_split_hours?: boolean;
+    is_manual_override: boolean;
   }) => void;
   onClose: () => void;
 }
 
-function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHoursModalProps) {
-  const [useSplitHours, setUseSplitHours] = useState(currentHours.use_split_hours || false);
-  const [openingTime, setOpeningTime] = useState(currentHours.opening_time || '10:00');
-  const [closingTime, setClosingTime] = useState(currentHours.closing_time || '20:00');
-  const [morningOpening, setMorningOpening] = useState(currentHours.morning_opening || '10:00');
-  const [morningClosing, setMorningClosing] = useState(currentHours.morning_closing || '14:00');
-  const [afternoonOpening, setAfternoonOpening] = useState(currentHours.afternoon_opening || '19:00');
-  const [afternoonClosing, setAfternoonClosing] = useState(currentHours.afternoon_closing || '22:00');
+function DateEditModal({ date, currentStatus, onSave, onClose }: DateEditModalProps) {
+  const [isClosed, setIsClosed] = useState(currentStatus?.is_closed || false);
+  const [reason, setReason] = useState(currentStatus?.reason || '');
+  const [useSplitHours, setUseSplitHours] = useState(currentStatus?.use_split_hours || false);
+  const [openingTime, setOpeningTime] = useState(currentStatus?.opening_time || '10:00');
+  const [closingTime, setClosingTime] = useState(currentStatus?.closing_time || '20:00');
+  const [morningOpening, setMorningOpening] = useState(currentStatus?.morning_opening || '10:00');
+  const [morningClosing, setMorningClosing] = useState(currentStatus?.morning_closing || '14:00');
+  const [afternoonOpening, setAfternoonOpening] = useState(currentStatus?.afternoon_opening || '19:00');
+  const [afternoonClosing, setAfternoonClosing] = useState(currentStatus?.afternoon_closing || '22:00');
+  const [isPermanentOverride, setIsPermanentOverride] = useState(currentStatus?.is_manual_override ?? true);
 
   const handleSave = () => {
     if (useSplitHours) {
-      onSave({ 
+      onSave({
+        is_closed: isClosed,
+        reason: reason || undefined,
         opening_time: morningOpening,
         closing_time: afternoonClosing,
         morning_opening: morningOpening,
         morning_closing: morningClosing,
         afternoon_opening: afternoonOpening,
         afternoon_closing: afternoonClosing,
-        use_split_hours: true
+        use_split_hours: true,
+        is_manual_override: isPermanentOverride
       });
     } else {
-      onSave({ 
-        opening_time: openingTime, 
+      onSave({
+        is_closed: isClosed,
+        reason: reason || undefined,
+        opening_time: openingTime,
         closing_time: closingTime,
-        use_split_hours: false
+        use_split_hours: false,
+        is_manual_override: isPermanentOverride
       });
     }
     onClose();
@@ -104,100 +110,159 @@ function OpeningHoursModal({ date, currentHours, onSave, onClose }: OpeningHours
         </button>
 
         <h3 className="text-base md:text-lg font-semibold mb-4">
-          Modifier les horaires - {new Date(date).toLocaleDateString('fr-FR')}
+          Modifier le {new Date(date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </h3>
-        
+
         <div className="space-y-4">
-          {/* Split Hours Toggle */}
+          {/* Open/Closed Toggle */}
           <div className="flex items-center gap-3">
             <label className="block text-sm font-medium text-gray-700">
-              Type d'horaires
+              Statut :
             </label>
             <button
-              onClick={() => setUseSplitHours(!useSplitHours)}
-              className={`px-3 py-1 rounded text-sm transition-colors cursor-pointer ${
-                useSplitHours
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              onClick={() => setIsClosed(!isClosed)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                isClosed
+                  ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                  : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
             >
-              {useSplitHours ? 'Horaires coupés' : 'Horaire continu'}
+              {isClosed ? 'Fermé' : 'Ouvert'}
             </button>
           </div>
 
-          {useSplitHours ? (
-            // Split hours (morning + afternoon)
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Service Matin
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    type="time"
-                    value={morningOpening}
-                    onChange={(e) => setMorningOpening(e.target.value)}
-                    className="flex-1"
-                  />
-                  <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
-                  <Input
-                    type="time"
-                    value={morningClosing}
-                    onChange={(e) => setMorningClosing(e.target.value)}
-                    className="flex-1"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Service Soir
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    type="time"
-                    value={afternoonOpening}
-                    onChange={(e) => setAfternoonOpening(e.target.value)}
-                    className="flex-1"
-                  />
-                  <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
-                  <Input
-                    type="time"
-                    value={afternoonClosing}
-                    onChange={(e) => setAfternoonClosing(e.target.value)}
-                    className="flex-1"
-                  />
-                </div>
-              </div>
-            </div>
-          ) : (
-            // Single continuous hours
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Heure d'ouverture
-                </label>
-                <Input
-                  type="time"
-                  value={openingTime}
-                  onChange={(e) => setOpeningTime(e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Heure de fermeture
-                </label>
-                <Input
-                  type="time"
-                  value={closingTime}
-                  onChange={(e) => setClosingTime(e.target.value)}
-                />
-              </div>
+          {/* Reason Field */}
+          {isClosed && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Raison (optionnel)
+              </label>
+              <Input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Ex: Férié, Événement privé..."
+                className="w-full"
+              />
             </div>
           )}
+
+          {/* Hours Configuration (only when open) */}
+          {!isClosed && (
+            <>
+              {/* Split Hours Toggle */}
+              <div className="flex items-center gap-3">
+                <label className="block text-sm font-medium text-gray-700">
+                  Type d'horaires :
+                </label>
+                <button
+                  onClick={() => setUseSplitHours(!useSplitHours)}
+                  className={`px-3 py-1 rounded text-sm transition-colors cursor-pointer ${
+                    useSplitHours
+                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {useSplitHours ? 'Horaires coupés' : 'Horaire continu'}
+                </button>
+              </div>
+
+              {useSplitHours ? (
+                // Split hours (morning + afternoon)
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Service Matin
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Input
+                        type="time"
+                        value={morningOpening}
+                        onChange={(e) => setMorningOpening(e.target.value)}
+                        className="flex-1"
+                      />
+                      <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
+                      <Input
+                        type="time"
+                        value={morningClosing}
+                        onChange={(e) => setMorningClosing(e.target.value)}
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Service Soir
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Input
+                        type="time"
+                        value={afternoonOpening}
+                        onChange={(e) => setAfternoonOpening(e.target.value)}
+                        className="flex-1"
+                      />
+                      <span className="flex items-center justify-center text-gray-500 py-2 sm:py-0">à</span>
+                      <Input
+                        type="time"
+                        value={afternoonClosing}
+                        onChange={(e) => setAfternoonClosing(e.target.value)}
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Single continuous hours
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Heure d'ouverture
+                    </label>
+                    <Input
+                      type="time"
+                      value={openingTime}
+                      onChange={(e) => setOpeningTime(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Heure de fermeture
+                    </label>
+                    <Input
+                      type="time"
+                      value={closingTime}
+                      onChange={(e) => setClosingTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Permanent Override Checkbox */}
+          <div className="pt-4 border-t border-gray-200">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isPermanentOverride}
+                onChange={(e) => setIsPermanentOverride(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              />
+              <div className="flex-1">
+                <span className="block text-sm font-medium text-gray-900">
+                  Override permanent
+                </span>
+                <span className="block text-xs text-gray-600 mt-1">
+                  Si coché, cette date ne sera pas synchronisée avec les changements de l'horaire hebdomadaire.
+                  Utilisez cette option pour les dates spéciales (jours fériés, événements, etc.)
+                </span>
+              </div>
+            </label>
+          </div>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-2 mt-6">
           <Button onClick={handleSave} className="flex-1 order-2 sm:order-1">
             Enregistrer
@@ -474,7 +539,7 @@ export function SettingsTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [showHoursModal, setShowHoursModal] = useState<string | null>(null);
+  const [showDateModal, setShowDateModal] = useState<string | null>(null);
   // Guest limit settings for automatic confirmation system
   const [guestLimit, setGuestLimit] = useState(4);              // Default: 4 guests max for auto-confirmation
   const [updatingGuestLimit, setUpdatingGuestLimit] = useState(false);
@@ -628,6 +693,7 @@ export function SettingsTab() {
                 reason: 'Fermé manuellement',
                 opening_time: specificDateStatus?.opening_time || currentStatus?.opening_time || '10:00',
                 closing_time: specificDateStatus?.closing_time || currentStatus?.closing_time || '20:00',
+                is_manual_override: true, // Mark as manual override
                 updated_at: new Date().toISOString(),
               })
               .eq('date', dateStr)
@@ -646,6 +712,7 @@ export function SettingsTab() {
                 reason: 'Fermé manuellement',
                 opening_time: currentStatus?.opening_time || '10:00',
                 closing_time: currentStatus?.closing_time || '20:00',
+                is_manual_override: true, // Mark as manual override
               })
               .select()
               .single();
@@ -680,6 +747,7 @@ export function SettingsTab() {
               .update({
                 is_closed: false,
                 reason: null,
+                is_manual_override: true, // Mark as manual override
               })
               .eq('date', dateStr)
               .select()
@@ -720,6 +788,7 @@ export function SettingsTab() {
               reason: 'Ouvert exceptionnellement',
               opening_time: currentStatus?.opening_time || '10:00',
               closing_time: currentStatus?.closing_time || '20:00',
+              is_manual_override: true, // Mark as manual override
             })
             .select()
             .single();
@@ -796,12 +865,13 @@ export function SettingsTab() {
             afternoon_opening: hours.afternoon_opening || null,
             afternoon_closing: hours.afternoon_closing || null,
             use_split_hours: hours.use_split_hours || false,
+            is_manual_override: true, // Mark as manual override
             updated_at: new Date().toISOString(),
           })
           .eq('date', date)
           .select()
           .single();
-        
+
         data = result.data;
         error = result.error;
       } else {
@@ -819,10 +889,11 @@ export function SettingsTab() {
             afternoon_opening: hours.afternoon_opening || null,
             afternoon_closing: hours.afternoon_closing || null,
             use_split_hours: hours.use_split_hours || false,
+            is_manual_override: true, // Mark as manual override
           })
           .select()
           .single();
-        
+
         data = result.data;
         error = result.error;
       }
@@ -840,6 +911,99 @@ export function SettingsTab() {
     } catch (err) {
       console.error('Error updating opening hours:', err);
       setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour des horaires');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  // Unified save function for date modal (handles everything)
+  const saveDateConfiguration = async (date: string, config: {
+    is_closed: boolean;
+    reason?: string;
+    opening_time: string;
+    closing_time: string;
+    morning_opening?: string;
+    morning_closing?: string;
+    afternoon_opening?: string;
+    afternoon_closing?: string;
+    use_split_hours?: boolean;
+    is_manual_override: boolean;
+  }) => {
+    try {
+      setUpdating(date);
+      setError(null);
+
+      const { supabase } = await import('@/lib/supabase');
+
+      // Check if record exists
+      const { data: existingRecord } = await supabase
+        .from('closed_dates')
+        .select('*')
+        .eq('date', date)
+        .single();
+
+      let data, error;
+
+      if (existingRecord) {
+        // Update existing record
+        const result = await supabase
+          .from('closed_dates')
+          .update({
+            is_closed: config.is_closed,
+            reason: config.reason || null,
+            opening_time: config.opening_time,
+            closing_time: config.closing_time,
+            morning_opening: config.morning_opening || null,
+            morning_closing: config.morning_closing || null,
+            afternoon_opening: config.afternoon_opening || null,
+            afternoon_closing: config.afternoon_closing || null,
+            use_split_hours: config.use_split_hours || false,
+            is_manual_override: config.is_manual_override,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('date', date)
+          .select()
+          .single();
+
+        data = result.data;
+        error = result.error;
+      } else {
+        // Create new record
+        const result = await supabase
+          .from('closed_dates')
+          .insert({
+            date,
+            is_closed: config.is_closed,
+            reason: config.reason || null,
+            opening_time: config.opening_time,
+            closing_time: config.closing_time,
+            morning_opening: config.morning_opening || null,
+            morning_closing: config.morning_closing || null,
+            afternoon_opening: config.afternoon_opening || null,
+            afternoon_closing: config.afternoon_closing || null,
+            use_split_hours: config.use_split_hours || false,
+            is_manual_override: config.is_manual_override,
+          })
+          .select()
+          .single();
+
+        data = result.data;
+        error = result.error;
+      }
+
+      if (error) {
+        throw new Error(`Erreur base de données: ${error.message}`);
+      }
+
+      // Update local state
+      setDateStatuses(prev => ({
+        ...prev,
+        [date]: data,
+      }));
+
+    } catch (err) {
+      console.error('Error saving date configuration:', err);
+      setError(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
     } finally {
       setUpdating(null);
     }
@@ -1171,6 +1335,7 @@ export function SettingsTab() {
   /**
    * Update weekly schedule for a specific day of week
    * Saves configuration to restaurant_settings table
+   * SYNC LOGIC: Clears all non-manual calendar overrides for this weekday
    */
   const updateWeeklySchedule = async (dayOfWeek: number, scheduleData: Partial<WeeklySchedule>) => {
     try {
@@ -1224,6 +1389,59 @@ export function SettingsTab() {
       if (error) {
         throw new Error(`Erreur base de données: ${error.message} (code: ${error.code})`);
       }
+
+      // ========================================================================
+      // SYNC LOGIC: Delete non-permanent calendar entries for this weekday
+      // Only entries with is_manual_override = false are deleted
+      // Permanent overrides (checkbox checked) are protected
+      // ========================================================================
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().split('T')[0];
+
+      // Get future closed_dates for this day of week that are NOT permanent overrides
+      const { data: futureDates, error: fetchError } = await supabase
+        .from('closed_dates')
+        .select('date, is_manual_override')
+        .gte('date', todayStr)
+        .eq('is_manual_override', false);
+
+      if (fetchError) {
+        console.error('Error fetching future dates for sync:', fetchError);
+      } else if (futureDates && futureDates.length > 0) {
+        // Filter dates that match this weekday
+        const datesToDelete = futureDates.filter(record => {
+          const recordDate = new Date(record.date);
+          return recordDate.getDay() === dayOfWeek;
+        });
+
+        if (datesToDelete.length > 0) {
+          const dateStrings = datesToDelete.map(d => d.date);
+
+          // Delete non-permanent entries for this weekday
+          const { error: deleteError } = await supabase
+            .from('closed_dates')
+            .delete()
+            .in('date', dateStrings)
+            .eq('is_manual_override', false);
+
+          if (deleteError) {
+            console.error('Error deleting calendar entries during sync:', deleteError);
+          } else {
+            console.log(`✓ Synced ${datesToDelete.length} non-permanent entries for ${dayNames[dayOfWeek]}`);
+
+            // Update local state to remove deleted entries
+            setDateStatuses(prev => {
+              const newState = { ...prev };
+              dateStrings.forEach(dateStr => {
+                delete newState[dateStr];
+              });
+              return newState;
+            });
+          }
+        }
+      }
+      // ========================================================================
 
       // Update local state
       setWeeklySchedule(prev => ({
@@ -1696,14 +1914,17 @@ export function SettingsTab() {
                       return (
                         <div
                           key={day}
+                          onClick={() => !isPast && !isUpdatingThisDate && setShowDateModal(dateStr)}
                           className={`h-20 md:h-28 border-r border-b border-gray-200 last:border-r-0 relative ${
-                            isPast ? 'bg-gray-50' : 'bg-white hover:bg-gray-50'
+                            isPast
+                              ? 'bg-gray-50 cursor-not-allowed'
+                              : 'bg-white hover:bg-gray-100 cursor-pointer'
                           } transition-colors`}
                         >
-                          <div className="w-full h-full p-1 md:p-2">
+                          <div className="w-full h-full p-1 md:p-2 flex flex-col">
                             {/* Date number */}
                             <div
-                              className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-medium ${
+                              className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-medium mb-1 ${
                                 isCurrentDay
                                   ? 'bg-blue-500 text-white'
                                   : isPast
@@ -1714,25 +1935,23 @@ export function SettingsTab() {
                               {day}
                             </div>
 
-                            {/* Status and controls */}
+                            {/* Status display (not clickable individually) */}
                             {!isPast && (
-                              <div className="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
-                                {/* Open/Close toggle */}
-                                <button
-                                  onClick={() => toggleDateStatus(day)}
-                                  disabled={isUpdatingThisDate}
-                                  className={`w-full text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors cursor-pointer ${
+                              <div className="flex-1 flex flex-col gap-0.5 md:gap-1 text-center pointer-events-none">
+                                {/* Status badge */}
+                                <div
+                                  className={`text-[10px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded ${
                                     isClosed
                                       ? isClosedByWeeklySchedule
-                                        ? 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                                        : 'bg-red-100 text-red-700 hover:bg-red-200'
-                                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                        ? 'bg-orange-100 text-orange-700'
+                                        : 'bg-red-100 text-red-700'
+                                      : 'bg-green-100 text-green-700'
                                   }`}
                                 >
                                   <span className="hidden sm:inline">
-                                    {isClosed 
-                                      ? isClosedByWeeklySchedule 
-                                        ? 'Fermé (hebdo)' 
+                                    {isClosed
+                                      ? isClosedByWeeklySchedule
+                                        ? 'Fermé (hebdo)'
                                         : 'Fermé'
                                       : 'Ouvert'
                                     }
@@ -1740,41 +1959,39 @@ export function SettingsTab() {
                                   <span className="sm:hidden">
                                     {isClosed ? 'F' : 'O'}
                                   </span>
-                                </button>
+                                </div>
 
-                                {/* Hours button */}
-                                <button
-                                  onClick={() => setShowHoursModal(dateStr)}
-                                  disabled={isUpdatingThisDate}
-                                  className={`w-full text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded transition-colors leading-tight cursor-pointer ${
+                                {/* Hours display */}
+                                <div
+                                  className={`text-[9px] md:text-xs px-1 md:px-2 py-0.5 md:py-1 rounded leading-tight ${
                                     hasCustomHours || status?.use_split_hours
-                                      ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                      ? 'bg-yellow-100 text-yellow-700'
+                                      : 'bg-gray-100 text-gray-700'
                                   }`}
                                 >
                                   <span className="hidden sm:inline">
-                                    {status?.use_split_hours 
+                                    {status?.use_split_hours
                                       ? `${status.morning_opening || '10:00'}-${status.morning_closing || '14:00'} • ${status.afternoon_opening || '19:00'}-${status.afternoon_closing || '22:00'}`
-                                      : hasCustomHours 
+                                      : hasCustomHours
                                         ? `${status.opening_time}-${status.closing_time}`
                                         : '10:00-20:00'
                                     }
                                   </span>
                                   <span className="sm:hidden">
-                                    {status?.use_split_hours 
+                                    {status?.use_split_hours
                                       ? `${status.morning_opening || '10:00'}-${status.afternoon_closing || '22:00'}`
-                                      : hasCustomHours 
+                                      : hasCustomHours
                                         ? `${status.opening_time}-${status.closing_time}`
                                         : '10-20'
                                     }
                                   </span>
-                                </button>
+                                </div>
                               </div>
                             )}
 
                             {/* Loading indicator */}
                             {isUpdatingThisDate && (
-                              <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                              <div className="absolute inset-0 bg-white/50 flex items-center justify-center pointer-events-none">
                                 <LoadingSpinner size="sm" />
                               </div>
                             )}
@@ -1789,8 +2006,9 @@ export function SettingsTab() {
                 <div className="mt-4 text-sm text-gray-600">
                   <p>• <span className="font-medium">Orange "Fermé (hebdo)"</span> : Fermé selon les horaires hebdomadaires ci-dessus</p>
                   <p>• <span className="font-medium">Rouge "Fermé"</span> : Fermé spécifiquement pour cette date</p>
-                  <p>• Cliquez sur "Ouvert/Fermé" pour créer une exception à la règle hebdomadaire</p>
-                  <p>• Cliquez sur les horaires pour personnaliser les heures d'ouverture</p>
+                  <p>• <span className="font-medium">Jaune</span> : Horaires personnalisés</p>
+                  <p>• <span className="font-medium">Cliquez sur une date</span> pour la modifier (statut, horaires, override permanent)</p>
+                  <p>• <span className="font-medium">Override permanent</span> : Protège la date des changements de l'horaire hebdomadaire</p>
                   <p>• Les dates passées ne peuvent pas être modifiées</p>
                 </div>
               </>
@@ -1799,13 +2017,16 @@ export function SettingsTab() {
         )}
       </div>
 
-      {/* Opening Hours Modal */}
-      {showHoursModal && (
-        <OpeningHoursModal
-          date={showHoursModal}
-          currentHours={dateStatuses[showHoursModal] || { opening_time: '10:00', closing_time: '20:00' }}
-          onSave={(hours) => updateOpeningHours(showHoursModal, hours)}
-          onClose={() => setShowHoursModal(null)}
+      {/* Date Edit Modal */}
+      {showDateModal && (
+        <DateEditModal
+          date={showDateModal}
+          currentStatus={getDateStatus(parseInt(showDateModal.split('-')[2]))}
+          onSave={(config) => {
+            saveDateConfiguration(showDateModal, config);
+            setShowDateModal(null);
+          }}
+          onClose={() => setShowDateModal(null)}
         />
       )}
     </div>
