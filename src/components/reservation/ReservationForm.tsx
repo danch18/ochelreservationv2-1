@@ -425,7 +425,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
                           border: value === time ? '1px solid rgba(239, 230, 210, 0.5)' : 'none'
                         }}
                       >
-                        {time}
+                        <span suppressHydrationWarning>{time}</span>
                       </div>
                     ))}
                   </div>

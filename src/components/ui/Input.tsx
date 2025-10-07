@@ -9,8 +9,14 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, icon, id, ...props }, ref) => {
+  ({ className, label, error, helperText, icon, id, type, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
+
+    // Force 24-hour format for time inputs
+    const timeInputProps = type === 'time' ? {
+      step: 60, // 1 minute steps
+      lang: 'en-GB', // British English uses 24-hour format
+    } : {};
 
     return (
       <div className="space-y-2">
@@ -26,6 +32,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           <input
             id={inputId}
+            type={type}
             className={cn(
               'w-full px-4 py-3 rounded-2xl border',
               'bg-white text-black placeholder-[#0A0A0A]/50',
@@ -54,6 +61,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               }
             }}
             ref={ref}
+            {...timeInputProps}
             {...props}
           />
           {icon && (

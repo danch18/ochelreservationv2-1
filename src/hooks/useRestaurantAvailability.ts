@@ -41,6 +41,8 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
 
   useEffect(() => {
     let mounted = true;
+    let settingsChannel: any = null;
+    let datesChannel: any = null;
 
     const loadAvailability = async () => {
       try {
@@ -133,8 +135,62 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
 
     loadAvailability();
 
+    // Set up real-time subscriptions
+    const setupRealtimeSubscriptions = async () => {
+      const { supabase } = await import('@/lib/supabase');
+
+      // Subscribe to restaurant_settings changes (weekly schedule)
+      settingsChannel = supabase
+        .channel('restaurant-settings-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'restaurant_settings'
+          },
+          (payload: any) => {
+            // Only reload if it's a weekly_schedule setting
+            const settingKey = payload.new?.setting_key || payload.old?.setting_key;
+            if (settingKey && settingKey.startsWith('weekly_schedule_')) {
+              loadAvailability();
+            }
+          }
+        )
+        .subscribe();
+
+      // Subscribe to closed_dates changes (calendar overrides)
+      datesChannel = supabase
+        .channel('closed-dates-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'closed_dates'
+          },
+          (payload) => {
+            loadAvailability();
+          }
+        )
+        .subscribe();
+    };
+
+    setupRealtimeSubscriptions();
+
     return () => {
       mounted = false;
+
+      // Cleanup subscriptions
+      (async () => {
+        const { supabase } = await import('@/lib/supabase');
+        if (settingsChannel) {
+          supabase.removeChannel(settingsChannel);
+        }
+        if (datesChannel) {
+          supabase.removeChannel(datesChannel);
+        }
+      })();
     };
   }, []);
 
@@ -220,19 +276,22 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
 
-    // Generate consecutive 30-minute slots (e.g., "10:00-10:30", "10:30-11:00")
+    // Generate consecutive 30-minute slots in 24-hour format (e.g., "10:00-10:30", "13:00-13:30")
     for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const min = minutes % 60;
-      const startSlot = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+      // Explicitly format as 24-hour time with zero-padding
+      const startSlot = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
       // Calculate end time of this slot (30 minutes later)
       const endSlotMinutes = minutes + 30;
       const endSlotHour = Math.floor(endSlotMinutes / 60);
       const endSlotMin = endSlotMinutes % 60;
-      const endSlot = `${endSlotHour.toString().padStart(2, '0')}:${endSlotMin.toString().padStart(2, '0')}`;
+      // Explicitly format as 24-hour time with zero-padding
+      const endSlot = `${String(endSlotHour).padStart(2, '0')}:${String(endSlotMin).padStart(2, '0')}`;
 
-      slots.push(`${startSlot}-${endSlot}`);
+      const timeSlot = `${startSlot}-${endSlot}`;
+      slots.push(timeSlot);
     }
 
     return slots;
