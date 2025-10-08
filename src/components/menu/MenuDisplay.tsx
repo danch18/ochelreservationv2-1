@@ -316,11 +316,11 @@ export default function MenuDisplay() {
       {/* Menu Content Section */}
       {!loading && !error && (
         <div className={`w-full transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-          {sections.length === 0 ? (
+          {sections.length === 0 && categories.length > 0 ? (
             <div className="text-center py-12">
               <p className="text-white/60">No items available in this category.</p>
             </div>
-          ) : (
+          ) : sections.length > 0 ? (
             sections.map((section, sectionIndex) => (
               <div key={sectionIndex} className="mb-8">
                 {/* Section Title - Only show if title is not empty */}
@@ -355,7 +355,7 @@ export default function MenuDisplay() {
                 </div>
               </div>
             ))
-          )}
+          ) : null}
         </div>
       )}
     </div>
