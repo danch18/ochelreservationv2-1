@@ -1461,6 +1461,27 @@ export function SettingsTab() {
     loadGuestLimit();
     loadHeaderTexts();
     loadWeeklySchedule();
+
+    // Subscribe to realtime changes
+    const { supabase } = require('@/lib/supabase');
+
+    const settingsChannel = supabase
+      .channel('settings-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'restaurant_settings' }, () => {
+        console.log('Restaurant settings changed, refreshing...');
+        loadGuestLimit();
+        loadHeaderTexts();
+        loadWeeklySchedule();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'closed_dates' }, () => {
+        console.log('Closed dates changed, refreshing...');
+        loadDateStatuses();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(settingsChannel);
+    };
   }, [currentMonth, currentYear]);
 
   // Get status for a specific date (combines weekly schedule + specific date overrides)
