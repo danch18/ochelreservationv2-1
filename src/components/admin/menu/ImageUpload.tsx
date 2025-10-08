@@ -41,11 +41,11 @@ export function ImageUpload({ value, onChange, folder, label = 'Image' }: ImageU
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Upload failed: ${response.status}`);
+      }
 
       if (!data.path) {
         throw new Error('No path returned from upload');
