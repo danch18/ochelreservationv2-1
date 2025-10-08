@@ -50,8 +50,17 @@ export default function MenuPage() {
                 "relative flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat h-[250px] md:h-[300px] lg:h-screen w-full"
               )}
               style={{ backgroundImage: 'url("/images/menu-bg.webp")' }}>
+              {/* Dark overlay */}
+              <div className="absolute" style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                top: 0,
+                left: 0
+              }}></div>
+
               {/* NOTRE MENU text in the middle */}
-              <div className="text-center px-4 pt-16 lg:pt-0">
+              <div className="text-center px-4 pt-16 lg:pt-0 relative z-10">
                 <h1 className="text-[2.5rem] md:text-[3rem] font-normal tracking-normal text-white" suppressHydrationWarning>
                   NOTRE MENU
                 </h1>
