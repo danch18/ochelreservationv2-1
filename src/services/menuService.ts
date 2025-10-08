@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { deleteImage, isSupabaseUrl } from '@/lib/storage';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -239,6 +240,17 @@ export const menuItemService = {
   },
 
   async update(id: number, menuItem: Partial<MenuItem>): Promise<MenuItem> {
+    // If updating image_path, delete the old image from storage
+    if (menuItem.image_path !== undefined) {
+      const oldItem = await this.getById(id);
+      if (oldItem?.image_path && isSupabaseUrl(oldItem.image_path) && oldItem.image_path !== menuItem.image_path) {
+        // Delete old image asynchronously (don't wait)
+        deleteImage(oldItem.image_path).catch(err =>
+          console.warn('Failed to delete old menu item image:', err)
+        );
+      }
+    }
+
     const { data, error } = await supabase
       .from('menu_items')
       .update(menuItem)
@@ -251,12 +263,23 @@ export const menuItemService = {
   },
 
   async delete(id: number): Promise<void> {
+    // Get the menu item first to access its image path
+    const menuItem = await this.getById(id);
+
+    // Delete from database
     const { error } = await supabase
       .from('menu_items')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
+
+    // Delete associated image from storage (only if it's a Supabase URL)
+    if (menuItem?.image_path && isSupabaseUrl(menuItem.image_path)) {
+      deleteImage(menuItem.image_path).catch(err =>
+        console.warn('Failed to delete menu item image:', err)
+      );
+    }
   },
 };
 
@@ -422,6 +445,17 @@ export const addonService = {
   },
 
   async update(id: number, addon: Partial<Addon>): Promise<Addon> {
+    // If updating image_path, delete the old image from storage
+    if (addon.image_path !== undefined) {
+      const oldAddon = await this.getById(id);
+      if (oldAddon?.image_path && isSupabaseUrl(oldAddon.image_path) && oldAddon.image_path !== addon.image_path) {
+        // Delete old image asynchronously (don't wait)
+        deleteImage(oldAddon.image_path).catch(err =>
+          console.warn('Failed to delete old addon image:', err)
+        );
+      }
+    }
+
     const { data, error } = await supabase
       .from('addons')
       .update(addon)
@@ -434,11 +468,22 @@ export const addonService = {
   },
 
   async delete(id: number): Promise<void> {
+    // Get the addon first to access its image path
+    const addon = await this.getById(id);
+
+    // Delete from database
     const { error } = await supabase
       .from('addons')
       .delete()
       .eq('id', id);
 
     if (error) throw error;
+
+    // Delete associated image from storage (only if it's a Supabase URL)
+    if (addon?.image_path && isSupabaseUrl(addon.image_path)) {
+      deleteImage(addon.image_path).catch(err =>
+        console.warn('Failed to delete addon image:', err)
+      );
+    }
   },
 };
