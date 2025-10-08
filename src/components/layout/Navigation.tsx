@@ -85,8 +85,10 @@ export default function Navigation({
   return (
     <>
       {/* Fixed Navigation Bar */}
-      <nav className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 ${className}`}>
-        <div className="border border-[#4a3f35] shadow-lg" style={{ display: 'flex', padding: '0.375rem', justifyContent: 'center', alignItems: 'center', gap: '1rem', borderRadius: '3.75rem', background: '#1F1F1F', backdropFilter: 'blur(5px)' }}>
+      <nav className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 w-[356px] md:w-auto ${className}`}>
+        <div className="border border-[#4a3f35] shadow-lg" style={{ display: 'flex', padding: '0.375rem', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', borderRadius: '3.75rem', background: '#1F1F1F', backdropFilter: 'blur(5px)' }}>
+            {/* Left side wrapper: Hamburger + Logo */}
+            <div className="flex items-center gap-4">
             {/* Hamburger Menu Button */}
             <div className="rounded-full flex items-center justify-center" style={{ width: '56px', height: '56px', backgroundColor: '#101010' }}>
               <button
@@ -143,74 +145,99 @@ export default function Navigation({
                 </Link>
               )}
             </div>
+            </div>
 
-            {/* Main Navigation Items - Desktop */}
-            <div className="hidden md:flex">
+            {/* Main Navigation Items */}
+            {/* Mobile: Only show Menu link */}
+            <div className="md:hidden">
               <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
-                {defaultDesktopItems.map((item, index) => (
-                  <div key={index} style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
-                    {item.isReservation ? (
-                      <button
-                        onClick={() => {
-                          // Trigger reservation popup by posting message
-                          const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
-                          if (reservationButton) {
-                            reservationButton.click();
-                          }
-                        }}
-                        className="hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
-                        style={{
-                          color: '#FFF',
-                          fontFamily: 'Forum',
-                          fontSize: '0.875rem',
-                          fontStyle: 'normal',
-                          fontWeight: 400,
-                          lineHeight: '1.4rem',
-                          letterSpacing: '-0.0175rem'
-                        }}
-                      >
-                        {item.label}
-                      </button>
-                    ) : item.isDelivery ? (
-                      <button
-                        onClick={() => {
-                          // Trigger delivery popup
-                          console.log('Delivery button clicked'); // Debug log
-                          openDeliveryPopup();
-                        }}
-                        className="hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
-                        style={{
-                          color: '#FFF',
-                          fontFamily: 'Forum',
-                          fontSize: '0.875rem',
-                          fontStyle: 'normal',
-                          fontWeight: 400,
-                          lineHeight: '1.4rem',
-                          letterSpacing: '-0.0175rem'
-                        }}
-                      >
-                        {item.label}
-                      </button>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className="hover:text-[#d4af37] transition-colors"
-                        style={{
-                          color: '#FFF',
-                          fontFamily: 'Forum',
-                          fontSize: '0.875rem',
-                          fontStyle: 'normal',
-                          fontWeight: 400,
-                          lineHeight: '1.4rem',
-                          letterSpacing: '-0.0175rem'
-                        }}
-                        {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
-                      >
-                        {item.label}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+                <div style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
+                  <Link
+                    href="/menu"
+                    className="hover:text-[#d4af37] transition-colors"
+                    style={{
+                      color: '#FFF',
+                      fontFamily: 'Forum',
+                      fontSize: '0.875rem',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      lineHeight: '1.4rem',
+                      letterSpacing: '-0.0175rem'
+                    }}
+                  >
+                    Menu
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: Show all items */}
+            <div className="hidden md:block">
+              <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
+                  {defaultDesktopItems.map((item, index) => (
+                    <div key={index} style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
+                      {item.isReservation ? (
+                        <button
+                          onClick={() => {
+                            // Trigger reservation popup by posting message
+                            const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
+                            if (reservationButton) {
+                              reservationButton.click();
+                            }
+                          }}
+                          className="hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                          style={{
+                            color: '#FFF',
+                            fontFamily: 'Forum',
+                            fontSize: '0.875rem',
+                            fontStyle: 'normal',
+                            fontWeight: 400,
+                            lineHeight: '1.4rem',
+                            letterSpacing: '-0.0175rem'
+                          }}
+                        >
+                          {item.label}
+                        </button>
+                      ) : item.isDelivery ? (
+                        <button
+                          onClick={() => {
+                            // Trigger delivery popup
+                            console.log('Delivery button clicked'); // Debug log
+                            openDeliveryPopup();
+                          }}
+                          className="hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                          style={{
+                            color: '#FFF',
+                            fontFamily: 'Forum',
+                            fontSize: '0.875rem',
+                            fontStyle: 'normal',
+                            fontWeight: 400,
+                            lineHeight: '1.4rem',
+                            letterSpacing: '-0.0175rem'
+                          }}
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="hover:text-[#d4af37] transition-colors"
+                          style={{
+                            color: '#FFF',
+                            fontFamily: 'Forum',
+                            fontSize: '0.875rem',
+                            fontStyle: 'normal',
+                            fontWeight: 400,
+                            lineHeight: '1.4rem',
+                            letterSpacing: '-0.0175rem'
+                          }}
+                          {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                        >
+                          {item.label}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
         </div>
@@ -257,6 +284,50 @@ export default function Navigation({
                 {item.label}
               </Link>
             ))}
+
+            {/* Mobile only: Reservation and Livraison buttons */}
+            <div className="md:hidden space-y-4">
+              <button
+                onClick={() => {
+                  handleLinkClick();
+                  const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
+                  if (reservationButton) {
+                    reservationButton.click();
+                  }
+                }}
+                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                style={{
+                  color: '#FFF2CC',
+                  fontFamily: 'Forum',
+                  fontSize: '1.5rem',
+                  fontStyle: 'normal',
+                  fontWeight: 400,
+                  lineHeight: '1.8rem',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Reservation
+              </button>
+
+              <button
+                onClick={() => {
+                  handleLinkClick();
+                  openDeliveryPopup();
+                }}
+                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                style={{
+                  color: '#FFF2CC',
+                  fontFamily: 'Forum',
+                  fontSize: '1.5rem',
+                  fontStyle: 'normal',
+                  fontWeight: 400,
+                  lineHeight: '1.8rem',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Livraison
+              </button>
+            </div>
           </div>
 
           {/* Google Logo */}
