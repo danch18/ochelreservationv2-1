@@ -799,15 +799,15 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
             </Button>
             <div className="flex items-center justify-center gap-1 text-xs max-sm:text-[10px] text-muted-foreground">
               <span>propulsé par</span>
-              <a 
-                href="https://www.ochel.fr/" 
-                target="_blank" 
+              <a
+                href="https://www.ochel.fr/"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-75 transition-opacity"
               >
-                <Image 
-                  src="/icons/ochellogofull.png" 
-                  alt="Logo" 
+                <Image
+                  src="/icons/ochelFullLogoWhite.png"
+                  alt="Logo"
                   width={30}
                   height={12}
                   className="h-3 w-auto max-sm:h-2"
