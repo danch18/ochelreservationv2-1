@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { uploadImage, StorageFolder } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string; // 'menu-item' or 'add-ons'
+    const folder = formData.get('folder') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -15,39 +15,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid folder' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Create filename
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-    const filePath = `menu/${folder}/${fileName}`;
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from('menu-images')
-      .upload(filePath, buffer, {
-        contentType: file.type,
-        upsert: false
-      });
-
-    if (error) {
-      console.error('Supabase upload error:', error);
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
       return NextResponse.json(
-        { error: 'Failed to upload file to storage' },
-        { status: 500 }
+        { error: 'Only image files are allowed' },
+        { status: 400 }
       );
     }
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('menu-images')
-      .getPublicUrl(filePath);
+    // Validate file size (10MB max)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: 'File size must be less than 10MB' },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ path: publicUrl, success: true });
+    // Upload to Supabase Storage
+    const result = await uploadImage(file, folder as StorageFolder);
+
+    return NextResponse.json({
+      path: result.publicUrl,
+      storagePath: result.path,
+      success: true,
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to upload file',
+      },
       { status: 500 }
     );
   }

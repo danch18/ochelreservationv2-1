@@ -46,10 +46,16 @@ export function ImageUpload({ value, onChange, folder, label = 'Image' }: ImageU
       }
 
       const data = await response.json();
+
+      if (!data.path) {
+        throw new Error('No path returned from upload');
+      }
+
       onChange(data.path);
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Erreur lors du téléchargement de l\'image');
+      const errorMessage = error instanceof Error ? error.message : 'Erreur lors du téléchargement de l\'image';
+      alert(errorMessage);
       setPreview(null);
     } finally {
       setUploading(false);

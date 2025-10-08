@@ -123,7 +123,7 @@ export default function MenuItemCard({
             )}
           </div>
 
-          {subtitle && (
+          {subtitle && subtitle.trim() && (
             <p className={`text-sm mb-2 font-forum ${
               isSpecial ? 'text-black/70' : 'text-gray-400'
             }`}>{subtitle}</p>
@@ -145,8 +145,8 @@ export default function MenuItemCard({
             onClick={closeModal}
           />
 
-          {/* Modal Content - 80% of viewport */}
-          <div className={`relative bg-[#101010] rounded-lg border border-white/20 w-[80vw] h-[80vh] flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          {/* Modal Content - Square shaped, responsive */}
+          <div className={`relative bg-[#101010] rounded-lg border border-white/20 w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] aspect-square max-h-[90vh] flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
             {/* Close Button */}
             <button
               onClick={closeModal}
