@@ -40,7 +40,7 @@ export default function HomePage() {
         {/* <div className="absolute inset-0 bg-black bg-opacity-10"></div> */}
         
         <div className="relative z-10 text-center">
-          <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4" suppressHydrationWarning>
+          <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4 whitespace-pre-line" suppressHydrationWarning>
             {content.hero.title}
           </h1>
         </div>
