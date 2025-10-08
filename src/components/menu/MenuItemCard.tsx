@@ -148,68 +148,67 @@ export default function MenuItemCard({
           />
 
           {/* Modal Content - Square shaped, responsive */}
-          <div className={`relative bg-[#101010] rounded-lg border border-white/20 w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] aspect-square max-h-[90vh] flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-            {/* Close Button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer bg-white rounded-full w-8 h-8 flex items-center justify-center"
-              aria-label="Close"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+          <div className={`relative bg-[#101010] rounded-2xl border border-white/20 w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] aspect-square max-h-[90vh] p-3 sm:p-4 md:p-6 flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+            {/* Close Button - In empty space, not overlapping */}
+            <div className="flex justify-end mb-2 sm:mb-3">
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer bg-white rounded-full w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center flex-shrink-0"
+                aria-label="Close"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-            {/* Content Area */}
-            <div className="w-full h-full p-4 flex flex-col">
-              {modalType === '3d' && (model3DGlbUrl || model3DUsdzUrl) ? (
-                <>
-                  {/* 3D Model Viewer */}
-                  <div className="flex-1 mb-4">
-                    <model-viewer
-                      src={model3DGlbUrl || ''}
-                      ios-src={model3DUsdzUrl || ''}
-                      camera-controls
-                      touch-action="pan-y"
-                      exposure="1"
-                      shadow-intensity="1"
+            {modalType === '3d' && (model3DGlbUrl || model3DUsdzUrl) ? (
+              <>
+                {/* 3D Model Viewer with rounded corners */}
+                <div className="flex-1 rounded-xl overflow-hidden mb-4">
+                  <model-viewer
+                    src={model3DGlbUrl || ''}
+                    ios-src={model3DUsdzUrl || ''}
+                    camera-controls
+                    touch-action="pan-y"
+                    exposure="1"
+                    shadow-intensity="1"
+                    alt={title}
+                    interaction-prompt="auto"
+                    interaction-prompt-threshold="0"
+                    interaction-prompt-style="basic"
+                    auto-rotate
+                    auto-rotate-delay="1000"
+                    style={{ width: '100%', height: '100%', background: '#fff' }}
+                  />
+                </div>
+
+                {/* AR Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleARClick}
+                    className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
+                  >
+                    Voir sur la table
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* Image Display with rounded corners */
+              image && (
+                <div className="w-full h-full rounded-xl overflow-hidden">
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={image}
                       alt={title}
-                      interaction-prompt="auto"
-                      interaction-prompt-threshold="0"
-                      interaction-prompt-style="basic"
-                      auto-rotate
-                      auto-rotate-delay="1000"
-                      style={{ width: '100%', height: '100%', minHeight: '300px', background: '#fff', borderRadius: '0.5rem' }}
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   </div>
-
-                  {/* AR Button */}
-                  <div className="flex justify-center pb-2">
-                    <button
-                      onClick={handleARClick}
-                      className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
-                    >
-                      Voir sur la table
-                    </button>
-                  </div>
-                </>
-              ) : (
-                /* Image Display */
-                image && (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={image}
-                        alt={title}
-                        fill
-                        className="object-contain"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
+                </div>
+              )
+            )}
           </div>
         </div>
       )}
