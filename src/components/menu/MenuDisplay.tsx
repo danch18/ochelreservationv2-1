@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib';
 import MenuItemCard from './MenuItemCard';
+import MenuItemSkeleton from './MenuItemSkeleton';
 import {
   menuService,
   type Category,
@@ -298,8 +299,10 @@ export default function MenuDisplay() {
 
       {/* Loading State */}
       {loading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-white/60">Loading menu...</div>
+        <div className="space-y-4">
+          {[...Array(6)].map((_, index) => (
+            <MenuItemSkeleton key={index} />
+          ))}
         </div>
       )}
 
