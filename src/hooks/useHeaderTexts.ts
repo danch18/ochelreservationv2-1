@@ -15,9 +15,9 @@ interface HeaderTexts {
  */
 export function useHeaderTexts() {
   const [headerTexts, setHeaderTexts] = useState<HeaderTexts>({
-    headerText1: 'NO RESERVATIONS AT LUNCH ON WEEKDAYS',
-    headerText2: 'OPEN ALL MONTH OF AUGUST',
-    headerText3: 'For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.'
+    headerText1: 'Bienvenue au Magnifiko !',
+    headerText2: 'Réservez votre table en quelques clics (sans réservation après 20h)',
+    headerText3: 'Pour toute demande particulière, contactez-nous au 01 49 59 00 94'
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,9 +41,9 @@ export function useHeaderTexts() {
 
         // Initialize with default values
         const texts: HeaderTexts = {
-          headerText1: 'NO RESERVATIONS AT LUNCH ON WEEKDAYS',
-          headerText2: 'OPEN ALL MONTH OF AUGUST',
-          headerText3: 'For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.'
+          headerText1: 'Bienvenue au Magnifiko !',
+          headerText2: 'Réservez votre table en quelques clics (sans réservation après 20h)',
+          headerText3: 'Pour toute demande particulière, contactez-nous au 01 49 59 00 94'
         };
 
         // Update with database values if they exist
