@@ -90,11 +90,6 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
       return;
     }
 
-    if (!description.trim()) {
-      setError('La description est obligatoire');
-      return;
-    }
-
     if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
       setError('Le prix doit être un nombre positif');
       return;
@@ -127,7 +122,7 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
       await onSave({
         title: title.trim(),
         text: text.trim() || null,
-        description: description.trim(),
+        description: description.trim() || null,
         price: parseFloat(price),
         image_path: imagePath.trim() || null,
         model_3d_url: model3dGlbUrl.trim() || null,
@@ -206,7 +201,7 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-red-500">*</span>
+              Description
             </label>
             <textarea
               value={description}
@@ -214,7 +209,6 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
               placeholder="Description complète du plat..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
               rows={3}
-              required
             />
           </div>
 
