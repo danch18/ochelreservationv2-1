@@ -431,7 +431,7 @@ export function MenuItemsManagement() {
         return (
           item.title.toLowerCase().includes(query) ||
           item.text?.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query) ||
+          item.description?.toLowerCase().includes(query) ||
           cat?.title.toLowerCase().includes(query) ||
           subcat?.title.toLowerCase().includes(query)
         );

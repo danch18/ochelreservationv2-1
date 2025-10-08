@@ -184,6 +184,11 @@ export function SubcategoriesManagement() {
     loadData();
   }, []);
 
+  // Helper function to get category name
+  const getCategoryName = (categoryId: number): string => {
+    return categories.find((c) => c.id === categoryId)?.title || 'N/A';
+  };
+
   // Apply search and category filters
   const filteredSubcategories = useMemo(() => {
     // First, filter out "General" subcategories
@@ -207,7 +212,7 @@ export function SubcategoriesManagement() {
     }
 
     return filtered;
-  }, [subcategories, searchQuery, selectedCategoryId]);
+  }, [subcategories, searchQuery, selectedCategoryId, categories]);
 
   // Pagination
   const totalPages = Math.ceil(filteredSubcategories.length / itemsPerPage);
@@ -273,10 +278,6 @@ export function SubcategoriesManagement() {
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);
     setSubcategoryToDelete(null);
-  };
-
-  const getCategoryName = (categoryId: number): string => {
-    return categories.find((c) => c.id === categoryId)?.title || 'N/A';
   };
 
   if (loading) {
