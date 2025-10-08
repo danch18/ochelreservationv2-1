@@ -32,12 +32,17 @@ export function useReservationForm() {
     setSubmitError(null);
 
     try {
+      // Extract start time from time slot format (e.g., "20:30-21:00" -> "20:30")
+      const startTime = data.time.includes('-')
+        ? data.time.split('-')[0].trim()
+        : data.time;
+
       const reservationData = {
         name: data.name,
         email: data.email,
         phone: data.phone,
         reservation_date: data.date,
-        reservation_time: data.time,
+        reservation_time: startTime,
         guests: parseInt(data.guests),
         special_requests: data.specialRequests || null
       };

@@ -19,7 +19,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
 
   // Dynamic popup dimensions based on step
   const popupWidth = currentStep === 2 ? 1035 : 414;  // 2.5x width for step 2 (414 * 2.5 = 1035)
-  const popupHeight = currentStep === 2 ? 700 : 600; // Slightly taller for step 2
+  const popupHeight = 600; // Same height for both steps
 
   // Ensure component only renders on client
   useEffect(() => {
