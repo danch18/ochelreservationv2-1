@@ -50,29 +50,8 @@ export default function MenuDisplay() {
         setLoading(true);
         setError(null);
 
-        let allMenuData: Map<number, {
-          category: Category;
-          subcategories: Subcategory[];
-          menuItems: MenuItem[];
-          addons: Addon[];
-        }>;
-
-        // Check sessionStorage first
-        const cachedData = sessionStorage.getItem('menuData');
-        const cacheTimestamp = sessionStorage.getItem('menuDataTimestamp');
-        const now = Date.now();
-        const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
-
-        // Use cache if it exists and is less than 5 minutes old
-        if (cachedData && cacheAge < 5 * 60 * 1000) {
-          const parsedData = JSON.parse(cachedData);
-          allMenuData = new Map(parsedData);
-        } else {
-          // Fetch fresh data
-          allMenuData = await menuService.getAllMenuData();
-          sessionStorage.setItem('menuData', JSON.stringify(Array.from(allMenuData.entries())));
-          sessionStorage.setItem('menuDataTimestamp', now.toString());
-        }
+        // Fetch fresh data (no caching - using realtime updates instead)
+        const allMenuData = await menuService.getAllMenuData();
 
         setMenuDataCache(allMenuData);
 
@@ -92,21 +71,36 @@ export default function MenuDisplay() {
 
     loadAllMenuData();
 
-    // Listen for menu data changes from admin panel via BroadcastChannel
-    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+    // Subscribe to realtime changes
+    const { supabase } = require('@/lib/supabase');
 
-    menuUpdateChannel.onmessage = (event) => {
-      if (event.data === 'invalidate') {
-        console.log('Menu data changed, refreshing...');
-        sessionStorage.removeItem('menuData');
-        sessionStorage.removeItem('menuDataTimestamp');
+    const menuChannel = supabase
+      .channel('menu-display-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+        console.log('Categories changed, refreshing...');
+        setMenuDataCache(new Map()); // Clear cache
         loadAllMenuData();
-      }
-    };
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'subcategories' }, () => {
+        console.log('Subcategories changed, refreshing...');
+        setMenuDataCache(new Map()); // Clear cache
+        loadAllMenuData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => {
+        console.log('Menu items changed, refreshing...');
+        setMenuDataCache(new Map()); // Clear cache
+        loadAllMenuData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'addons' }, () => {
+        console.log('Addons changed, refreshing...');
+        setMenuDataCache(new Map()); // Clear cache
+        loadAllMenuData();
+      })
+      .subscribe();
 
     // Cleanup on unmount
     return () => {
-      menuUpdateChannel.close();
+      supabase.removeChannel(menuChannel);
     };
   }, []);
 
