@@ -275,22 +275,14 @@ export function useRestaurantAvailability(): UseRestaurantAvailabilityReturn {
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
 
-    // Generate consecutive 30-minute slots in 24-hour format (e.g., "10:00-10:30", "13:00-13:30")
+    // Generate consecutive 30-minute slots in 24-hour format (e.g., "10:00", "10:30", "13:00", "13:30")
     for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const min = minutes % 60;
       // Explicitly format as 24-hour time with zero-padding
       const startSlot = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
-      // Calculate end time of this slot (30 minutes later)
-      const endSlotMinutes = minutes + 30;
-      const endSlotHour = Math.floor(endSlotMinutes / 60);
-      const endSlotMin = endSlotMinutes % 60;
-      // Explicitly format as 24-hour time with zero-padding
-      const endSlot = `${String(endSlotHour).padStart(2, '0')}:${String(endSlotMin).padStart(2, '0')}`;
-
-      const timeSlot = `${startSlot}-${endSlot}`;
-      slots.push(timeSlot);
+      slots.push(startSlot);
     }
 
     return slots;
