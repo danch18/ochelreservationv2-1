@@ -13,9 +13,10 @@ interface TestimonialCardProps {
     image?: string;
   };
   link?: string;
+  fillHeight?: boolean;
 }
 
-export default function TestimonialCard({ rating, title, description, author, link }: TestimonialCardProps) {
+export default function TestimonialCard({ rating, title, description, author, link, fillHeight = false }: TestimonialCardProps) {
   const CardContent = () => (
     <div style={{
       display: 'flex',
@@ -26,7 +27,8 @@ export default function TestimonialCard({ rating, title, description, author, li
       alignSelf: 'stretch',
       borderRadius: '0.75rem',
       background: '#101010',
-      border: '1px solid rgba(255, 255, 255, 0.10)'
+      border: '1px solid rgba(255, 255, 255, 0.10)',
+      height: fillHeight ? '100%' : 'auto'
     }}>
       <div className="flex justify-center mb-4">
         {[...Array(rating)].map((_, i) => (
@@ -76,7 +78,7 @@ export default function TestimonialCard({ rating, title, description, author, li
 
   if (link) {
     return (
-      <Link href={link} target="_blank" rel="noopener noreferrer" className="block">
+      <Link href={link} target="_blank" rel="noopener noreferrer" className={`block ${fillHeight ? 'h-full' : ''}`}>
         <CardContent />
       </Link>
     );
