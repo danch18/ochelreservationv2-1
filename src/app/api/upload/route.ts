@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadImage, StorageFolder } from '@/lib/storage';
+import { createClient } from '@supabase/supabase-js';
+
+const BUCKET_NAME = 'menu-images';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,12 +34,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upload to Supabase Storage
-    const result = await uploadImage(file, folder as StorageFolder);
+    // Create a Supabase client for server-side operations
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+
+    // Create a unique filename
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    // Upload file to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('Upload error:', error);
+      throw new Error(`Failed to upload image: ${error.message}`);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(data.path);
 
     return NextResponse.json({
-      path: result.publicUrl,
-      storagePath: result.path,
+      path: urlData.publicUrl,
+      storagePath: data.path,
       success: true,
     });
   } catch (error) {
