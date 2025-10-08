@@ -51,13 +51,13 @@ export function formatDate(dateString: string): string {
   if (!dateString || dateString.trim() === '') {
     return 'Invalid Date';
   }
-  
+
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
     return 'Invalid Date';
   }
-  
-  return date.toLocaleDateString('en-US', {
+
+  return date.toLocaleDateString('fr-FR', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -66,7 +66,7 @@ export function formatDate(dateString: string): string {
 }
 
 export function formatShortDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  return new Date(dateString).toLocaleDateString('fr-FR', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'

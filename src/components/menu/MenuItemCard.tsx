@@ -187,7 +187,7 @@ export default function MenuItemCard({
                       onClick={handleARClick}
                       className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
                     >
-                      View in AR
+                      Voir sur la table
                     </button>
                   </div>
                 </>
