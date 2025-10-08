@@ -110,7 +110,9 @@ export default function MenuItemCard({
             {has3D && (
               <button
                 onClick={handle3DClick}
-                className="w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer ml-1 sm:ml-2"
+                className={`w-5 h-5 sm:w-6 sm:h-6 opacity-70 hover:opacity-100 transition-opacity cursor-pointer ml-1 sm:ml-2 ${
+                  isSpecial ? 'invert' : ''
+                }`}
               >
                 <Image
                   src="/icons/3d.svg"
