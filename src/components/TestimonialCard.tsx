@@ -76,7 +76,7 @@ export default function TestimonialCard({ rating, title, description, author, li
 
   if (link) {
     return (
-      <Link href={link} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
+      <Link href={link} target="_blank" rel="noopener noreferrer" className="block">
         <CardContent />
       </Link>
     );
