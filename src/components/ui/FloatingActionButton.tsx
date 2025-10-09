@@ -195,8 +195,8 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
       </div>
 
       {/* Global styles for reservation popup content */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      {mounted && (
+        <style suppressHydrationWarning>{`
           .reservation-popup-content h1,
           .reservation-popup-content h2,
           .reservation-popup-content h3,
@@ -336,8 +336,8 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
             align-items: center !important;
             justify-content: center !important;
           }
-        `
-      }} />
+        `}</style>
+      )}
     </div>
   );
 }
