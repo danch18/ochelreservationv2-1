@@ -912,26 +912,36 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   <Input
                     type="tel"
                     label="Téléphone"
-                    placeholder="612345678 ou +33612345678"
+                    placeholder="+33612345678 ou 0612345678"
                     error={errors.phone?.message}
-                    {...register('phone')}
+                    maxLength={phoneValue?.startsWith('+33') ? 12 : 10}
+                    isValid={phoneValue ? phoneValidation.isValid : false}
+                    {...register('phone', {
+                      onChange: (e) => {
+                        // Only allow +, digits 0-9
+                        const value = e.target.value;
+                        const cleaned = value.replace(/[^+0-9]/g, '');
+                        if (value !== cleaned) {
+                          e.target.value = cleaned;
+                          setValue('phone', cleaned);
+                        }
+                      }
+                    })}
+                    onKeyPress={(e) => {
+                      // Prevent typing any character that's not + or 0-9
+                      const char = e.key;
+                      if (!/[+0-9]/.test(char)) {
+                        e.preventDefault();
+                      }
+                    }}
                   />
-                  {phoneValue && !phoneValidation.isValid && phoneValidation.suggestion && (
-                    <div className="mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                      <p className="text-xs text-blue-700">
-                        💡 <strong>Suggestion:</strong> {phoneValidation.suggestion}
+                  {/* Success message when format is valid */}
+                  {phoneValue && phoneValidation.isValid && (
+                    <div className="mt-1 ">
+                      <p className="text-xs text-green-700">
+                        ✓ Format valide
                       </p>
                     </div>
-                  )}
-                  {!phoneValue && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Format: sans espaces, sans 0 initial (ex: 612345678)
-                    </p>
-                  )}
-                  {phoneValue && phoneValidation.isValid && (
-                    <p className="text-xs text-green-600 mt-1">
-                      ✓ Format valide
-                    </p>
                   )}
                 </div>
                 <Input
@@ -1078,7 +1088,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
           <Button
             type="submit"
             loading={isSubmitting}
-            disabled={isSubmitting || !nameValue || !emailValue || !phoneValue}
+            disabled={isSubmitting || !nameValue || !emailValue || !phoneValue || !phoneValidation.isValid}
             className="w-full mb-2"
             size="md"
           >

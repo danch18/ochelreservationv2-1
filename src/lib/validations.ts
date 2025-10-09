@@ -15,9 +15,16 @@ export const reservationSchema = z.object({
   
   phone: z
     .string()
-    .min(10, 'Le numéro de téléphone doit contenir au moins 10 chiffres')
-    .max(20, 'Le numéro de téléphone doit contenir moins de 20 caractères')
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Format invalide. Utilisez: 612345678 ou +33612345678 (sans espaces, sans 0 initial)'),
+    .min(10, 'Le numéro de téléphone est requis')
+    .refine((phone) => {
+      // Remove spaces and hyphens for validation
+      const cleaned = phone.replace(/[^\d+]/g, '');
+      // Format 1: +33 followed by 9 digits
+      const format1 = /^\+33[0-9]{9}$/;
+      // Format 2: 0 followed by 9 digits
+      const format2 = /^0[0-9]{9}$/;
+      return format1.test(cleaned) || format2.test(cleaned);
+    }, 'Format invalide. Utilisez: +33612345678 ou 0612345678'),
   
   date: z
     .string()

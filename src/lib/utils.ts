@@ -8,41 +8,79 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Phone number validation for French numbers
-export function validatePhoneFormat(phoneNumber: string): { isValid: boolean; suggestion?: string } {
+// Accepts two formats:
+// 1. +33 followed by 9 digits (e.g., +33612345678)
+// 2. 0 followed by 9 digits (e.g., 0612345678)
+export function validatePhoneFormat(phoneNumber: string): { isValid: boolean; suggestion?: string; warning?: string } {
   const cleaned = phoneNumber.replace(/[^\d+]/g, '');
 
-  // Check if it matches the required pattern
-  const isValid = /^[\+]?[1-9][\d]{9,15}$/.test(cleaned);
+  // Format 1: +33 followed by 9 digits
+  const format1 = /^\+33[0-9]{9}$/;
+  // Format 2: 0 followed by 9 digits
+  const format2 = /^0[0-9]{9}$/;
+
+  // Check if it matches either format
+  const isValid = format1.test(cleaned) || format2.test(cleaned);
 
   if (isValid) {
     return { isValid: true };
   }
 
-  // Provide suggestions based on common mistakes
+  // Provide specific warnings based on what's being typed
+  if (cleaned.length === 0) {
+    return {
+      isValid: false,
+      warning: 'Veuillez entrer un numéro de téléphone'
+    };
+  }
+
+  // Check if it starts correctly
+  if (!cleaned.startsWith('+33') && !cleaned.startsWith('0')) {
+    return {
+      isValid: false,
+      warning: 'Le numéro doit commencer par +33 ou 0',
+      suggestion: 'Format: +33612345678 ou 0612345678'
+    };
+  }
+
+  // Check length for +33 format
+  if (cleaned.startsWith('+33')) {
+    if (cleaned.length < 12) {
+      return {
+        isValid: false,
+        warning: `${12 - cleaned.length} chiffre(s) restant(s)`
+      };
+    }
+    if (cleaned.length > 12) {
+      return {
+        isValid: false,
+        warning: 'Trop de chiffres pour le format +33',
+        suggestion: 'Format: +33 suivi de 9 chiffres'
+      };
+    }
+  }
+
+  // Check length for 0 format
   if (cleaned.startsWith('0')) {
-    return {
-      isValid: false,
-      suggestion: `Essayez sans le 0: ${cleaned.substring(1)}`
-    };
-  }
-
-  if (phoneNumber.includes(' ') || phoneNumber.includes('-')) {
-    return {
-      isValid: false,
-      suggestion: `Supprimez les espaces/tirets: ${cleaned}`
-    };
-  }
-
-  if (cleaned.length < 10) {
-    return {
-      isValid: false,
-      suggestion: 'Le numéro doit contenir au moins 10 chiffres'
-    };
+    if (cleaned.length < 10) {
+      return {
+        isValid: false,
+        warning: `${10 - cleaned.length} chiffre(s) restant(s)`
+      };
+    }
+    if (cleaned.length > 10) {
+      return {
+        isValid: false,
+        warning: 'Trop de chiffres pour le format 0',
+        suggestion: 'Format: 0 suivi de 9 chiffres'
+      };
+    }
   }
 
   return {
     isValid: false,
-    suggestion: 'Format attendu: 612345678 ou +33612345678'
+    warning: 'Format invalide',
+    suggestion: 'Format: +33612345678 ou 0612345678'
   };
 }
 

@@ -6,10 +6,11 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: string;
   helperText?: string;
   icon?: React.ReactNode;
+  isValid?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, icon, id, type, ...props }, ref) => {
+  ({ className, label, error, helperText, icon, id, type, isValid, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
     // Force 24-hour format for time inputs
@@ -47,17 +48,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             style={{
               ...(!error && {
-                borderColor: 'rgba(239, 230, 210, 0.2)',
+                borderColor: isValid ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 230, 210, 0.2)',
               }),
             }}
             onFocus={(e) => {
               if (!error) {
-                e.currentTarget.style.borderColor = 'rgba(239, 230, 210, 0.4)';
+                e.currentTarget.style.borderColor = isValid ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 230, 210, 0.4)';
               }
             }}
             onBlur={(e) => {
               if (!error) {
-                e.currentTarget.style.borderColor = 'rgba(239, 230, 210, 0.2)';
+                e.currentTarget.style.borderColor = isValid ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 230, 210, 0.2)';
               }
             }}
             ref={ref}
