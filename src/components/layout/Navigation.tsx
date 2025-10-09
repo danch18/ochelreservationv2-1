@@ -264,11 +264,36 @@ export default function Navigation({
         }}>
           {/* Navigation Links */}
           <div className="space-y-4 w-full text-center">
-            {primaryItems.map((item, index) => (
+            {/* Desktop only: Show primaryItems first */}
+            <div className="hidden md:block space-y-4">
+              {primaryItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className="block hover:text-[#d4af37] transition-colors"
+                  style={{
+                    color: '#FFF2CC',
+                    fontFamily: 'Forum',
+                    fontSize: '1.5rem',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    lineHeight: '1.8rem',
+                    textTransform: 'uppercase'
+                  }}
+                  onClick={handleLinkClick}
+                  {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Mobile only: Menu, Reservation, Livraison, then Certifications halal */}
+            <div className="md:hidden space-y-4">
               <Link
-                key={index}
-                href={item.href}
-                className="block hover:text-[#d4af37] transition-colors"
+                href="/menu"
+                onClick={handleLinkClick}
+                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer"
                 style={{
                   color: '#FFF2CC',
                   fontFamily: 'Forum',
@@ -278,15 +303,10 @@ export default function Navigation({
                   lineHeight: '1.8rem',
                   textTransform: 'uppercase'
                 }}
-                onClick={handleLinkClick}
-                {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
               >
-                {item.label}
+                Menu
               </Link>
-            ))}
 
-            {/* Mobile only: Reservation and Livraison buttons */}
-            <div className="md:hidden space-y-4">
               <button
                 onClick={() => {
                   handleLinkClick();
@@ -327,6 +347,27 @@ export default function Navigation({
               >
                 Livraison
               </button>
+
+              {primaryItems.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  className="block hover:text-[#d4af37] transition-colors"
+                  style={{
+                    color: '#FFF2CC',
+                    fontFamily: 'Forum',
+                    fontSize: '1.5rem',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    lineHeight: '1.8rem',
+                    textTransform: 'uppercase'
+                  }}
+                  onClick={handleLinkClick}
+                  {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
 
