@@ -148,7 +148,7 @@ export default function MenuItemCard({
           />
 
           {/* Modal Content - Square shaped, responsive */}
-          <div className={`relative bg-[#101010] rounded-2xl border border-white/20 w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] aspect-square max-h-[90vh] p-3 sm:p-4 md:p-6 flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className={`relative bg-[#101010] rounded-2xl border border-white/20 w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] h-[85vh] sm:aspect-square sm:max-h-[90vh] sm:h-auto p-3 sm:p-4 md:p-6 flex flex-col transition-all duration-300 ${isClosing ? 'opacity-0 scale-95' : isOpening ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
             {/* Close Button - In empty space, not overlapping */}
             <div className="flex justify-end mb-2 sm:mb-3">
               <button
