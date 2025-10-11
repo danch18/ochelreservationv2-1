@@ -642,8 +642,35 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
 
   // Get dynamic time slots for the selected date based on admin-configured weekly schedule
   // This replaces the static TIME_SLOTS constant with dynamic slots from database
-  const availableTimeSlots = selectedDate ? getTimeSlots(selectedDate) : [];
-  
+  const allTimeSlots = selectedDate ? getTimeSlots(selectedDate) : [];
+
+  // Filter out past time slots if the selected date is today
+  const availableTimeSlots = (() => {
+    if (!selectedDate) return [];
+
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = selectedDate === today;
+
+    if (!isToday) {
+      return allTimeSlots;
+    }
+
+    // Get current time
+    const now = new Date();
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+
+    // Filter slots: only show slots that are after current time
+    return allTimeSlots.filter(slot => {
+      const [slotHours, slotMinutes] = slot.split(':').map(Number);
+      const slotTimeInMinutes = slotHours * 60 + slotMinutes;
+
+      // Only allow slots that are strictly after the current time
+      return slotTimeInMinutes > currentTimeInMinutes;
+    });
+  })();
+
   // Check if the selected date is closed based on weekly schedule or specific date override
   const selectedDateClosed = selectedDate ? isDateClosed(selectedDate) : false;
 
