@@ -1,6 +1,11 @@
+'use client';
+
 import { Footer } from '@/components/layout';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export function PublicFooter() {
+  const { t } = useTranslation();
+
   return (
     <div id="contact">
       <Footer
@@ -10,19 +15,23 @@ export function PublicFooter() {
           width: 100,
           height: 34
         }}
+        brandInfo={{
+          name: "Magnifiko",
+          description: t('footer.description')
+        }}
         backgroundColor="bg-black"
         sections={[
           {
-            title: 'Liens Rapides',
+            title: t('footer.quickLinks'),
             items: [
-              { label: 'Accueil', href: '/' },
-              { label: 'Menu', href: '/menu' },
-              { label: 'À Propos', href: '#about' },
-              { label: 'Contact', href: '#contact' },
+              { label: t('footer.home'), href: '/' },
+              { label: t('footer.menu'), href: '/menu' },
+              { label: t('footer.about'), href: '#about' },
+              { label: t('footer.contact'), href: '#contact' },
             ],
           },
           {
-            title: 'Information',
+            title: t('footer.information'),
             items: [
               { icon: "/icons/footer/location.svg", label: '63 Bd Paul Vaillant Couturier,', text: '63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France' },
               { icon: "/icons/footer/phone.svg", label: '01 49 59 00 94', text: '01 49 59 00 94' },
@@ -30,12 +39,12 @@ export function PublicFooter() {
             ],
           },
           {
-            title: 'Horaires',
+            title: t('footer.hours'),
             items: [
-              { label: 'Ouvert tous les jours', text: 'Ouvert tous les jours' },
-              { label: '11h - Minuit', text: '11h - Minuit' },
-              { label: 'Vendredi', text: 'Vendredi' },
-              { label: '14h - Minuit', text: '14h - Minuit' },
+              { label: t('footer.openDaily'), text: t('footer.openDaily') },
+              { label: t('footer.hours1'), text: t('footer.hours1') },
+              { label: t('footer.friday'), text: t('footer.friday') },
+              { label: t('footer.hours2'), text: t('footer.hours2') },
             ],
           },
         ]}
@@ -44,7 +53,7 @@ export function PublicFooter() {
           { label: 'Facebook', href: '#', icon: 'facebook' },
           { label: 'TikTok', href: '#', icon: 'tiktok' },
         ]}
-        copyright="© 2025 Magnifiko. Tous droits réservés"
+        copyright={t('footer.copyright')}
       />
     </div>
   );

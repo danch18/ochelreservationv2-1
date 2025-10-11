@@ -11,6 +11,7 @@ import {
   type Addon,
   type Subcategory
 } from '@/services/menuService';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface MenuDisplaySection {
   title: string;
@@ -29,6 +30,7 @@ interface MenuDisplaySection {
 }
 
 export default function MenuDisplay() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
@@ -191,7 +193,7 @@ export default function MenuDisplay() {
 
       if (specialItems.length > 0) {
         newSections.push({
-          title: "Magnifiko Specials",
+          title: t('menu.specials'),
           subtitle: null,
           isSpecial: true,
           items: specialItems.map(item => ({
@@ -214,7 +216,7 @@ export default function MenuDisplay() {
         );
 
         newSections.push({
-          title: 'Supplements',
+          title: t('menu.supplements'),
           subtitle: null,
           items: sortedAddons.map(addon => ({
             id: addon.id,
@@ -238,7 +240,7 @@ export default function MenuDisplay() {
     return (
       <div className="w-full h-full p-4 md:p-6 lg:p-8 flex items-center justify-center">
         <p className="text-white/60 text-center">
-          No menu categories available at the moment.
+          {t('menu.noCategories')}
         </p>
       </div>
     );
@@ -312,7 +314,7 @@ export default function MenuDisplay() {
         <div className={`w-full transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
           {sections.length === 0 && categories.length > 0 ? (
             <div className="text-center py-12">
-              <p className="text-white/60">No items available in this category.</p>
+              <p className="text-white/60">{t('menu.noItems')}</p>
             </div>
           ) : sections.length > 0 ? (
             sections.map((section, sectionIndex) => (

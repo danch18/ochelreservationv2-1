@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 // Global reference for opening the popup
 let openDeliveryPopupGlobal: (() => void) | null = null;
@@ -12,6 +13,7 @@ export const openDeliveryPopup = () => {
 };
 
 export function DeliveryPopup() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -125,7 +127,7 @@ export function DeliveryPopup() {
           lineHeight: '1.8rem',
           textTransform: 'uppercase'
         }}>
-          COMMANDEZ EN LIGNE
+          {t('delivery.title')}
         </h2>
 
         {/* Description */}
@@ -137,7 +139,7 @@ export function DeliveryPopup() {
           fontWeight: 400,
           lineHeight: '1.40625rem'
         }}>
-          Savourez nos délicieux plats italiens halal directement chez vous grâce à nos partenaires de livraison.
+          {t('delivery.description')}
         </p>
 
         {/* Buttons */}

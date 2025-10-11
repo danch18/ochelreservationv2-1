@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface HeaderTexts {
   headerText1: string;
@@ -14,10 +15,11 @@ interface HeaderTexts {
  * These texts appear at the top of the reservation form
  */
 export function useHeaderTexts() {
+  const { t } = useTranslation();
   const [headerTexts, setHeaderTexts] = useState<HeaderTexts>({
-    headerText1: 'Bienvenue au Magnifiko !',
-    headerText2: 'Réservez votre table en quelques clics (sans réservation après 20h)',
-    headerText3: 'Pour toute demande particulière, contactez-nous au 01 49 59 00 94'
+    headerText1: t('reservation.header.text1'),
+    headerText2: t('reservation.header.text2'),
+    headerText3: t('reservation.header.text3')
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,11 +41,11 @@ export function useHeaderTexts() {
           return;
         }
 
-        // Initialize with default values
+        // Initialize with default values from translations
         const texts: HeaderTexts = {
-          headerText1: 'Bienvenue au Magnifiko !',
-          headerText2: 'Réservez votre table en quelques clics (sans réservation après 20h)',
-          headerText3: 'Pour toute demande particulière, contactez-nous au 01 49 59 00 94'
+          headerText1: t('reservation.header.text1'),
+          headerText2: t('reservation.header.text2'),
+          headerText3: t('reservation.header.text3')
         };
 
         // Update with database values if they exist
@@ -73,7 +75,7 @@ export function useHeaderTexts() {
     };
 
     loadHeaderTexts();
-  }, []);
+  }, [t]);
 
   return { headerTexts, loading, error };
 }

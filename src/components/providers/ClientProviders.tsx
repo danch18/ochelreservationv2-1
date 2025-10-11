@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthProvider } from '@/contexts';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 interface ClientProvidersProps {
   children: React.ReactNode;
@@ -9,7 +10,9 @@ interface ClientProvidersProps {
 export function ClientProviders({ children }: ClientProvidersProps) {
   return (
     <AuthProvider>
-      {children}
+      <LanguageProvider>
+        {children}
+      </LanguageProvider>
     </AuthProvider>
   );
 }

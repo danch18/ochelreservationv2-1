@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { Navigation, Footer } from '@/components/layout';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export default function CertificationsHalalPage() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
       {/* Navigation */}
@@ -44,7 +46,7 @@ export default function CertificationsHalalPage() {
               border: '1px solid rgba(255, 255, 255, 0.10)'
             }}>
               <div className="text-[#d4af37] font-forum text-sm tracking-[0.2em] uppercase">
-                Nos Certifications
+                {t('certifications.subtitle')}
               </div>
               <h2 style={{
                 color: '#FFF2CC',
@@ -55,7 +57,7 @@ export default function CertificationsHalalPage() {
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                CERTIFICATIONS HALAL
+                {t('certifications.title')}
               </h2>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -65,7 +67,7 @@ export default function CertificationsHalalPage() {
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                Chez Magnifiko, nous nous engageons à respecter les plus hauts standards de certification halal. Tous nos ingrédients sont soigneusement sélectionnés et certifiés par des organismes reconnus pour garantir leur conformité aux règles islamiques.
+                {t('certifications.description1')}
               </p>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -75,7 +77,7 @@ export default function CertificationsHalalPage() {
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                Notre restaurant est certifié par Achahada, l'un des organismes de certification halal les plus respectés en France. Cette certification couvre l'ensemble de notre chaîne d'approvisionnement, de la sélection des fournisseurs à la préparation des plats.
+                {t('certifications.description2')}
               </p>
 
               {/* Button */}
@@ -98,7 +100,7 @@ export default function CertificationsHalalPage() {
                   marginTop: '1rem'
                 }}
               >
-                Publication Achahada
+                {t('certifications.publication')}
               </button>
             </div>
           </div>

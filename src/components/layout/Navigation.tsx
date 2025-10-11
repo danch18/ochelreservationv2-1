@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { openDeliveryPopup } from '@/components/DeliveryPopup';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export interface NavigationItem {
   label: string;
@@ -33,14 +35,15 @@ export interface NavigationProps {
   className?: string;
 }
 
+// NOTE: These will be overridden with translated labels in the component
 const defaultPrimaryItems: NavigationItem[] = [
-  { label: 'Certifications halal', href: '/Certifications-halal' },
+  { label: 'nav.certifications', href: '/Certifications-halal' },
 ];
 
 const defaultDesktopItems: NavigationItem[] = [
-  { label: 'Menu', href: '/menu' },
-  { label: 'Reservation', href: '#reservation', isReservation: true },
-  { label: 'Livraison', href: '#delivery', isDelivery: true },
+  { label: 'nav.menu', href: '/menu' },
+  { label: 'nav.reservation', href: '#reservation', isReservation: true },
+  { label: 'nav.delivery', href: '#delivery', isDelivery: true },
 ];
 
 const defaultSecondaryItems: NavigationItem[] = [
@@ -73,6 +76,7 @@ export default function Navigation({
   className = '',
 }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -147,7 +151,12 @@ export default function Navigation({
             </div>
             </div>
 
-            {/* Main Navigation Items */}
+            {/* Right side: Language Switcher + Main Navigation Items */}
+            <div className="flex items-center gap-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
+              {/* Main Navigation Items */}
             {/* Mobile: Only show Menu link */}
             <div className="md:hidden">
               <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
@@ -165,10 +174,11 @@ export default function Navigation({
                       letterSpacing: '-0.0175rem'
                     }}
                   >
-                    Menu
+                    {t('nav.menu')}
                   </Link>
                 </div>
               </div>
+            </div>
             </div>
 
             {/* Desktop: Show all items */}
@@ -196,7 +206,7 @@ export default function Navigation({
                             letterSpacing: '-0.0175rem'
                           }}
                         >
-                          {item.label}
+                          {t(item.label)}
                         </button>
                       ) : item.isDelivery ? (
                         <button
@@ -216,7 +226,7 @@ export default function Navigation({
                             letterSpacing: '-0.0175rem'
                           }}
                         >
-                          {item.label}
+                          {t(item.label)}
                         </button>
                       ) : (
                         <Link
@@ -233,7 +243,7 @@ export default function Navigation({
                           }}
                           {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
                         >
-                          {item.label}
+                          {t(item.label)}
                         </Link>
                       )}
                     </div>
@@ -283,7 +293,7 @@ export default function Navigation({
                   onClick={handleLinkClick}
                   {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               ))}
             </div>
@@ -304,7 +314,7 @@ export default function Navigation({
                   textTransform: 'uppercase'
                 }}
               >
-                Menu
+                {t('nav.menu')}
               </Link>
 
               <button
@@ -326,7 +336,7 @@ export default function Navigation({
                   textTransform: 'uppercase'
                 }}
               >
-                Reservation
+                {t('nav.reservation')}
               </button>
 
               <button
@@ -345,7 +355,7 @@ export default function Navigation({
                   textTransform: 'uppercase'
                 }}
               >
-                Livraison
+                {t('nav.delivery')}
               </button>
 
               {primaryItems.map((item, index) => (
@@ -365,7 +375,7 @@ export default function Navigation({
                   onClick={handleLinkClick}
                   {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </Link>
               ))}
             </div>

@@ -8,7 +8,10 @@ import TestimonialCard from '@/components/TestimonialCard';
 import MenuCard from '@/components/MenuCard';
 import SectionHeader from '@/components/SectionHeader';
 import content from '@/data/content.json';
+import { useTranslation } from '@/contexts/LanguageContext';
+
 export default function HomePage() {
+  const { t } = useTranslation();
   
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
@@ -47,7 +50,7 @@ export default function HomePage() {
 
         <div className="relative z-10 text-center">
           <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4 whitespace-pre-line" suppressHydrationWarning>
-            {content.hero.title}
+            {t('home.hero.title')}
           </h1>
         </div>
       </section>
@@ -69,7 +72,7 @@ export default function HomePage() {
               border: '1px solid rgba(255, 255, 255, 0.10)'
             }}>
               <div className="text-[#d4af37] font-forum text-sm tracking-[0.2em] uppercase">
-                {content.experience.subtitle}
+                {t('home.experience.subtitle')}
               </div>
               <h2 style={{
                 color: '#FFF2CC',
@@ -80,7 +83,7 @@ export default function HomePage() {
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                {content.experience.title}
+                {t('home.experience.title')}
               </h2>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -90,7 +93,7 @@ export default function HomePage() {
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                {content.experience.description}
+                {t('home.experience.description')}
               </p>
             </div>
 
@@ -125,20 +128,29 @@ export default function HomePage() {
       <section id="menu" className="py-5 bg-[#000000] w-full overflow-hidden">
         <div className="px-5">
           <SectionHeader
-            subtitle={content.menu.subtitle}
-            title={content.menu.title}
+            subtitle={t('home.menu.subtitle')}
+            title={t('home.menu.title')}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            {content.menu.items.map((item, index) => (
-              <MenuCard
-                key={index}
-                title={item.title}
-                description={item.description}
-                note={item.note}
-                image={item.image}
-              />
-            ))}
+            <MenuCard
+              title={t('home.menu.pasta.title')}
+              description={t('home.menu.pasta.description')}
+              note={t('home.menu.pasta.note')}
+              image={content.menu.items[0].image}
+            />
+            <MenuCard
+              title={t('home.menu.pizza.title')}
+              description={t('home.menu.pizza.description')}
+              note=""
+              image={content.menu.items[1].image}
+            />
+            <MenuCard
+              title={t('home.menu.desserts.title')}
+              description={t('home.menu.desserts.description')}
+              note=""
+              image={content.menu.items[2].image}
+            />
           </div>
 
           {/* View Menu Button */}
@@ -159,7 +171,7 @@ export default function HomePage() {
                 border: 'none',
                 cursor: 'pointer'
               }}>
-                {content.menu.button.text}
+                {t('home.menu.button')}
               </button>
             </Link>
           </div>
@@ -188,7 +200,7 @@ export default function HomePage() {
             fontWeight: 400,
             lineHeight: '1.40625rem',
             textTransform: 'uppercase'
-          }} className="mb-4">{content.hours.subtitle}</p>
+          }} className="mb-4">{t('home.hours.subtitle')}</p>
           <h2 style={{
             color: '#FFF',
             textAlign: 'center',
@@ -200,7 +212,7 @@ export default function HomePage() {
             textTransform: 'uppercase',
             marginBottom: '8px'
           }} suppressHydrationWarning>
-            {content.hours.title}
+            {t('home.hours.title')}
           </h2>
           <h3 style={{
             color: '#d4af37',
@@ -213,7 +225,7 @@ export default function HomePage() {
             textTransform: 'uppercase',
             marginBottom: '8px'
           }} suppressHydrationWarning>
-            {content.hours.hours}
+            {t('home.hours.hours')}
           </h3>
           <p style={{
             color: '#EAEAEA',
@@ -224,7 +236,7 @@ export default function HomePage() {
             fontWeight: 400,
             lineHeight: '1.40625rem'
           }}>
-            {content.hours.note}
+            {t('home.hours.note')}
           </p>
         </div>
       </section>
@@ -246,7 +258,7 @@ export default function HomePage() {
               border: '1px solid rgba(255, 255, 255, 0.10)'
             }}>
               <div className="text-[#d4af37] font-forum text-sm tracking-[0.2em] uppercase">
-                {content.secrets.subtitle}
+                {t('home.secrets.subtitle')}
               </div>
               <h2 style={{
                 color: '#FFF2CC',
@@ -257,20 +269,28 @@ export default function HomePage() {
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                {content.secrets.title}
+                {t('home.secrets.title')}
               </h2>
-              {content.secrets.paragraphs.map((paragraph, index) => (
-                <p key={index} style={{
-                  color: 'rgba(234, 234, 234, 0.70)',
-                  fontFamily: 'Forum',
-                  fontSize: '1rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.40625rem'
-                }}>
-                  {paragraph}
-                </p>
-              ))}
+              <p style={{
+                color: 'rgba(234, 234, 234, 0.70)',
+                fontFamily: 'Forum',
+                fontSize: '1rem',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                lineHeight: '1.40625rem'
+              }}>
+                {t('home.secrets.paragraph1')}
+              </p>
+              <p style={{
+                color: 'rgba(234, 234, 234, 0.70)',
+                fontFamily: 'Forum',
+                fontSize: '1rem',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                lineHeight: '1.40625rem'
+              }}>
+                {t('home.secrets.paragraph2')}
+              </p>
             </div>
 
             {/* Right Column - Image */}
@@ -291,8 +311,8 @@ export default function HomePage() {
       <section id="testimonials" className="py-5 bg-[#000000] w-full overflow-hidden">
         <div className="px-6">
           <SectionHeader
-            subtitle={content.testimonials.subtitle}
-            title={content.testimonials.title}
+            subtitle={t('home.testimonials.subtitle')}
+            title={t('home.testimonials.title')}
           />
 
           <div className="grid md:grid-cols-3 gap-4">

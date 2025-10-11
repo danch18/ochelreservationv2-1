@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface FloatingActionButtonProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface FloatingActionButtonProps {
 }
 
 function FloatingActionButtonContent({ children, className, currentStep = 1, onClose }: FloatingActionButtonProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -136,7 +138,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
               <div className="w-px h-6 bg-black mx-3"></div>
             </>
           )}
-          {isOpen ? 'Fermer' : 'Réserver une table'}
+          {isOpen ? t('common.close') : t('reservation.button')}
         </button>
       </div>
 

@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { cn } from '@/lib';
 import MenuDisplay from '@/components/menu/MenuDisplay';
 import { Navigation } from '@/components/layout';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export default function MenuPage() {
+  const { t } = useTranslation();
   useEffect(() => {
     // Ensure proper scrolling context for sticky positioning
     document.body.style.setProperty('overflow-x', 'hidden', 'important');
@@ -62,7 +64,7 @@ export default function MenuPage() {
               {/* NOTRE MENU text in the middle */}
               <div className="text-center px-4 pt-16 lg:pt-0 relative z-10">
                 <h1 className="text-[2.5rem] md:text-[3rem] font-normal tracking-normal text-white" suppressHydrationWarning>
-                  NOTRE MENU
+                  {t('menuPage.title')}
                 </h1>
               </div>
             </div>

@@ -8,6 +8,7 @@ import { Input, Select, Textarea, Button, Alert } from '@/components/ui';
 import { GUEST_OPTIONS } from '@/lib/constants';
 import { getTodayDate, validatePhoneFormat } from '@/lib/utils';
 import type { Reservation } from '@/types';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 
 interface ReservationFormProps {
@@ -32,6 +33,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   const [currentMonth, setCurrentMonth] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t, locale } = useTranslation();
 
   // Initialize currentMonth after component mounts to avoid hydration issues
   useEffect(() => {
@@ -55,11 +57,26 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
     if (value) {
       const date = new Date(value);
       const day = date.getDate();
-      const month = date.toLocaleString('fr-FR', { month: 'long' });
+      const monthIndex = date.getMonth();
+      const monthNames = [
+        t('reservation.calendar.months.0'),
+        t('reservation.calendar.months.1'),
+        t('reservation.calendar.months.2'),
+        t('reservation.calendar.months.3'),
+        t('reservation.calendar.months.4'),
+        t('reservation.calendar.months.5'),
+        t('reservation.calendar.months.6'),
+        t('reservation.calendar.months.7'),
+        t('reservation.calendar.months.8'),
+        t('reservation.calendar.months.9'),
+        t('reservation.calendar.months.10'),
+        t('reservation.calendar.months.11'),
+      ];
+      const month = monthNames[monthIndex];
       const year = date.getFullYear();
       return `${day} ${month} ${year}`;
     }
-    return "Date";
+    return t('reservation.form.step1.date');
   };
 
   // Use the passed isDateClosed function or fallback to default behavior
@@ -101,7 +118,29 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
   };
 
   const days = generateCalendarDays();
-  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const monthNames = [
+    t('reservation.calendar.months.0'),
+    t('reservation.calendar.months.1'),
+    t('reservation.calendar.months.2'),
+    t('reservation.calendar.months.3'),
+    t('reservation.calendar.months.4'),
+    t('reservation.calendar.months.5'),
+    t('reservation.calendar.months.6'),
+    t('reservation.calendar.months.7'),
+    t('reservation.calendar.months.8'),
+    t('reservation.calendar.months.9'),
+    t('reservation.calendar.months.10'),
+    t('reservation.calendar.months.11'),
+  ];
+  const dayNames = [
+    t('reservation.calendar.days.0'),
+    t('reservation.calendar.days.1'),
+    t('reservation.calendar.days.2'),
+    t('reservation.calendar.days.3'),
+    t('reservation.calendar.days.4'),
+    t('reservation.calendar.days.5'),
+    t('reservation.calendar.days.6'),
+  ];
 
   // Don't render calendar content until mounted to avoid hydration issues
   if (!mounted || !currentMonth) {
@@ -119,7 +158,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
               />
             )}
             <span className="text-gray-900 font-medium">
-              Chargement...
+              {t('reservation.form.step1.loading')}
             </span>
           </div>
         </div>
@@ -231,13 +270,9 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
               {/* Calendar Grid */}
               <div className="px-4">
                 <div className="grid grid-cols-7 gap-1 mb-4 text-center">
-                  <div className="text-xs font-medium text-gray-500 py-2">Dim</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Lun</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Mar</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Mer</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Jeu</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Ven</div>
-                  <div className="text-xs font-medium text-gray-500 py-2">Sam</div>
+                  {dayNames.map((dayName, index) => (
+                    <div key={index} className="text-xs font-medium text-gray-500 py-2">{dayName}</div>
+                  ))}
                   
                   {days.map((day) => (
                     <div
@@ -260,7 +295,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
                           : 'cursor-pointer'
                         }
                       `}
-                      title={day.isClosed ? 'Restaurant fermé' : ''}
+                      title={day.isClosed ? t('reservation.calendar.closedTooltip') : ''}
                       style={{
                         backgroundColor: 'transparent',
                         color: (!day.isCurrentMonth || day.isPast || day.isClosed)
@@ -303,6 +338,7 @@ interface TimeSelectorProps {
 function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpen = false, onToggle }: TimeSelectorProps) {
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   // Initialize after mount to avoid hydration issues
   useEffect(() => {
@@ -325,7 +361,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
     if (value) {
       return value;
     }
-    return "Heure";
+    return t('reservation.form.step1.time');
   };
 
   // Don't render until mounted to avoid hydration issues
@@ -345,7 +381,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
                 />
               )}
               <span className="text-gray-900 font-medium">
-                Chargement...
+{t('reservation.form.step1.loading')}
               </span>
             </div>
           </div>
@@ -458,6 +494,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const shortcuts = [1, 2, 3, 4, 5, 6];
+  const { t } = useTranslation();
 
   // Initialize after mount to avoid hydration issues
   useEffect(() => {
@@ -479,9 +516,10 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
   const formatDisplayGuests = () => {
     if (value) {
       const num = parseInt(value);
-      return `${num} invité${num > 1 ? 's' : ''}`;
+      const guestText = num > 1 ? t('reservation.form.step1.guestCountPlural') : t('reservation.form.step1.guestCount');
+      return `${num} ${guestText}`;
     }
-    return "Nombre d'invités";
+    return t('reservation.form.step1.guests');
   };
 
   // Don't render until mounted to avoid hydration issues
@@ -501,7 +539,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
                 />
               )}
               <span className="text-gray-900 font-medium">
-                Chargement...
+{t('reservation.form.step1.loading')}
               </span>
             </div>
           </div>
@@ -567,14 +605,14 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
                   max="50"
                   value={value || ''}
                   onChange={(e) => !disabled && onChange(e.target.value)}
-                  placeholder="Entrez le nombre d'invités"
+                  placeholder={t('reservation.form.step1.enterGuests')}
                   disabled={disabled}
                 />
               </div>
               
               {/* Quick shortcuts */}
               <div className="px-4">
-                <div className="text-xs font-medium text-gray-500 mb-2">Sélection rapide</div>
+                <div className="text-xs font-medium text-gray-500 mb-2">{t('reservation.form.step1.quickSelect')}</div>
                 <div className="border border-white/30 rounded-[8px] p-[6px]">
                   <div className="grid grid-cols-3 grid-rows-2 gap-1">
                     {shortcuts.map(num => (
@@ -596,7 +634,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
                         }}
                       >
                         <span>{num}</span>
-                        <span className="text-xs ml-1">invités</span>
+                        <span className="text-xs ml-1">{t('reservation.form.step1.guestCountPlural')}</span>
                       </div>
                     ))}
                   </div>
@@ -617,6 +655,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
 export function ReservationForm({ onSuccess, onBack, onStepChange }: ReservationFormProps) {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { t } = useTranslation();
   const {
     form: { register, handleSubmit, formState: { errors }, setValue, watch },
     isSubmitting,
@@ -798,12 +837,12 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               <>
                 {selectedDateClosed && (
                   <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
-                    Restaurant fermé ce jour-là
+                    {t('reservation.form.step1.closed')}
                   </div>
                 )}
                 {!selectedDateClosed && availableTimeSlots.length === 0 && (
                   <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
-                    Aucun créneau disponible pour cette date
+                    {t('reservation.form.step1.noSlots')}
                   </div>
                 )}
               </>
@@ -822,10 +861,10 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               className="w-full mb-2"
               size="md"
             >
-              Réserver
+              {t('reservation.form.step1.button')}
             </Button>
             <div className="flex items-center justify-center gap-1 text-xs max-sm:text-[10px] text-muted-foreground">
-              <span>propulsé par</span>
+              <span>{t('reservation.form.poweredBy')}</span>
               <a
                 href="https://www.ochel.fr/"
                 target="_blank"
@@ -886,7 +925,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
             <div className="flex-1 overflow-y-auto space-y-4 pb-4">
               {/* Title Field */}
               <div>
-                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">Civilité</label>
+                <label className="block text-sm max-sm:text-xs font-medium text-gray-700 mb-2">{t('reservation.form.step2.title')}</label>
                 <div className="flex gap-4 max-sm:gap-3">
                   <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
@@ -895,7 +934,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                       value="Madame"
                       className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm max-sm:text-xs">Madame</span>
+                    <span className="text-sm max-sm:text-xs">{t('reservation.form.step2.mrs')}</span>
                   </label>
                   <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
@@ -904,7 +943,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                       value="Monsieur"
                       className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm max-sm:text-xs">Monsieur</span>
+                    <span className="text-sm max-sm:text-xs">{t('reservation.form.step2.mr')}</span>
                   </label>
                   <label className="flex items-center gap-2 max-sm:gap-1 cursor-pointer">
                     <input
@@ -913,7 +952,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                       value="Mx."
                       className="w-4 h-4 max-sm:w-3 max-sm:h-3 text-[#F34A23] accent-[#F34A23]"
                     />
-                    <span className="text-sm max-sm:text-xs">Mx.</span>
+                    <span className="text-sm max-sm:text-xs">{t('reservation.form.step2.mx')}</span>
                   </label>
                 </div>
               </div>
@@ -921,13 +960,13 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               {/* Name Fields Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
-                  label="Prénom"
+                  label={t('reservation.form.step2.firstName')}
                   placeholder="Jean"
                   error={errors.name?.message}
                   {...register('name')}
                 />
                 <Input
-                  label="Nom"
+                  label={t('reservation.form.step2.lastName')}
                   placeholder="Dupont"
                   // We'll use the same name field for now, but you can add a separate lastName field if needed
                 />
@@ -938,7 +977,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                 <div>
                   <Input
                     type="tel"
-                    label="Téléphone"
+                    label={t('reservation.form.step2.phone')}
                     placeholder="+33612345678 ou 0612345678"
                     error={errors.phone?.message}
                     maxLength={phoneValue?.startsWith('+33') ? 12 : 10}
@@ -966,14 +1005,14 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                   {phoneValue && phoneValidation.isValid && (
                     <div className="mt-1 ">
                       <p className="text-xs text-green-700">
-                        ✓ Format valide
+                        {t('reservation.form.step2.validFormat')}
                       </p>
                     </div>
                   )}
                 </div>
                 <Input
                   type="email"
-                  label="Email"
+                  label={t('reservation.form.step2.email')}
                   placeholder="jean@exemple.com"
                   error={errors.email?.message}
                   {...register('email')}
@@ -981,8 +1020,8 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               </div>
 
               <Textarea
-                label="Commentaires, préférences ou restrictions alimentaires (facultatif)"
-                placeholder="Allergies, célébration, préférences de siège..."
+                label={t('reservation.form.step2.comments')}
+                placeholder={t('reservation.form.step2.commentsPlaceholder')}
                 rows={3}
                 error={errors.specialRequests?.message}
                 {...register('specialRequests')}
@@ -995,9 +1034,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-600">Sauvegardez les informations pour mes prochaines réservations.</span>
+                  <span className="text-gray-600">{t('reservation.form.step2.saveInfo')}</span>
                 </label>
-                
+
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -1005,7 +1044,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     required
                   />
                   <span className="text-gray-600">
-                    J'accepte les conditions générales d'utilisation du service.
+                    {t('reservation.form.step2.acceptTerms')}
                     <span className="text-red-500 ml-1">*</span>
                   </span>
                 </label>
@@ -1015,7 +1054,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-600">Envoyez-moi des offres et actualités par e-mail.</span>
+                  <span className="text-gray-600">{t('reservation.form.step2.emailOffers')}</span>
                 </label>
 
                 <label className="flex items-start gap-2 cursor-pointer">
@@ -1023,7 +1062,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                     type="checkbox"
                     className="w-4 h-4 text-[#F34A23] accent-[#F34A23] mt-0.5 rounded"
                   />
-                  <span className="text-gray-600">Envoyez-moi des offres et actualités par SMS.</span>
+                  <span className="text-gray-600">{t('reservation.form.step2.smsOffers')}</span>
                 </label>
               </div>
             </div>
@@ -1032,17 +1071,16 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
           {/* Right Column - Reservation Summary */}
           <div className="lg:w-80 flex-shrink-0">
             <div className="bg-gray-50 rounded-lg p-4 h-full">
-              <h4 className="text-lg font-semibold text-black mb-4">Votre réservation</h4>
-              
+              <h4 className="text-lg font-semibold text-black mb-4">{t('reservation.form.step2.yourReservation')}</h4>
+
               {/* Service Notice */}
               <div className="mb-4 p-3 bg-[#FF7043]/5 rounded-lg border border-[#FF7043]/20">
-                <p className="text-sm text-[#FF7043]">Notre premier service commence à 19h30.</p>
+                <p className="text-sm text-[#FF7043]">{t('reservation.form.step2.serviceNotice')}</p>
               </div>
 
               <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                 <p className="text-sm text-yellow-800">
-                  Merci de respecter votre horaire de réservation. La table devra être libérée à 
-                  21h30 pour l'arrivée du second service.
+                  {t('reservation.form.step2.tableNotice')}
                 </p>
               </div>
 
@@ -1096,14 +1134,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               {/* Privacy Notice */}
               <div className="text-xs max-sm:text-[10px] text-gray-600 space-y-2 max-sm:space-y-1">
                 <p>
-                  Les informations que vous nous transmettez dans le cadre de votre réservation sont collectées par le restaurant et traitées via l'outil de réservation mis à disposition par Ochel.
-                </p>
-                <p>
-                  Elles sont utilisées uniquement pour gérer votre demande (confirmation, modification, annulation) et pour assurer le suivi de votre venue (notifications par email ou SMS liées à votre réservation).
-                  Ces données peuvent également être utilisées par le restaurant afin d'améliorer votre expérience et, si vous y avez consenti, pour vous adresser des communications personnalisées (actualités, offres spéciales, campagnes de fidélisation).
-                </p>
-                <p>
-                  Conformément à la réglementation applicable (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données, ainsi que d'un droit d'opposition ou de limitation de leur traitement. Vous pouvez exercer ces droits directement auprès du restaurant.
+                  {t('reservation.form.step2.privacyNotice')}
                 </p>
               </div>
             </div>
@@ -1119,10 +1150,10 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
             className="w-full mb-2"
             size="md"
           >
-            {isSubmitting ? 'Création de la réservation...' : 'Confirmer la réservation'}
+            {isSubmitting ? t('reservation.form.step2.submitting') : t('reservation.form.step2.confirmButton')}
           </Button>
           <div className="flex items-center justify-center gap-1 text-xs max-sm:text-[10px] text-muted-foreground">
-            <span>propulsé par</span>
+            <span>{t('reservation.form.poweredBy')}</span>
             <a 
               href="https://www.ochel.fr/" 
               target="_blank" 
