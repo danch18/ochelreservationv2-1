@@ -1,6 +1,10 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import frTranslations from '@/locales/fr.json';
+import enTranslations from '@/locales/en.json';
+import itTranslations from '@/locales/it.json';
+import esTranslations from '@/locales/es.json';
 
 type Locale = 'fr' | 'en' | 'it' | 'es';
 
@@ -12,21 +16,12 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Locale, Record<string, string>> = {
-  fr: {},
-  en: {},
-  it: {},
-  es: {},
-};
-
-// Function to load translations dynamically
-const loadTranslations = async (locale: Locale) => {
-  try {
-    const translation = await import(`@/locales/${locale}.json`);
-    translations[locale] = translation.default;
-  } catch (error) {
-    console.error(`Failed to load translations for ${locale}:`, error);
-  }
+// Import all translations statically so they're available immediately
+const translations: Record<Locale, Record<string, any>> = {
+  fr: frTranslations,
+  en: enTranslations,
+  it: itTranslations,
+  es: esTranslations,
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -41,11 +36,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
     setIsLoaded(true);
   }, []);
-
-  // Load translations when locale changes
-  useEffect(() => {
-    loadTranslations(locale);
-  }, [locale]);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
