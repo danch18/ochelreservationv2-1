@@ -28,18 +28,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('fr');
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load saved locale from localStorage on mount
+  // Always use French as default - removed localStorage persistence
   useEffect(() => {
-    const savedLocale = localStorage.getItem('locale') as Locale | null;
-    if (savedLocale && ['fr', 'en', 'it', 'es'].includes(savedLocale)) {
-      setLocaleState(savedLocale);
-    }
+    // Clear any previously saved locale to ensure French default
+    localStorage.removeItem('locale');
     setIsLoaded(true);
   }, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
-    localStorage.setItem('locale', newLocale);
+    // Removed localStorage.setItem to prevent persistence
   };
 
   // Translation function with nested key support
