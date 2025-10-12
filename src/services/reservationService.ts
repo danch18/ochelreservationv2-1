@@ -323,6 +323,45 @@ class ReservationServiceClass {
     }
   }
 
+  // Delete all reservations by email (hard delete - use with caution)
+  async deleteReservationsByEmail(email: string): Promise<number> {
+    try {
+      if (!email?.trim()) {
+        throw new Error('Email is required');
+      }
+
+      // First, get the reservations to delete to return the count
+      const { data: reservationsToDelete, error: fetchError } = await supabase
+        .from(this.tableName)
+        .select('id')
+        .eq('email', email.toLowerCase().trim());
+
+      if (fetchError) {
+        this.handleError(fetchError, 'Error fetching reservations to delete');
+      }
+
+      const count = reservationsToDelete?.length || 0;
+
+      if (count === 0) {
+        return 0; // No reservations found with this email
+      }
+
+      // Delete all reservations with this email
+      const { error } = await supabase
+        .from(this.tableName)
+        .delete()
+        .eq('email', email.toLowerCase().trim());
+
+      if (error) {
+        this.handleError(error, 'Error deleting reservations by email');
+      }
+
+      return count;
+    } catch (error) {
+      this.handleError(error, 'Error deleting reservations by email');
+    }
+  }
+
   // Get reservation statistics
   async getReservationStats(date?: string): Promise<{
     total: number;

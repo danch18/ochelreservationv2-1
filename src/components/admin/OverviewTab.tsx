@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { ReservationTable } from './ReservationTable';
 import { StatsCards } from './StatsCards';
 import { AdminFilters } from './AdminFilters';
+import { reservationService } from '@/services/reservationService';
 import type { Reservation } from '@/types';
 
 interface OverviewTabProps {
@@ -26,6 +27,11 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   // Export state for professional UX
   const [isExporting, setIsExporting] = useState(false);
   const [showExportSuccess, setShowExportSuccess] = useState(false);
+
+  // Bulk delete state
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteEmail, setDeleteEmail] = useState('');
 
   /**
    * Filters reservations based on selected stats time range
@@ -196,6 +202,58 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   }, [reservations, isExporting]);
 
   /**
+   * Delete all reservations for a specific email
+   */
+  const deleteReservationsByEmail = useCallback(async (email: string) => {
+    if (!email?.trim()) {
+      showToast('Veuillez entrer une adresse email valide.', 'error');
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      
+      // Small delay to show loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const deletedCount = await reservationService.deleteReservationsByEmail(email);
+      
+      if (deletedCount === 0) {
+        showToast(`Aucune réservation trouvée pour l'email: ${email}`, 'warning');
+      } else {
+        showToast(`${deletedCount} réservation${deletedCount > 1 ? 's' : ''} supprimée${deletedCount > 1 ? 's' : ''} pour ${email}`, 'success');
+        // Refresh the reservations list
+        onReservationsUpdate();
+      }
+      
+      // Close modal and reset form
+      setShowDeleteModal(false);
+      setDeleteEmail('');
+      
+    } catch (error) {
+      console.error('Error deleting reservations:', error);
+      showToast('Erreur lors de la suppression. Veuillez réessayer.', 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [onReservationsUpdate]);
+
+  /**
+   * Handle bulk delete button click
+   */
+  const handleBulkDeleteClick = () => {
+    setShowDeleteModal(true);
+    setDeleteEmail('');
+  };
+
+  /**
+   * Handle bulk delete confirmation
+   */
+  const handleBulkDeleteConfirm = () => {
+    deleteReservationsByEmail(deleteEmail);
+  };
+
+  /**
    * Show elegant toast notification instead of browser alert
    */
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -231,7 +289,29 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   return (
     <div className="space-y-6 font-forum">
       {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
+        {/* Bulk Delete Button */}
+        <button
+          onClick={handleBulkDeleteClick}
+          disabled={isDeleting}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg text-sm font-medium transition-all duration-200 ease-out flex items-center gap-2"
+        >
+          {isDeleting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Suppression...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Supprimer par email
+            </>
+          )}
+        </button>
+
+        {/* Stats Filter Buttons */}
         <div className="flex bg-gray-100 rounded-lg p-1">
           {[
             { key: 'today' as const, label: "Aujourd'hui" },
@@ -280,6 +360,68 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         isLoading={isLoading}
         onReservationsUpdate={onReservationsUpdate}
       />
+
+      {/* Bulk Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Supprimer les réservations</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-4">
+              Cette action supprimera définitivement toutes les réservations associées à l'adresse email spécifiée. Cette action ne peut pas être annulée.
+            </p>
+            
+            <div className="mb-6">
+              <label htmlFor="delete-email" className="block text-sm font-medium text-gray-700 mb-2">
+                Adresse email
+              </label>
+              <input
+                id="delete-email"
+                type="email"
+                value={deleteEmail}
+                onChange={(e) => setDeleteEmail(e.target.value)}
+                placeholder="Entrez l'adresse email"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                autoFocus
+              />
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteEmail('');
+                }}
+                disabled={isDeleting}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 rounded-lg font-medium transition-all duration-200"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleBulkDeleteConfirm}
+                disabled={isDeleting || !deleteEmail.trim()}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Suppression...
+                  </>
+                ) : (
+                  'Supprimer'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

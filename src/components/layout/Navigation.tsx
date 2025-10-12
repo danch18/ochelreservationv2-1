@@ -47,10 +47,10 @@ const defaultDesktopItems: NavigationItem[] = [
 ];
 
 const defaultSecondaryItems: NavigationItem[] = [
-  { label: 'Our Specialties', href: '#menu' },
-  { label: 'Reviews', href: '#testimonials' },
-  { label: 'Back to Top', href: '#hero' },
-  { label: 'Location', href: '#contact' },
+  { label: 'nav.specialties', href: '#menu' },
+  { label: 'nav.reviews', href: '#testimonials' },
+  { label: 'nav.backToTop', href: '#hero' },
+  { label: 'nav.location', href: '#contact' },
 ];
 
 const defaultContactInfo = {

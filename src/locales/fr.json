@@ -3,7 +3,11 @@
     "menu": "Menu",
     "reservation": "Reservation",
     "delivery": "Livraison",
-    "certifications": "Certifications halal"
+    "certifications": "Certifications halal",
+    "specialties": "Nos Spécialités",
+    "reviews": "Avis",
+    "backToTop": "Retour en haut",
+    "location": "Localisation"
   },
   "home": {
     "hero": {
