@@ -28,6 +28,34 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
     setMounted(true);
   }, []);
 
+  // Check URL parameters to auto-open reservation popup
+  useEffect(() => {
+    if (!mounted) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldOpenReservation = urlParams.get('reservation') === 'open';
+
+    if (shouldOpenReservation && !isOpen) {
+      // Auto-open the popup
+      setIsOpen(true);
+
+      // Send message to parent window about popup state change
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          type: 'popupResize',
+          isOpen: true,
+          width: popupWidth,
+          height: popupHeight + 88
+        }, '*');
+      }
+
+      // Remove the parameter from URL without reloading the page
+      urlParams.delete('reservation');
+      const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [mounted, isOpen, popupWidth, popupHeight]);
+
   const handleClose = () => {
     setIsOpen(false);
 
