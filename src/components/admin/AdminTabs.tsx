@@ -1,20 +1,22 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface AdminTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-const tabs = [
-  { id: 'overview', label: 'Vue d\'ensemble', mobileLabel: 'Aperçu', icon: '📊' },
-  { id: 'settings', label: 'Paramètres', mobileLabel: 'Paramètres', icon: '⚙️' },
-  { id: 'manage', label: 'Gestion des Réservations', mobileLabel: 'Gestion', icon: '🍽️' },
-  { id: 'menu', label: 'Gestion du Menu', mobileLabel: 'Menu', icon: '📋' },
-];
-
 export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
+  const { t } = useTranslation();
+
+  const tabs = [
+    { id: 'overview', labelKey: 'admin.tabs.overview', mobileLabelKey: 'admin.tabs.overviewMobile', icon: '📊' },
+    { id: 'settings', labelKey: 'admin.tabs.settings', mobileLabelKey: 'admin.tabs.settingsMobile', icon: '⚙️' },
+    { id: 'manage', labelKey: 'admin.tabs.manage', mobileLabelKey: 'admin.tabs.manageMobile', icon: '🍽️' },
+    { id: 'menu', labelKey: 'admin.tabs.menu', mobileLabelKey: 'admin.tabs.menuMobile', icon: '📋' },
+  ];
   return (
     <div className="font-forum">
       {/* Desktop Tabs */}
@@ -31,7 +33,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
                   : 'border-transparent text-black/70 hover:text-black hover:!border-[#F34A23]/30 hover:bg-[#F34A23]/5'
               )}
             >
-              <span>{tab.label}</span>
+              <span>{t(tab.labelKey)}</span>
             </button>
           ))}
         </nav>
@@ -63,7 +65,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
                   <span className="text-base">{tab.icon}</span>
                 )}
               </div>
-              <span className="text-xs font-medium">{tab.mobileLabel}</span>
+              <span className="text-xs font-medium">{t(tab.mobileLabelKey)}</span>
             </button>
           ))}
         </nav>

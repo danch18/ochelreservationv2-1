@@ -124,7 +124,8 @@
     "noCategories": "Aucune catégorie de menu disponible pour le moment.",
     "noItems": "Aucun article disponible dans cette catégorie.",
     "specials": "Magnifiko Specials",
-    "supplements": "Supplements"
+    "supplements": "Supplements",
+    "viewOnTable": "Voir sur la table"
   },
   "footer": {
     "description": "Restaurant gastronomique situé au cœur d'Ivry-sur-Seine, proposant une cuisine d'exception dans un cadre élégant et raffiné.",
@@ -173,5 +174,79 @@
   "metadata": {
     "title": "Magnifiko - Restaurant Italien Halal à Ivry-sur-Seine",
     "description": "Magnifiko - La référence de la cuisine italienne halal en Île-de-France, certifiée Achahada. Pizzas, pâtes fraîches et desserts traditionnels."
+  },
+  "admin": {
+    "header": {
+      "title": "Magnifiko",
+      "subtitle": "Admin Dashboard",
+      "logout": "Déconnexion"
+    },
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "overviewMobile": "Aperçu",
+      "settings": "Paramètres",
+      "settingsMobile": "Paramètres",
+      "manage": "Gestion des Réservations",
+      "manageMobile": "Gestion",
+      "menu": "Gestion du Menu",
+      "menuMobile": "Menu"
+    },
+    "stats": {
+      "total": "Total",
+      "totalSubtitle": "réservations",
+      "confirmed": "Confirmées",
+      "confirmedSubtitle": "réservations actives",
+      "pending": "En attente",
+      "pendingSubtitle": "à confirmer",
+      "completed": "Terminées",
+      "completedSubtitle": "repas terminés",
+      "cancelled": "Annulées",
+      "cancelledSubtitle": "réservations annulées",
+      "totalGuests": "Total Invités",
+      "totalGuestsSubtitle": "attendus"
+    },
+    "overview": {
+      "bulkDelete": "Supprimer par email",
+      "bulkDeleting": "Suppression...",
+      "today": "Aujourd'hui",
+      "next7days": "7 prochains jours",
+      "all": "Tout",
+      "resultsFound": "réservation(s) trouvée(s) sur",
+      "resultsTotal": "au total",
+      "deleteModal": {
+        "title": "Supprimer les réservations",
+        "description": "Cette action supprimera définitivement toutes les réservations associées à l'adresse email spécifiée. Cette action ne peut pas être annulée.",
+        "emailLabel": "Adresse email",
+        "emailPlaceholder": "Entrez l'adresse email",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "deleting": "Suppression..."
+      },
+      "export": {
+        "noReservations": "Aucune réservation à exporter.",
+        "success": "réservations exportées avec succès!",
+        "error": "Erreur lors de l'export. Veuillez réessayer.",
+        "csvHeaders": {
+          "id": "ID",
+          "name": "Nom",
+          "email": "Email",
+          "phone": "Téléphone",
+          "date": "Date de réservation",
+          "time": "Heure",
+          "guests": "Nombre d'invités",
+          "status": "Statut",
+          "requests": "Demandes spéciales",
+          "autoConfirmed": "Confirmé automatiquement",
+          "created": "Date de création",
+          "updated": "Dernière mise à jour"
+        }
+      },
+      "toast": {
+        "noReservationsFound": "Aucune réservation trouvée pour l'email:",
+        "reservationsDeleted": "réservation(s) supprimée(s) pour",
+        "deleteError": "Erreur lors de la suppression. Veuillez réessayer.",
+        "validEmail": "Veuillez entrer une adresse email valide."
+      }
+    }
   }
 }

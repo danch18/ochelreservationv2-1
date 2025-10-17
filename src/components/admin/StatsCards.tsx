@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui';
 import type { ReservationStats } from '@/types';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface StatsCardsProps {
   stats: ReservationStats;
@@ -7,45 +8,46 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats, totalGuests }: StatsCardsProps) {
+  const { t } = useTranslation();
   /**
    * Configuration for each statistics card
    * Each item represents a metric to display in the admin dashboard
    */
   const statItems = [
     {
-      title: 'Total',
+      title: t('admin.stats.total'),
       value: stats.total,
-      subtitle: 'réservations',
+      subtitle: t('admin.stats.totalSubtitle'),
       color: 'text-black'                    // Neutral color for total count
     },
     {
-      title: 'Confirmées',
+      title: t('admin.stats.confirmed'),
       value: stats.confirmed,
-      subtitle: 'réservations actives',
+      subtitle: t('admin.stats.confirmedSubtitle'),
       color: 'text-green-600'               // Green for confirmed/active reservations
     },
     {
-      title: 'En attente',
+      title: t('admin.stats.pending'),
       value: stats.pending || 0,             // Fallback to 0 if pending is undefined
-      subtitle: 'à confirmer',
+      subtitle: t('admin.stats.pendingSubtitle'),
       color: 'text-orange-600'              // Orange for pending/awaiting confirmation
     },
     {
-      title: 'Terminées',
+      title: t('admin.stats.completed'),
       value: stats.completed,
-      subtitle: 'repas terminés',
+      subtitle: t('admin.stats.completedSubtitle'),
       color: 'text-blue-600'                // Blue for completed reservations
     },
     {
-      title: 'Annulées',
+      title: t('admin.stats.cancelled'),
       value: stats.cancelled,
-      subtitle: 'réservations annulées',
+      subtitle: t('admin.stats.cancelledSubtitle'),
       color: 'text-red-600'                 // Red for cancelled reservations
     },
     {
-      title: 'Total Invités',
+      title: t('admin.stats.totalGuests'),
       value: totalGuests,
-      subtitle: 'attendus',
+      subtitle: t('admin.stats.totalGuestsSubtitle'),
       color: 'text-[#F34A23]'               // Restaurant brand color for guest count
     }
   ];

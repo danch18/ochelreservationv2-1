@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Navigation, Footer } from '@/components/layout';
+import { Navigation } from '@/components/layout';
 import { useTranslation } from '@/contexts/LanguageContext';
 
 export default function CertificationsHalalPage() {

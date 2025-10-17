@@ -5,6 +5,7 @@ import { ReservationTable } from './ReservationTable';
 import { StatsCards } from './StatsCards';
 import { AdminFilters } from './AdminFilters';
 import { reservationService } from '@/services/reservationService';
+import { useTranslation } from '@/contexts/LanguageContext';
 import type { Reservation } from '@/types';
 
 interface OverviewTabProps {
@@ -14,6 +15,7 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: OverviewTabProps) {
+  const { t } = useTranslation();
   // Filter state for reservation table (independent from stats filter)
   const [filters, setFilters] = useState({
     status: '',
@@ -114,7 +116,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   const exportToCSV = useCallback(async () => {
     // Check if there are reservations to export
     if (reservations.length === 0) {
-      showToast('Aucune réservation à exporter.', 'warning');
+      showToast(t('admin.overview.export.noReservations'), 'warning');
       return;
     }
 
@@ -131,18 +133,18 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       // Define CSV headers
       const headers = [
-        'ID',
-        'Nom',
-        'Email',
-        'Téléphone',
-        'Date de réservation',
-        'Heure',
-        'Nombre d\'invités',
-        'Statut',
-        'Demandes spéciales',
-        'Confirmé automatiquement',
-        'Date de création',
-        'Dernière mise à jour'
+        t('admin.overview.export.csvHeaders.id'),
+        t('admin.overview.export.csvHeaders.name'),
+        t('admin.overview.export.csvHeaders.email'),
+        t('admin.overview.export.csvHeaders.phone'),
+        t('admin.overview.export.csvHeaders.date'),
+        t('admin.overview.export.csvHeaders.time'),
+        t('admin.overview.export.csvHeaders.guests'),
+        t('admin.overview.export.csvHeaders.status'),
+        t('admin.overview.export.csvHeaders.requests'),
+        t('admin.overview.export.csvHeaders.autoConfirmed'),
+        t('admin.overview.export.csvHeaders.created'),
+        t('admin.overview.export.csvHeaders.updated')
       ];
 
       // Helper function to escape CSV values
@@ -191,22 +193,22 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         URL.revokeObjectURL(url);
         
         // Show success feedback
-        showToast(`${reservations.length} réservations exportées avec succès!`, 'success');
+        showToast(`${reservations.length} ${t('admin.overview.export.success')}`, 'success');
       }
     } catch (error) {
       console.error('Erreur lors de l\'export CSV:', error);
-      showToast('Erreur lors de l\'export. Veuillez réessayer.', 'error');
+      showToast(t('admin.overview.export.error'), 'error');
     } finally {
       setIsExporting(false);
     }
-  }, [reservations, isExporting]);
+  }, [reservations, isExporting, t]);
 
   /**
    * Delete all reservations for a specific email
    */
   const deleteReservationsByEmail = useCallback(async (email: string) => {
     if (!email?.trim()) {
-      showToast('Veuillez entrer une adresse email valide.', 'error');
+      showToast(t('admin.overview.toast.validEmail'), 'error');
       return;
     }
 
@@ -217,11 +219,11 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       await new Promise(resolve => setTimeout(resolve, 300));
 
       const deletedCount = await reservationService.deleteReservationsByEmail(email);
-      
+
       if (deletedCount === 0) {
-        showToast(`Aucune réservation trouvée pour l'email: ${email}`, 'warning');
+        showToast(`${t('admin.overview.toast.noReservationsFound')} ${email}`, 'warning');
       } else {
-        showToast(`${deletedCount} réservation${deletedCount > 1 ? 's' : ''} supprimée${deletedCount > 1 ? 's' : ''} pour ${email}`, 'success');
+        showToast(`${deletedCount} ${t('admin.overview.toast.reservationsDeleted')} ${email}`, 'success');
         // Refresh the reservations list
         onReservationsUpdate();
       }
@@ -232,11 +234,11 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       
     } catch (error) {
       console.error('Error deleting reservations:', error);
-      showToast('Erreur lors de la suppression. Veuillez réessayer.', 'error');
+      showToast(t('admin.overview.toast.deleteError'), 'error');
     } finally {
       setIsDeleting(false);
     }
-  }, [onReservationsUpdate]);
+  }, [onReservationsUpdate, t]);
 
   /**
    * Handle bulk delete button click
@@ -299,14 +301,14 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
           {isDeleting ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Suppression...
+              {t('admin.overview.bulkDeleting')}
             </>
           ) : (
             <>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              Supprimer par email
+              {t('admin.overview.bulkDelete')}
             </>
           )}
         </button>
@@ -314,9 +316,9 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         {/* Stats Filter Buttons */}
         <div className="flex bg-gray-100 rounded-lg p-1">
           {[
-            { key: 'today' as const, label: "Aujourd'hui" },
-            { key: 'next7days' as const, label: '7 prochains jours' },
-            { key: 'all' as const, label: 'Tout' }
+            { key: 'today' as const, label: t('admin.overview.today') },
+            { key: 'next7days' as const, label: t('admin.overview.next7days') },
+            { key: 'all' as const, label: t('admin.overview.all') }
           ].map(option => (
             <button
               key={option.key}
@@ -349,7 +351,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       {(filters.status || filters.date || filters.search) && (
         <div className="bg-blue-50 border !border-blue-200 rounded-2xl p-4 transition-all duration-300 ease-out animate-in slide-in-from-top-2 fade-in">
           <p className="text-sm text-blue-800">
-            <strong className="transition-all duration-200">{filteredReservations.length}</strong> réservation{filteredReservations.length !== 1 ? 's' : ''} trouvée{filteredReservations.length !== 1 ? 's' : ''} sur {reservations.length} au total
+            <strong className="transition-all duration-200">{filteredReservations.length}</strong> {t('admin.overview.resultsFound')} {reservations.length} {t('admin.overview.resultsTotal')}
           </p>
         </div>
       )}
@@ -371,23 +373,23 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Supprimer les réservations</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.deleteModal.title')}</h3>
             </div>
-            
+
             <p className="text-gray-600 mb-4">
-              Cette action supprimera définitivement toutes les réservations associées à l'adresse email spécifiée. Cette action ne peut pas être annulée.
+              {t('admin.overview.deleteModal.description')}
             </p>
-            
+
             <div className="mb-6">
               <label htmlFor="delete-email" className="block text-sm font-medium text-gray-700 mb-2">
-                Adresse email
+                {t('admin.overview.deleteModal.emailLabel')}
               </label>
               <input
                 id="delete-email"
                 type="email"
                 value={deleteEmail}
                 onChange={(e) => setDeleteEmail(e.target.value)}
-                placeholder="Entrez l'adresse email"
+                placeholder={t('admin.overview.deleteModal.emailPlaceholder')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 autoFocus
               />
@@ -402,7 +404,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
                 disabled={isDeleting}
                 className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 rounded-lg font-medium transition-all duration-200"
               >
-                Annuler
+                {t('admin.overview.deleteModal.cancel')}
               </button>
               <button
                 onClick={handleBulkDeleteConfirm}
@@ -412,10 +414,10 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
                 {isDeleting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Suppression...
+                    {t('admin.overview.deleteModal.deleting')}
                   </>
                 ) : (
-                  'Supprimer'
+                  t('admin.overview.deleteModal.delete')
                 )}
               </button>
             </div>
