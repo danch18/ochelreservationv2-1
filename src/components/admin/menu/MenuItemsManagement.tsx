@@ -9,6 +9,8 @@ import { Alert } from '@/components/ui/Alert';
 import { menuItemService, categoryService, subcategoryService, MenuItem, Category, Subcategory } from '@/services/menuService';
 import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
+import { LanguageTabs } from './translation/LanguageTabs';
+import { TranslationField } from './translation/TranslationField';
 
 interface MenuItemModalProps {
   menuItem?: MenuItem | null;
@@ -19,9 +21,51 @@ interface MenuItemModalProps {
 }
 
 function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }: MenuItemModalProps) {
+  // French (source)
   const [title, setTitle] = useState(menuItem?.title || '');
   const [text, setText] = useState(menuItem?.text || '');
   const [description, setDescription] = useState(menuItem?.description || '');
+
+  // English
+  const [titleEn, setTitleEn] = useState(menuItem?.title_en || '');
+  const [textEn, setTextEn] = useState(menuItem?.text_en || '');
+  const [descriptionEn, setDescriptionEn] = useState(menuItem?.description_en || '');
+
+  // Italian
+  const [titleIt, setTitleIt] = useState(menuItem?.title_it || '');
+  const [textIt, setTextIt] = useState(menuItem?.text_it || '');
+  const [descriptionIt, setDescriptionIt] = useState(menuItem?.description_it || '');
+
+  // Spanish
+  const [titleEs, setTitleEs] = useState(menuItem?.title_es || '');
+  const [textEs, setTextEs] = useState(menuItem?.text_es || '');
+  const [descriptionEs, setDescriptionEs] = useState(menuItem?.description_es || '');
+
+  // Active language tab
+  const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
+
+  // Handle global translation
+  const handleGlobalTranslate = (translations: {
+    en: { [key: string]: string };
+    it: { [key: string]: string };
+    es: { [key: string]: string };
+  }) => {
+    // Update English fields
+    if (translations.en.title) setTitleEn(translations.en.title);
+    if (translations.en.text) setTextEn(translations.en.text);
+    if (translations.en.description) setDescriptionEn(translations.en.description);
+
+    // Update Italian fields
+    if (translations.it.title) setTitleIt(translations.it.title);
+    if (translations.it.text) setTextIt(translations.it.text);
+    if (translations.it.description) setDescriptionIt(translations.it.description);
+
+    // Update Spanish fields
+    if (translations.es.title) setTitleEs(translations.es.title);
+    if (translations.es.text) setTextEs(translations.es.text);
+    if (translations.es.description) setDescriptionEs(translations.es.description);
+  };
+
   const [price, setPrice] = useState(menuItem?.price?.toString() || '');
   const [imagePath, setImagePath] = useState(menuItem?.image_path || '');
   const [model3dGlbUrl, setModel3dGlbUrl] = useState(menuItem?.model_3d_url || '');
@@ -123,6 +167,15 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
         title: title.trim(),
         text: text.trim() || null,
         description: description.trim() || null,
+        title_en: titleEn.trim() || null,
+        text_en: textEn.trim() || null,
+        description_en: descriptionEn.trim() || null,
+        title_it: titleIt.trim() || null,
+        text_it: textIt.trim() || null,
+        description_it: descriptionIt.trim() || null,
+        title_es: titleEs.trim() || null,
+        text_es: textEs.trim() || null,
+        description_es: descriptionEs.trim() || null,
         price: parseFloat(price),
         image_path: imagePath.trim() || null,
         model_3d_url: model3dGlbUrl.trim() || null,
@@ -174,43 +227,143 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Titre <span className="text-red-500">*</span>
-            </label>
-            <Input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Salade César, Steak Frites..."
-              required
-            />
-          </div>
+          {/* Language Tabs */}
+          <LanguageTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            sourceFields={{ title, text, description }}
+            onGlobalTranslate={handleGlobalTranslate}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Texte court
-            </label>
-            <Input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Texte court optionnel..."
-            />
-          </div>
+          {/* French Fields */}
+          {activeTab === 'fr' && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Titre <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ex: Salade César, Steak Frites..."
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description complète du plat..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
-              rows={3}
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Texte court
+                </label>
+                <Input
+                  type="text"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Texte court optionnel..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description complète du plat..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                  rows={3}
+                />
+              </div>
+            </>
+          )}
+
+          {/* English Fields */}
+          {activeTab === 'en' && (
+            <>
+              <TranslationField
+                label="Titre (EN)"
+                sourceText={title}
+                value={titleEn}
+                onChange={setTitleEn}
+                targetLang="en"
+              />
+              <TranslationField
+                label="Texte court (EN)"
+                sourceText={text}
+                value={textEn}
+                onChange={setTextEn}
+                targetLang="en"
+              />
+              <TranslationField
+                label="Description (EN)"
+                sourceText={description}
+                value={descriptionEn}
+                onChange={setDescriptionEn}
+                targetLang="en"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
+
+          {/* Italian Fields */}
+          {activeTab === 'it' && (
+            <>
+              <TranslationField
+                label="Titre (IT)"
+                sourceText={title}
+                value={titleIt}
+                onChange={setTitleIt}
+                targetLang="it"
+              />
+              <TranslationField
+                label="Texte court (IT)"
+                sourceText={text}
+                value={textIt}
+                onChange={setTextIt}
+                targetLang="it"
+              />
+              <TranslationField
+                label="Description (IT)"
+                sourceText={description}
+                value={descriptionIt}
+                onChange={setDescriptionIt}
+                targetLang="it"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
+
+          {/* Spanish Fields */}
+          {activeTab === 'es' && (
+            <>
+              <TranslationField
+                label="Titre (ES)"
+                sourceText={title}
+                value={titleEs}
+                onChange={setTitleEs}
+                targetLang="es"
+              />
+              <TranslationField
+                label="Texte court (ES)"
+                sourceText={text}
+                value={textEs}
+                onChange={setTextEs}
+                targetLang="es"
+              />
+              <TranslationField
+                label="Description (ES)"
+                sourceText={description}
+                value={descriptionEs}
+                onChange={setDescriptionEs}
+                targetLang="es"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

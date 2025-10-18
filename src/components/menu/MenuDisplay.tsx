@@ -283,7 +283,7 @@ export default function MenuDisplay() {
       {/* Category Title and Description */}
       {currentCategory && (
         <div className="mb-6">
-          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium">
+          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium capitalize">
             {getTranslatedField(currentCategory, 'title', locale)}
           </h2>
           {getTranslatedField(currentCategory, 'text', locale) && (
@@ -323,7 +323,7 @@ export default function MenuDisplay() {
                 {/* Section Title - Only show if title is not empty */}
                 {section.title && (
                   <div className="mb-4">
-                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium">
+                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium capitalize">
                       {section.title}
                     </h3>
                     {section.subtitle && (

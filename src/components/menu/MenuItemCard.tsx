@@ -104,7 +104,7 @@ export default function MenuItemCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2 mb-1">
-            <h3 className={`text-base sm:text-lg font-medium font-forum ${
+            <h3 className={`text-base sm:text-lg font-medium font-forum capitalize ${
               isSpecial ? 'text-black' : 'text-white'
             }`}>{title}</h3>
 

@@ -7,6 +7,8 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
 import { categoryService, subcategoryService, Category } from '@/services/menuService';
 import { ConfirmationModal } from './ConfirmationModal';
+import { LanguageTabs } from './translation/LanguageTabs';
+import { TranslationField } from './translation/TranslationField';
 
 interface CategoryModalProps {
   category?: Category | null;
@@ -15,10 +17,46 @@ interface CategoryModalProps {
 }
 
 function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
+  // French (source)
   const [title, setTitle] = useState(category?.title || '');
   const [text, setText] = useState(category?.text || '');
+
+  // English
+  const [titleEn, setTitleEn] = useState(category?.title_en || '');
+  const [textEn, setTextEn] = useState(category?.text_en || '');
+
+  // Italian
+  const [titleIt, setTitleIt] = useState(category?.title_it || '');
+  const [textIt, setTextIt] = useState(category?.text_it || '');
+
+  // Spanish
+  const [titleEs, setTitleEs] = useState(category?.title_es || '');
+  const [textEs, setTextEs] = useState(category?.text_es || '');
+
+  // Active language tab
+  const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Handle global translation
+  const handleGlobalTranslate = (translations: {
+    en: { [key: string]: string };
+    it: { [key: string]: string };
+    es: { [key: string]: string };
+  }) => {
+    // Update English fields
+    if (translations.en.title) setTitleEn(translations.en.title);
+    if (translations.en.text) setTextEn(translations.en.text);
+
+    // Update Italian fields
+    if (translations.it.title) setTitleIt(translations.it.title);
+    if (translations.it.text) setTextIt(translations.it.text);
+
+    // Update Spanish fields
+    if (translations.es.title) setTitleEs(translations.es.title);
+    if (translations.es.text) setTextEs(translations.es.text);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +73,12 @@ function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
       await onSave({
         title: title.trim(),
         text: text.trim() || null,
+        title_en: titleEn.trim() || null,
+        text_en: textEn.trim() || null,
+        title_it: titleIt.trim() || null,
+        text_it: textIt.trim() || null,
+        title_es: titleEs.trim() || null,
+        text_es: textEs.trim() || null,
         status: category?.status || 'active',
         created_by: null,
         updated_by: null,
@@ -79,31 +123,110 @@ function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Titre <span className="text-red-500">*</span>
-            </label>
-            <Input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Entrées, Plats, Desserts..."
-              required
-            />
-          </div>
+          {/* Language Tabs */}
+          <LanguageTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            sourceFields={{ title, text }}
+            onGlobalTranslate={handleGlobalTranslate}
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Description optionnelle..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
-              rows={3}
-            />
-          </div>
+          {/* French Fields */}
+          {activeTab === 'fr' && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Titre <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ex: Entrées, Plats, Desserts..."
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Description optionnelle..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                  rows={3}
+                />
+              </div>
+            </>
+          )}
+
+          {/* English Fields */}
+          {activeTab === 'en' && (
+            <>
+              <TranslationField
+                label="Titre (EN)"
+                sourceText={title}
+                value={titleEn}
+                onChange={setTitleEn}
+                targetLang="en"
+              />
+              <TranslationField
+                label="Description (EN)"
+                sourceText={text}
+                value={textEn}
+                onChange={setTextEn}
+                targetLang="en"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
+
+          {/* Italian Fields */}
+          {activeTab === 'it' && (
+            <>
+              <TranslationField
+                label="Titre (IT)"
+                sourceText={title}
+                value={titleIt}
+                onChange={setTitleIt}
+                targetLang="it"
+              />
+              <TranslationField
+                label="Description (IT)"
+                sourceText={text}
+                value={textIt}
+                onChange={setTextIt}
+                targetLang="it"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
+
+          {/* Spanish Fields */}
+          {activeTab === 'es' && (
+            <>
+              <TranslationField
+                label="Titre (ES)"
+                sourceText={title}
+                value={titleEs}
+                onChange={setTitleEs}
+                targetLang="es"
+              />
+              <TranslationField
+                label="Description (ES)"
+                sourceText={text}
+                value={textEs}
+                onChange={setTextEs}
+                targetLang="es"
+                multiline
+                rows={3}
+              />
+            </>
+          )}
 
           <div className="flex flex-col sm:flex-row gap-2 mt-6">
             <Button type="submit" disabled={saving} className="flex-1 order-2 sm:order-1">
