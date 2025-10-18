@@ -52,7 +52,7 @@
   "reservation": {
     "button": "Reservar una mesa",
     "header": {
-      "text1": "¡Bienvenido a Magnifiko!",
+      "text1": "Bienvenido au Magnifiko",
       "text2": "Reserve su mesa en pocos clics (sin reservación después de las 20h)",
       "text3": "Para cualquier solicitud especial, contáctenos al 01 49 59 00 94"
     },
@@ -111,8 +111,29 @@
       "makeAnother": "Hacer otra reservación"
     },
     "calendar": {
-      "months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-      "days": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+      "months": [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+      ],
+      "days": [
+        "Dom",
+        "Lun",
+        "Mar",
+        "Mié",
+        "Jue",
+        "Vie",
+        "Sáb"
+      ],
       "closedTooltip": "Restaurante cerrado"
     }
   },

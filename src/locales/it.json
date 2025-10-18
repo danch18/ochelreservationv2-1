@@ -52,8 +52,8 @@
   "reservation": {
     "button": "Prenota un tavolo",
     "header": {
-      "text1": "Benvenuti a Magnifiko!",
-      "text2": "Prenota il tuo tavolo in pochi clic (senza prenotazione dopo le 20:00)",
+      "text1": "Benvenuti au Magnifiko",
+      "text2": "Prenota il tuo tavolo in pochi clic (senza prenotazione dopo le 20h)",
       "text3": "Per qualsiasi richiesta speciale, contattaci al 01 49 59 00 94"
     },
     "lookup": {
@@ -111,8 +111,29 @@
       "makeAnother": "Fai un'altra prenotazione"
     },
     "calendar": {
-      "months": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
-      "days": ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
+      "months": [
+        "Gennaio",
+        "Febbraio",
+        "Marzo",
+        "Aprile",
+        "Maggio",
+        "Giugno",
+        "Luglio",
+        "Agosto",
+        "Settembre",
+        "Ottobre",
+        "Novembre",
+        "Dicembre"
+      ],
+      "days": [
+        "Dom",
+        "Lun",
+        "Mar",
+        "Mer",
+        "Gio",
+        "Ven",
+        "Sab"
+      ],
       "closedTooltip": "Ristorante chiuso"
     }
   },

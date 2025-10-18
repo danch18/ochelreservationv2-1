@@ -52,8 +52,8 @@
   "reservation": {
     "button": "Book a table",
     "header": {
-      "text1": "Welcome to Magnifiko!",
-      "text2": "Book your table in a few clicks (no reservation after 8pm)",
+      "text1": "Welcome au Magnifiko",
+      "text2": "Book your table in a few clicks (no reservation after 20h)",
       "text3": "For any special request, contact us at 01 49 59 00 94"
     },
     "lookup": {
@@ -111,8 +111,29 @@
       "makeAnother": "Make another reservation"
     },
     "calendar": {
-      "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-      "days": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      "months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      "days": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
       "closedTooltip": "Restaurant closed"
     }
   },
