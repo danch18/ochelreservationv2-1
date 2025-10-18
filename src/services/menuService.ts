@@ -8,7 +8,13 @@ import { deleteImage, isSupabaseUrl } from '@/lib/storage';
 export interface Category {
   id: number;
   title: string;
+  title_en?: string | null;
+  title_it?: string | null;
+  title_es?: string | null;
   text?: string | null;
+  text_en?: string | null;
+  text_it?: string | null;
+  text_es?: string | null;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -20,7 +26,13 @@ export interface Subcategory {
   id: number;
   category_id: number;
   title: string;
+  title_en?: string | null;
+  title_it?: string | null;
+  title_es?: string | null;
   text?: string | null;
+  text_en?: string | null;
+  text_it?: string | null;
+  text_es?: string | null;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -31,8 +43,17 @@ export interface Subcategory {
 export interface MenuItem {
   id: number;
   title: string;
+  title_en?: string | null;
+  title_it?: string | null;
+  title_es?: string | null;
   text?: string | null;
+  text_en?: string | null;
+  text_it?: string | null;
+  text_es?: string | null;
   description: string;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
   image_path?: string | null;
   model_3d_url?: string | null;
   redirect_3d_url?: string | null;
@@ -50,7 +71,13 @@ export interface MenuItem {
 export interface Addon {
   id: number;
   title: string;
+  title_en?: string | null;
+  title_it?: string | null;
+  title_es?: string | null;
   description?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
   image_path?: string | null;
   price: number;
   category_id?: number | null;
@@ -60,6 +87,29 @@ export interface Addon {
   updated_at?: string;
   created_by?: number | null;
   updated_by?: number | null;
+}
+
+// ============================================================================
+// TRANSLATION HELPER
+// ============================================================================
+
+/**
+ * Get translated field value based on locale
+ * Falls back to French if translation not available
+ */
+export function getTranslatedField<T extends Record<string, any>>(
+  item: T,
+  field: string,
+  locale: 'fr' | 'en' | 'it' | 'es'
+): string {
+  // For French, return the original field
+  if (locale === 'fr') {
+    return (item[field] as string) || '';
+  }
+
+  // For other languages, try translated field first, fallback to French
+  const translatedField = `${field}_${locale}`;
+  return (item[translatedField] as string) || (item[field] as string) || '';
 }
 
 // ============================================================================
