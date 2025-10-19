@@ -44,3 +44,14 @@ next-env.d.ts
 database-*.sql
 database-*.sql.gz
 *.dump
+
+# backup files
+*.old
+*.old2
+*.backup
+*.bak
+*.bak2
+*.tmp
+*.temp
+*~
+*.swp
