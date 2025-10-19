@@ -1365,123 +1365,100 @@ function generateReminderEmailHTML(reservation: Reservation): string {
       <title>Reservation Reminder - Today</title>
       <style>
         body {
-          font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Forum', Georgia, serif;
           line-height: 1.6;
-          color: #2c3e50;
+          color: #EFE6D2;
           max-width: 600px;
           margin: 0 auto;
           padding: 20px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #000000;
           min-height: 100vh;
         }
         .email-container {
-          background: #ffffff;
-          border-radius: 20px;
+          background: #101010;
+          border-radius: 0.25rem;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .header {
-          background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-          color: #ffffff;
+          background: #1a1a1a;
+          color: #FFF2CC;
           padding: 40px 24px;
           text-align: center;
-          position: relative;
-          overflow: hidden;
-        }
-        .header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-          animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-          0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
-          50% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+          border-bottom: 1px solid rgba(255, 255, 255, 0.10);
         }
         .logo {
-          font-size: 2.8em;
-          font-weight: 800;
-          color: #ffffff;
-          margin-bottom: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          position: relative;
-          z-index: 1;
-        }
-        .logo::before {
-          content: '🍽️';
-          font-size: 0.8em;
-          margin-right: 8px;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 32px;
+          font-weight: 400;
+          color: #FFF2CC;
+          margin-bottom: 8px;
+          letter-spacing: 0.5px;
+          line-height: normal;
         }
         .tagline {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 1.1em;
-          font-weight: 300;
-          position: relative;
-          z-index: 1;
-        }
-        .reminder-icon {
-          font-size: 4em;
-          color: #f39c12;
-          margin: 20px 0;
-          animation: ring 2s infinite;
-        }
-        @keyframes ring {
-          0%, 100% { transform: rotate(0deg); }
-          10%, 30% { transform: rotate(-10deg); }
-          20%, 40% { transform: rotate(10deg); }
-          50% { transform: rotate(0deg); }
+          color: #FFD65A;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .content {
           padding: 40px 32px;
-          background: #ffffff;
-          color: #2c3e50;
+          background: #101010;
+          color: #EFE6D2;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .greeting {
-          font-size: 1.3em;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 16px;
           margin-bottom: 24px;
-          color: #2c3e50;
-          font-weight: 600;
+          color: #FFF2CC;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .reminder-message {
-          background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-          border-left: 4px solid #f39c12;
+          background: rgba(255, 214, 90, 0.1);
+          border-left: 4px solid #FFD65A;
           padding: 20px;
           margin: 24px 0;
-          border-radius: 8px;
-          font-size: 1.1em;
-          color: #856404;
-          font-weight: 500;
+          border-radius: 0.25rem;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          color: #EFE6D2;
+          font-weight: 400;
+          line-height: 1.6;
+        }
+        .time-highlight {
+          background: rgba(255, 214, 90, 0.15);
+          border: 2px solid #FFD65A;
+          color: #FFD65A;
+          padding: 24px;
+          border-radius: 0.25rem;
+          text-align: center;
+          margin: 32px 0;
+          font-size: 28px;
+          font-weight: 400;
+          font-family: 'Forum', Georgia, serif;
+          letter-spacing: 1px;
         }
         .reservation-details {
-          background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
           padding: 32px;
           margin: 32px 0;
-          border: 2px solid #F34A23;
-          box-shadow: 0 8px 25px rgba(243, 74, 35, 0.15);
-          position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
-        .reservation-details::before {
-          content: '⏰';
-          position: absolute;
-          top: -15px;
-          left: 30px;
-          background: #F34A23;
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 1.2em;
-          box-shadow: 0 4px 12px rgba(243, 74, 35, 0.3);
+        .reservation-details h3 {
+          color: #FFF2CC;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 24px;
+          font-weight: 400;
+          line-height: normal;
+          margin-top: 0;
+          margin-bottom: 24px;
         }
         .detail-row {
           display: flex;
@@ -1489,127 +1466,99 @@ function generateReminderEmailHTML(reservation: Reservation): string {
           align-items: center;
           margin-bottom: 16px;
           padding: 12px 0;
-          border-bottom: 1px solid rgba(243, 74, 35, 0.2);
-          transition: all 0.3s ease;
-        }
-        .detail-row:hover {
-          background: rgba(243, 74, 35, 0.05);
-          border-radius: 8px;
-          padding-left: 12px;
-          padding-right: 12px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .detail-row:last-child {
           border-bottom: none;
           margin-bottom: 0;
         }
         .detail-label {
-          font-weight: 700;
-          color: #F34A23;
-          font-size: 1.05em;
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          font-family: 'Forum', Georgia, serif;
+          font-weight: 400;
+          color: #FFD65A;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .detail-value {
-          color: #2c3e50;
+          font-family: 'Forum', Georgia, serif;
+          color: #EFE6D2;
           text-align: right;
-          font-weight: 600;
-          font-size: 1.05em;
-        }
-        .time-highlight {
-          background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-          color: white;
-          padding: 24px;
-          border-radius: 16px;
-          text-align: center;
-          margin: 32px 0;
-          font-size: 2em;
-          font-weight: 700;
-          box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 1.6;
         }
         .special-requests {
-          background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
-          border-radius: 16px;
-          padding: 28px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
+          padding: 24px;
           margin: 32px 0;
-          border: 2px solid #17a2b8;
-          box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
-          position: relative;
-        }
-        .special-requests::before {
-          content: '💬';
-          position: absolute;
-          top: -15px;
-          left: 30px;
-          background: #17a2b8;
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 1.2em;
-          box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .special-requests h4 {
           margin-top: 0;
-          color: #17a2b8;
-          font-size: 1.2em;
-          font-weight: 700;
+          margin-bottom: 16px;
+          color: #FFD65A;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: normal;
+        }
+        .special-requests p {
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
+          color: #EFE6D2;
         }
         .contact-info {
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 0.25rem;
           padding: 32px;
           margin: 32px 0;
           text-align: center;
-          border: 2px solid #6c757d;
-          box-shadow: 0 8px 25px rgba(108, 117, 125, 0.15);
-          position: relative;
-        }
-        .contact-info::before {
-          content: '📞';
-          position: absolute;
-          top: -15px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #6c757d;
-          color: white;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 1.2em;
-          box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.10);
         }
         .contact-info h4 {
-          color: #6c757d;
+          color: #FFD65A;
           margin-top: 0;
           margin-bottom: 20px;
-          font-size: 1.2em;
-          font-weight: 700;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 18px;
+          font-weight: 400;
+          line-height: normal;
         }
         .contact-info p {
-          color: #495057;
+          color: #EFE6D2;
           margin: 12px 0;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
           line-height: 1.6;
-          font-weight: 500;
+          font-weight: 400;
         }
         .footer {
-          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+          background: #1a1a1a;
           padding: 32px 24px;
           text-align: center;
-          color: #ecf0f1;
-          font-size: 0.95em;
+          color: #EFE6D2;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          border-top: 1px solid rgba(255, 255, 255, 0.10);
         }
         .footer p {
           margin: 12px 0;
-          font-weight: 500;
+          font-family: 'Forum', Georgia, serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.6;
         }
         .highlight {
-          color: #f39c12;
-          font-weight: 700;
+          color: #FFD65A;
+          font-weight: 400;
         }
         .divider {
-          height: 2px;
-          background: linear-gradient(90deg, transparent 0%, #f39c12 50%, transparent 100%);
+          height: 1px;
+          background: rgba(255, 255, 255, 0.3);
           margin: 32px 0;
-          border-radius: 1px;
         }
         @media (max-width: 640px) {
           body {
@@ -1622,7 +1571,7 @@ function generateReminderEmailHTML(reservation: Reservation): string {
             padding: 32px 20px;
           }
           .logo {
-            font-size: 2.2em;
+            font-size: 24px;
           }
           .reservation-details, .special-requests, .contact-info {
             padding: 24px 20px;
@@ -1636,7 +1585,7 @@ function generateReminderEmailHTML(reservation: Reservation): string {
             text-align: left;
           }
           .time-highlight {
-            font-size: 1.5em;
+            font-size: 20px;
           }
         }
       </style>
@@ -1645,42 +1594,38 @@ function generateReminderEmailHTML(reservation: Reservation): string {
       <div class="email-container">
         <div class="header">
           <div class="logo">Magnifiko Réservez</div>
-          <div class="tagline">Your Reservation is Today!</div>
+          <div class="tagline">Reminder: Your Reservation Today</div>
         </div>
 
         <div class="content">
-          <div style="text-align: center;">
-            <div class="reminder-icon">🔔</div>
-          </div>
-
           <div class="greeting">
             Dear ${reservation.name},
           </div>
 
           <div class="reminder-message">
-            ⏰ <strong>Friendly Reminder:</strong> You have a reservation with us <strong style="color: #f39c12;">TODAY</strong>! We're excited to welcome you.
+            This is a friendly reminder that you have a reservation with us <span class="highlight">today</span>. We look forward to welcoming you!
           </div>
 
           <div class="time-highlight">
-            🕐 ${reservation.reservation_time}
+            Today at ${reservation.reservation_time}
           </div>
 
           <div class="reservation-details">
-            <h3 style="margin-top: 20px; color: #F34A23; margin-bottom: 24px; font-size: 1.4em; font-weight: 700;">Today's Reservation Details</h3>
+            <h3>Your Reservation Details</h3>
             <div class="detail-row">
-              <span class="detail-label">📋 Confirmation ID:</span>
+              <span class="detail-label">Confirmation ID:</span>
               <span class="detail-value">#${reservation.id?.slice(-8).toUpperCase()}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">📅 Date:</span>
+              <span class="detail-label">Date:</span>
               <span class="detail-value">${formattedDate}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">🕐 Time:</span>
+              <span class="detail-label">Time:</span>
               <span class="detail-value">${reservation.reservation_time}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">👥 Party Size:</span>
+              <span class="detail-label">Party Size:</span>
               <span class="detail-value">${reservation.guests} ${reservation.guests === 1 ? 'guest' : 'guests'}</span>
             </div>
           </div>
@@ -1688,7 +1633,7 @@ function generateReminderEmailHTML(reservation: Reservation): string {
           ${reservation.special_requests ? `
           <div class="special-requests">
             <h4>Your Special Requests</h4>
-            <p style="margin-bottom: 0; color: #495057; font-weight: 500; line-height: 1.6;">${reservation.special_requests}</p>
+            <p>${reservation.special_requests}</p>
           </div>
           ` : ''}
 
@@ -1698,19 +1643,16 @@ function generateReminderEmailHTML(reservation: Reservation): string {
             <h4>Need to Make Changes?</h4>
             <p>If you need to cancel or modify your reservation, please contact us as soon as possible.</p>
             <div style="margin-top: 20px;">
-              <p><strong>📞 (555) 123-4567</strong></p>
-              <p><strong>📧 info@ochel.com</strong></p>
-              <p>📍 123 Fine Dining Street, Downtown</p>
+              <p>01 49 59 00 94</p>
+              <p>compte.magnifiko@gmail.com</p>
+              <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
+              <p>Lundi - Dimanche, 11h00 - 00h00 (Service continu)</p>
             </div>
           </div>
-
-          <p style="text-align: center; font-size: 1.1em; color: #495057; margin: 32px 0;">
-            🌟 We look forward to providing you with an exceptional dining experience! 🌟
-          </p>
         </div>
 
         <div class="footer">
-          <p>See you soon at <span class="highlight">Magnifiko Réservez</span>!</p>
+          <p>We look forward to serving you at <span class="highlight">Magnifiko Réservez</span>!</p>
           <p style="font-size: 0.85em; opacity: 0.8; margin-top: 16px;">
             This is an automated reminder email. Please do not reply to this email.
           </p>
