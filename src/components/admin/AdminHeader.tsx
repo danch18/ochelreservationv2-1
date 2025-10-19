@@ -2,9 +2,11 @@
 
 import { useAuth } from '@/hooks';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export function AdminHeader() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await logout();
@@ -18,8 +20,8 @@ export function AdminHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-xl font-semibold text-white">Magnifiko</h1>
-              <p className="text-sm text-white/80">Admin Dashboard</p>
+              <h1 className="text-xl font-semibold text-white">{t('admin.header.title')}</h1>
+              <p className="text-sm text-white/80">{t('admin.header.subtitle')}</p>
             </div>
           </div>
           
@@ -36,7 +38,7 @@ export function AdminHeader() {
                   size="sm"
                   className="text-white/80 hover:text-white hover:bg-white/20 rounded-2xl"
                 >
-                  Déconnexion
+                  {t('admin.header.logout')}
                 </Button>
               </div>
             )}
@@ -52,8 +54,8 @@ export function AdminHeader() {
               <div className="w-4 h-4 bg-white rounded-sm"></div>
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-white">Magnifiko</h1>
-              <p className="text-xs text-white/70 -mt-1">Admin</p>
+              <h1 className="text-lg font-semibold text-white">{t('admin.header.title')}</h1>
+              <p className="text-xs text-white/70 -mt-1">{t('admin.header.subtitle').split(' ')[0]}</p>
             </div>
           </div>
           

@@ -66,15 +66,22 @@ export function ReservationPopup() {
   }, []);
 
   const handlePopupClose = useCallback(() => {
-    // Reset everything when popup closes
     requestAnimationFrame(() => {
-      setCurrentView('form');
-      setSubmittedReservation(null);
-      setLookupEmail('');
-      setCurrentFormStep(1);
-      setFormKey(prev => prev + 1); // Force complete form reset
+      // If user closes after successful reservation, reset everything
+      if (currentView === 'success' || currentView === 'reservations') {
+        setCurrentView('form');
+        setSubmittedReservation(null);
+        setLookupEmail('');
+        setCurrentFormStep(1);
+        setFormKey(prev => prev + 1); // Force complete form reset
+      } else {
+        // If closing during form filling, preserve form state
+        setSubmittedReservation(null);
+        setLookupEmail('');
+        // Don't change currentView or formKey to preserve form data
+      }
     });
-  }, []);
+  }, [currentView]);
 
   const handleStepChange = useCallback((step: 1 | 2) => {
     setCurrentFormStep(step);

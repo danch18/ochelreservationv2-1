@@ -4,6 +4,8 @@ import { useState, useCallback } from 'react';
 import { ReservationTable } from './ReservationTable';
 import { StatsCards } from './StatsCards';
 import { AdminFilters } from './AdminFilters';
+import { reservationService } from '@/services/reservationService';
+import { useTranslation } from '@/contexts/LanguageContext';
 import type { Reservation } from '@/types';
 
 interface OverviewTabProps {
@@ -13,19 +15,25 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: OverviewTabProps) {
+  const { t } = useTranslation();
   // Filter state for reservation table (independent from stats filter)
   const [filters, setFilters] = useState({
     status: '',
     date: '',
     search: ''
   });
-  
+
   // Stats filter state - controls time range for top statistics cards
   const [statsFilter, setStatsFilter] = useState<'today' | 'next7days' | 'all'>('today');
 
   // Export state for professional UX
   const [isExporting, setIsExporting] = useState(false);
   const [showExportSuccess, setShowExportSuccess] = useState(false);
+
+  // Bulk delete state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteEmail, setDeleteEmail] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /**
    * Filters reservations based on selected stats time range
@@ -81,16 +89,16 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   const filteredReservations = reservations.filter(reservation => {
     // Check if reservation matches status filter
     const matchesStatus = !filters.status || reservation.status === filters.status;
-    
+
     // Check if reservation matches date filter
     const matchesDate = !filters.date || reservation.reservation_date === filters.date;
-    
+
     // Check if reservation matches search filter (name, email, or phone)
-    const matchesSearch = !filters.search || 
+    const matchesSearch = !filters.search ||
       reservation.name.toLowerCase().includes(filters.search.toLowerCase()) ||
       reservation.email.toLowerCase().includes(filters.search.toLowerCase()) ||
       reservation.phone.includes(filters.search);
-    
+
     return matchesStatus && matchesDate && matchesSearch;
   }).sort((a, b) => {
     // Sort by date first, then by time (chronological order)
@@ -108,7 +116,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   const exportToCSV = useCallback(async () => {
     // Check if there are reservations to export
     if (reservations.length === 0) {
-      showToast('Aucune réservation à exporter.', 'warning');
+      showToast(t('admin.overview.export.noReservations'), 'warning');
       return;
     }
 
@@ -125,18 +133,18 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       // Define CSV headers
       const headers = [
-        'ID',
-        'Nom',
-        'Email',
-        'Téléphone',
-        'Date de réservation',
-        'Heure',
-        'Nombre d\'invités',
-        'Statut',
-        'Demandes spéciales',
-        'Confirmé automatiquement',
-        'Date de création',
-        'Dernière mise à jour'
+        t('admin.overview.export.csvHeaders.id'),
+        t('admin.overview.export.csvHeaders.name'),
+        t('admin.overview.export.csvHeaders.email'),
+        t('admin.overview.export.csvHeaders.phone'),
+        t('admin.overview.export.csvHeaders.date'),
+        t('admin.overview.export.csvHeaders.time'),
+        t('admin.overview.export.csvHeaders.guests'),
+        t('admin.overview.export.csvHeaders.status'),
+        t('admin.overview.export.csvHeaders.requests'),
+        t('admin.overview.export.csvHeaders.autoConfirmed'),
+        t('admin.overview.export.csvHeaders.created'),
+        t('admin.overview.export.csvHeaders.updated')
       ];
 
       // Helper function to escape CSV values
@@ -171,7 +179,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       // Create blob and download link
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
-      
+
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
@@ -180,20 +188,72 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Clean up the URL object
         URL.revokeObjectURL(url);
-        
+
         // Show success feedback
-        showToast(`${reservations.length} réservations exportées avec succès!`, 'success');
+        showToast(`${reservations.length} ${t('admin.overview.export.success')}`, 'success');
       }
     } catch (error) {
       console.error('Erreur lors de l\'export CSV:', error);
-      showToast('Erreur lors de l\'export. Veuillez réessayer.', 'error');
+      showToast(t('admin.overview.export.error'), 'error');
     } finally {
       setIsExporting(false);
     }
-  }, [reservations, isExporting]);
+  }, [reservations, isExporting, t]);
+
+  /**
+   * Delete all reservations for a specific email
+   */
+  const deleteReservationsByEmail = useCallback(async (email: string) => {
+    if (!email?.trim()) {
+      showToast(t('admin.overview.toast.validEmail'), 'error');
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+
+      // Small delay to show loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const deletedCount = await reservationService.deleteReservationsByEmail(email);
+
+      if (deletedCount === 0) {
+        showToast(`${t('admin.overview.toast.noReservationsFound')} ${email}`, 'warning');
+      } else {
+        showToast(`${deletedCount} ${t('admin.overview.toast.reservationsDeleted')} ${email}`, 'success');
+        // Refresh the reservations list
+        onReservationsUpdate();
+      }
+
+      // Close modal and reset form
+      setShowDeleteModal(false);
+      setDeleteEmail('');
+
+    } catch (error) {
+      console.error('Error deleting reservations:', error);
+      showToast(t('admin.overview.toast.deleteError'), 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [onReservationsUpdate, t]);
+
+  /**
+   * Handle bulk delete button click
+   */
+  const handleBulkDeleteClick = () => {
+    setShowDeleteModal(true);
+    setDeleteEmail('');
+  };
+
+  /**
+   * Handle bulk delete confirmation
+   */
+  const handleBulkDeleteConfirm = () => {
+    deleteReservationsByEmail(deleteEmail);
+  };
 
   /**
    * Show elegant toast notification instead of browser alert
@@ -202,20 +262,20 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     // Create toast element
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 z-[10000] px-6 py-3 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 ease-out translate-x-full opacity-0 ${
-      type === 'success' ? 'bg-green-500' : 
-      type === 'error' ? 'bg-red-500' : 
+      type === 'success' ? 'bg-green-500' :
+      type === 'error' ? 'bg-red-500' :
       'bg-yellow-500'
     }`;
     toast.textContent = message;
-    
+
     document.body.appendChild(toast);
-    
+
     // Animate in
     requestAnimationFrame(() => {
       toast.style.transform = 'translateX(0)';
       toast.style.opacity = '1';
     });
-    
+
     // Animate out and remove
     setTimeout(() => {
       toast.style.transform = 'translateX(100%)';
@@ -231,12 +291,34 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   return (
     <div className="space-y-6 font-forum">
       {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
+        {/* Bulk Delete Button */}
+        <button
+          onClick={handleBulkDeleteClick}
+          disabled={isDeleting}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg text-sm font-medium transition-all duration-200 ease-out flex items-center gap-2"
+        >
+          {isDeleting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              {t('admin.overview.bulkDeleting')}
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {t('admin.overview.bulkDelete')}
+            </>
+          )}
+        </button>
+
+        {/* Stats Filter Buttons */}
         <div className="flex bg-gray-100 rounded-lg p-1">
           {[
-            { key: 'today' as const, label: "Aujourd'hui" },
-            { key: 'next7days' as const, label: '7 prochains jours' },
-            { key: 'all' as const, label: 'Tout' }
+            { key: 'today' as const, label: t('admin.overview.today') },
+            { key: 'next7days' as const, label: t('admin.overview.next7days') },
+            { key: 'all' as const, label: t('admin.overview.all') }
           ].map(option => (
             <button
               key={option.key}
@@ -255,31 +337,93 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Statistics Cards - Display stats based on selected time range */}
       <StatsCards stats={stats} totalGuests={totalGuests} />
-      
+
       {/* Reservation Table Filters */}
-      <AdminFilters 
+      <AdminFilters
         filters={filters}
         onFiltersChange={setFilters}
         reservations={reservations}
         onExportCSV={exportToCSV}
         isExporting={isExporting}
       />
-      
+
       {/* Show filtered results summary when table filters are applied */}
       {(filters.status || filters.date || filters.search) && (
         <div className="bg-blue-50 border !border-blue-200 rounded-2xl p-4 transition-all duration-300 ease-out animate-in slide-in-from-top-2 fade-in">
           <p className="text-sm text-blue-800">
-            <strong className="transition-all duration-200">{filteredReservations.length}</strong> réservation{filteredReservations.length !== 1 ? 's' : ''} trouvée{filteredReservations.length !== 1 ? 's' : ''} sur {reservations.length} au total
+            <strong className="transition-all duration-200">{filteredReservations.length}</strong> {t('admin.overview.resultsFound')} {reservations.length} {t('admin.overview.resultsTotal')}
           </p>
         </div>
       )}
-      
+
       {/* Reservation Table - Shows filtered reservations based on table filters */}
-      <ReservationTable 
+      <ReservationTable
         reservations={filteredReservations}
         isLoading={isLoading}
         onReservationsUpdate={onReservationsUpdate}
       />
+
+      {/* Bulk Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.deleteModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              {t('admin.overview.deleteModal.description')}
+            </p>
+
+            <div className="mb-6">
+              <label htmlFor="delete-email" className="block text-sm font-medium text-gray-700 mb-2">
+                {t('admin.overview.deleteModal.emailLabel')}
+              </label>
+              <input
+                id="delete-email"
+                type="email"
+                value={deleteEmail}
+                onChange={(e) => setDeleteEmail(e.target.value)}
+                placeholder={t('admin.overview.deleteModal.emailPlaceholder')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteEmail('');
+                }}
+                disabled={isDeleting}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.deleteModal.cancel')}
+              </button>
+              <button
+                onClick={handleBulkDeleteConfirm}
+                disabled={isDeleting || !deleteEmail.trim()}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {t('admin.overview.deleteModal.deleting')}
+                  </>
+                ) : (
+                  t('admin.overview.deleteModal.delete')
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

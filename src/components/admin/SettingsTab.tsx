@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
+import { translateText } from '@/lib/translate';
+import { LanguageTabs } from '@/components/admin/menu/translation/LanguageTabs';
+import { TranslationField } from '@/components/admin/menu/translation/TranslationField';
 
 interface DateStatus {
   id?: string;
@@ -530,6 +533,62 @@ function WeeklyScheduleTabs({ weeklySchedule, updatingWeeklySchedule, updateWeek
   );
 }
 
+// Notification Modal Component
+interface NotificationModalProps {
+  isOpen: boolean;
+  type: 'success' | 'error';
+  message: string;
+  onClose: () => void;
+}
+
+function NotificationModal({ isOpen, type, message, onClose }: NotificationModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+        <div className="flex items-start gap-4">
+          {/* Icon */}
+          <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+            type === 'success' ? 'bg-green-100' : 'bg-red-100'
+          }`}>
+            {type === 'success' ? (
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1">
+            <h3 className={`text-lg font-semibold mb-2 ${
+              type === 'success' ? 'text-green-900' : 'text-red-900'
+            }`}>
+              {type === 'success' ? 'Succès' : 'Erreur'}
+            </h3>
+            <p className="text-gray-700 text-sm">{message}</p>
+          </div>
+        </div>
+
+        {/* Close Button */}
+        <div className="mt-6 flex justify-end">
+          <Button
+            onClick={onClose}
+            variant={type === 'success' ? 'primary' : 'secondary'}
+            size="sm"
+          >
+            Fermer
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const DAYS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
 export function SettingsTab() {
@@ -543,12 +602,64 @@ export function SettingsTab() {
   const [guestLimit, setGuestLimit] = useState(4);              // Default: 4 guests max for auto-confirmation
   const [updatingGuestLimit, setUpdatingGuestLimit] = useState(false);
 
-  // Header text settings for reservation form
+  // Header text settings for reservation form - French (source)
   const [headerText1, setHeaderText1] = useState('NO RESERVATIONS AT LUNCH ON WEEKDAYS');
   const [headerText2, setHeaderText2] = useState('OPEN ALL MONTH OF AUGUST');
   const [headerText3, setHeaderText3] = useState('For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.');
+
+  // English translations
+  const [headerText1En, setHeaderText1En] = useState('');
+  const [headerText2En, setHeaderText2En] = useState('');
+  const [headerText3En, setHeaderText3En] = useState('');
+
+  // Italian translations
+  const [headerText1It, setHeaderText1It] = useState('');
+  const [headerText2It, setHeaderText2It] = useState('');
+  const [headerText3It, setHeaderText3It] = useState('');
+
+  // Spanish translations
+  const [headerText1Es, setHeaderText1Es] = useState('');
+  const [headerText2Es, setHeaderText2Es] = useState('');
+  const [headerText3Es, setHeaderText3Es] = useState('');
+
+  // Active language tab for header texts
+  const [headerTextsActiveTab, setHeaderTextsActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
+
   const [updatingHeaderTexts, setUpdatingHeaderTexts] = useState(false);
-  
+
+  // Handle global translation for header texts
+  const handleHeaderTextsGlobalTranslate = (translations: {
+    en: { [key: string]: string };
+    it: { [key: string]: string };
+    es: { [key: string]: string };
+  }) => {
+    // Update English fields
+    if (translations.en.headerText1) setHeaderText1En(translations.en.headerText1);
+    if (translations.en.headerText2) setHeaderText2En(translations.en.headerText2);
+    if (translations.en.headerText3) setHeaderText3En(translations.en.headerText3);
+
+    // Update Italian fields
+    if (translations.it.headerText1) setHeaderText1It(translations.it.headerText1);
+    if (translations.it.headerText2) setHeaderText2It(translations.it.headerText2);
+    if (translations.it.headerText3) setHeaderText3It(translations.it.headerText3);
+
+    // Update Spanish fields
+    if (translations.es.headerText1) setHeaderText1Es(translations.es.headerText1);
+    if (translations.es.headerText2) setHeaderText2Es(translations.es.headerText2);
+    if (translations.es.headerText3) setHeaderText3Es(translations.es.headerText3);
+  };
+
+  // Notification modal state
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error';
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: ''
+  });
+
   // Weekly schedule management state
   const [weeklySchedule, setWeeklySchedule] = useState<Record<number, WeeklySchedule>>({});
   const [loadingWeeklySchedule, setLoadingWeeklySchedule] = useState(true);
@@ -1138,7 +1249,7 @@ export function SettingsTab() {
       
       const { data, error } = await supabase
         .from('restaurant_settings')
-        .select('setting_key, setting_value')
+        .select('setting_key, setting_value, setting_value_en, setting_value_it, setting_value_es')
         .in('setting_key', ['header_text_1', 'header_text_2', 'header_text_3']);
 
       if (error) {
@@ -1151,12 +1262,21 @@ export function SettingsTab() {
           switch (setting.setting_key) {
             case 'header_text_1':
               setHeaderText1(setting.setting_value || 'NO RESERVATIONS AT LUNCH ON WEEKDAYS');
+              setHeaderText1En(setting.setting_value_en || '');
+              setHeaderText1It(setting.setting_value_it || '');
+              setHeaderText1Es(setting.setting_value_es || '');
               break;
             case 'header_text_2':
               setHeaderText2(setting.setting_value || 'OPEN ALL MONTH OF AUGUST');
+              setHeaderText2En(setting.setting_value_en || '');
+              setHeaderText2It(setting.setting_value_it || '');
+              setHeaderText2Es(setting.setting_value_es || '');
               break;
             case 'header_text_3':
               setHeaderText3(setting.setting_value || 'For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible.');
+              setHeaderText3En(setting.setting_value_en || '');
+              setHeaderText3It(setting.setting_value_it || '');
+              setHeaderText3Es(setting.setting_value_es || '');
               break;
           }
         });
@@ -1174,77 +1294,97 @@ export function SettingsTab() {
     try {
       setUpdatingHeaderTexts(true);
       setError(null);
-      const { supabase } = await import('@/lib/supabase');
-      
+
       console.log('Updating header texts...');
-      console.log('Supabase client:', supabase);
       console.log('Header text values:', { headerText1, headerText2, headerText3 });
-      
-      // Test Supabase connection first
-      const { data: testData, error: testError } = await supabase
-        .from('restaurant_settings')
-        .select('setting_key, setting_value')
-        .limit(1);
-      
-      if (testError) {
-        console.error('Supabase connection test failed:', testError);
-        console.error('Test error details:', JSON.stringify(testError, null, 2));
-        throw new Error(`Database connection failed: ${testError.message}`);
-      }
-      
-      console.log('Supabase connection test successful:', testData);
-      
+
       // Validate header text values
       if (!headerText1.trim() || !headerText2.trim() || !headerText3.trim()) {
-        throw new Error('All header text fields must be filled');
+        throw new Error('Tous les champs de texte d\'en-tête doivent être remplis');
       }
-      
-      // Update all three header texts
+
+      const { supabase } = await import('@/lib/supabase');
+
+      console.log('Saving header texts with manual translations...');
+
+      // Prepare all translations (using manually entered/translated values)
       const settings = [
-        { key: 'header_text_1', value: headerText1.trim() },
-        { key: 'header_text_2', value: headerText2.trim() },
-        { key: 'header_text_3', value: headerText3.trim() }
+        {
+          key: 'header_text_1',
+          fr: headerText1.trim(),
+          en: headerText1En.trim() || null,
+          it: headerText1It.trim() || null,
+          es: headerText1Es.trim() || null,
+        },
+        {
+          key: 'header_text_2',
+          fr: headerText2.trim(),
+          en: headerText2En.trim() || null,
+          it: headerText2It.trim() || null,
+          es: headerText2Es.trim() || null,
+        },
+        {
+          key: 'header_text_3',
+          fr: headerText3.trim(),
+          en: headerText3En.trim() || null,
+          it: headerText3It.trim() || null,
+          es: headerText3Es.trim() || null,
+        },
       ];
 
+      console.log('Saving to database with all language versions...');
+
+      // Save to database with all language versions
       for (const setting of settings) {
-        try {
-           console.log(`Processing setting: ${setting.key} = ${setting.value}`);
-           
-           // Try to upsert (insert or update) the record
-           const { data, error } = await supabase
-             .from('restaurant_settings')
-             .upsert({
-               setting_key: setting.key,
-               setting_value: setting.value,
-               description: `Header text line for reservation form (${setting.key})`,
-               updated_at: new Date().toISOString()
-             }, {
-               onConflict: 'setting_key'
-             })
-             .select();
+        const { error } = await supabase
+          .from('restaurant_settings')
+          .upsert({
+            setting_key: setting.key,
+            setting_value: setting.fr,         // French (default)
+            setting_value_en: setting.en,      // English
+            setting_value_it: setting.it,      // Italian
+            setting_value_es: setting.es,      // Spanish
+            description: `Header text for reservation form`,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'setting_key'
+          })
+          .select();
 
-          if (error) {
-            console.error(`Error upserting header text ${setting.key}:`, error);
-            console.error('Error details:', JSON.stringify(error, null, 2));
-            throw new Error(`Failed to update ${setting.key}: ${error.message || 'Unknown error'}`);
-          }
-
-          console.log(`Successfully processed ${setting.key}:`, data);
-        } catch (settingError) {
-          console.error(`Error processing setting ${setting.key}:`, settingError);
-          throw new Error(`Failed to update ${setting.key}: ${settingError instanceof Error ? settingError.message : 'Unknown error'}`);
+        if (error) {
+          console.error(`Error upserting header text ${setting.key}:`, error);
+          throw new Error(`Échec de la mise à jour de ${setting.key}: ${error.message || 'Erreur inconnue'}`);
         }
+
+        console.log(`Successfully saved ${setting.key} in all languages:`, {
+          fr: setting.fr,
+          en: setting.en,
+          it: setting.it,
+          es: setting.es
+        });
       }
 
       console.log('Successfully updated all header texts');
       setError(null);
-      // Show success message (you could add a success state if needed)
-      alert('Header texts updated successfully!');
+
+      // Show success notification
+      setNotification({
+        isOpen: true,
+        type: 'success',
+        message: 'Textes d\'en-tête mis à jour avec succès dans toutes les langues!'
+      });
     } catch (err) {
       console.error('Error updating header texts:', err);
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
       console.error('Full error object:', JSON.stringify(err, null, 2));
       setError(`Erreur lors de la mise à jour des textes d'en-tête: ${errorMessage}`);
+
+      // Show error notification
+      setNotification({
+        isOpen: true,
+        type: 'error',
+        message: `Erreur lors de la mise à jour des textes d'en-tête: ${errorMessage}`
+      });
     } finally {
       setUpdatingHeaderTexts(false);
     }
@@ -1722,47 +1862,142 @@ export function SettingsTab() {
             {isHeaderTextsExpanded && (
               <div className="px-4 pb-4 border-t border-gray-200">
                 <div className="space-y-4 pt-4">
-                  {/* Header Text 1 */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                      Ligne 1 - Texte principal
-                    </label>
-                    <Input
-                      type="text"
-                      value={headerText1}
-                      onChange={(e) => setHeaderText1(e.target.value)}
-                      className="text-sm"
-                      placeholder="NO RESERVATIONS AT LUNCH ON WEEKDAYS"
-                    />
-                  </div>
+                  {/* Language Tabs */}
+                  <LanguageTabs
+                    activeTab={headerTextsActiveTab}
+                    onTabChange={setHeaderTextsActiveTab}
+                    sourceFields={{
+                      headerText1,
+                      headerText2,
+                      headerText3
+                    }}
+                    onGlobalTranslate={handleHeaderTextsGlobalTranslate}
+                  />
 
-                  {/* Header Text 2 */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                      Ligne 2 - Texte secondaire
-                    </label>
-                    <Input
-                      type="text"
-                      value={headerText2}
-                      onChange={(e) => setHeaderText2(e.target.value)}
-                      className="text-sm"
-                      placeholder="OPEN ALL MONTH OF AUGUST"
-                    />
-                  </div>
+                  {/* French Fields */}
+                  {headerTextsActiveTab === 'fr' && (
+                    <>
+                      <div>
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                          Ligne 1 - Texte principal
+                        </label>
+                        <Input
+                          type="text"
+                          value={headerText1}
+                          onChange={(e) => setHeaderText1(e.target.value)}
+                          className="text-sm"
+                          placeholder="Bienvenue au Magnifiko !"
+                        />
+                      </div>
 
-                  {/* Header Text 3 */}
-                  <div>
-                    <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
-                      Ligne 3 - Message WhatsApp
-                    </label>
-                    <Input
-                      type="text"
-                      value={headerText3}
-                      onChange={(e) => setHeaderText3(e.target.value)}
-                      className="text-sm"
-                      placeholder="For any special request, send us a WhatsApp message at 06 42 66 87 03: we will respond to you as soon as possible."
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                          Ligne 2 - Texte secondaire
+                        </label>
+                        <Input
+                          type="text"
+                          value={headerText2}
+                          onChange={(e) => setHeaderText2(e.target.value)}
+                          className="text-sm"
+                          placeholder="Réservez votre table en quelques clics"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
+                          Ligne 3 - Informations de contact
+                        </label>
+                        <Input
+                          type="text"
+                          value={headerText3}
+                          onChange={(e) => setHeaderText3(e.target.value)}
+                          className="text-sm"
+                          placeholder="Pour toute demande particulière, contactez-nous au 01 49 59 00 94"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* English Fields */}
+                  {headerTextsActiveTab === 'en' && (
+                    <>
+                      <TranslationField
+                        label="Ligne 1 (EN)"
+                        sourceText={headerText1}
+                        value={headerText1En}
+                        onChange={setHeaderText1En}
+                        targetLang="en"
+                      />
+                      <TranslationField
+                        label="Ligne 2 (EN)"
+                        sourceText={headerText2}
+                        value={headerText2En}
+                        onChange={setHeaderText2En}
+                        targetLang="en"
+                      />
+                      <TranslationField
+                        label="Ligne 3 (EN)"
+                        sourceText={headerText3}
+                        value={headerText3En}
+                        onChange={setHeaderText3En}
+                        targetLang="en"
+                      />
+                    </>
+                  )}
+
+                  {/* Italian Fields */}
+                  {headerTextsActiveTab === 'it' && (
+                    <>
+                      <TranslationField
+                        label="Ligne 1 (IT)"
+                        sourceText={headerText1}
+                        value={headerText1It}
+                        onChange={setHeaderText1It}
+                        targetLang="it"
+                      />
+                      <TranslationField
+                        label="Ligne 2 (IT)"
+                        sourceText={headerText2}
+                        value={headerText2It}
+                        onChange={setHeaderText2It}
+                        targetLang="it"
+                      />
+                      <TranslationField
+                        label="Ligne 3 (IT)"
+                        sourceText={headerText3}
+                        value={headerText3It}
+                        onChange={setHeaderText3It}
+                        targetLang="it"
+                      />
+                    </>
+                  )}
+
+                  {/* Spanish Fields */}
+                  {headerTextsActiveTab === 'es' && (
+                    <>
+                      <TranslationField
+                        label="Ligne 1 (ES)"
+                        sourceText={headerText1}
+                        value={headerText1Es}
+                        onChange={setHeaderText1Es}
+                        targetLang="es"
+                      />
+                      <TranslationField
+                        label="Ligne 2 (ES)"
+                        sourceText={headerText2}
+                        value={headerText2Es}
+                        onChange={setHeaderText2Es}
+                        targetLang="es"
+                      />
+                      <TranslationField
+                        label="Ligne 3 (ES)"
+                        sourceText={headerText3}
+                        value={headerText3Es}
+                        onChange={setHeaderText3Es}
+                        targetLang="es"
+                      />
+                    </>
+                  )}
 
                   {/* Save Button */}
                   <div className="flex justify-end">
@@ -2049,6 +2284,14 @@ export function SettingsTab() {
           onClose={() => setShowDateModal(null)}
         />
       )}
+
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={notification.isOpen}
+        type={notification.type}
+        message={notification.message}
+        onClose={() => setNotification({ ...notification, isOpen: false })}
+      />
     </div>
   );
 }

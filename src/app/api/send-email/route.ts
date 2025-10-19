@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Email options
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'shasan1807013@gmail.com',
+      from: process.env.EMAIL_FROM || 'ochel.reservation@gmail.com',
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,

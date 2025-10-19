@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface MenuItemCardProps {
   image?: string;
@@ -26,6 +27,7 @@ export default function MenuItemCard({
   model3DUsdzUrl,
   variant = 'regular'
 }: MenuItemCardProps) {
+  const { t } = useTranslation();
   const [modalType, setModalType] = useState<ModalType>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
@@ -102,7 +104,7 @@ export default function MenuItemCard({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2 mb-1">
-            <h3 className={`text-base sm:text-lg font-medium font-forum ${
+            <h3 className={`text-base sm:text-lg font-medium font-forum capitalize ${
               isSpecial ? 'text-black' : 'text-white'
             }`}>{title}</h3>
 
@@ -189,7 +191,7 @@ export default function MenuItemCard({
                     onClick={handleARClick}
                     className="px-6 py-3 bg-[#FFD65A] hover:bg-[#FFD65A]/90 text-black font-medium rounded-lg transition-colors cursor-pointer font-forum"
                   >
-                    Voir sur la table
+                    {t('menu.viewOnTable')}
                   </button>
                 </div>
               </>

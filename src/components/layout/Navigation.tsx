@@ -153,10 +153,8 @@ export default function Navigation({
 
             {/* Right side: Language Switcher + Main Navigation Items */}
             <div className="flex items-center gap-3">
-              {/* Language Switcher - Hidden but functional */}
-              <div className="hidden">
-                <LanguageSwitcher />
-              </div>
+              {/* Language Switcher */}
+              <LanguageSwitcher />
 
               {/* Main Navigation Items */}
             {/* Mobile: Only show Menu link */}

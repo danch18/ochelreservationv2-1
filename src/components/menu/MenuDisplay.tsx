@@ -6,6 +6,7 @@ import MenuItemCard from './MenuItemCard';
 import MenuItemSkeleton from './MenuItemSkeleton';
 import {
   menuService,
+  getTranslatedField,
   type Category,
   type MenuItem,
   type Addon,
@@ -30,7 +31,7 @@ interface MenuDisplaySection {
 }
 
 export default function MenuDisplay() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
@@ -147,8 +148,8 @@ export default function MenuDisplay() {
             items: generalItems.map(item => ({
               id: item.id,
               image: item.image_path || undefined,
-              title: item.title,
-              subtitle: item.text || item.description,
+              title: getTranslatedField(item, 'title', locale),
+              subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
               price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DGlbUrl: item.model_3d_url || undefined,
@@ -170,13 +171,13 @@ export default function MenuDisplay() {
 
         if (subcatItems.length > 0) {
           newSections.push({
-            title: subcat.title,
-            subtitle: subcat.text,
+            title: getTranslatedField(subcat, 'title', locale),
+            subtitle: getTranslatedField(subcat, 'text', locale) || null,
             items: subcatItems.map(item => ({
               id: item.id,
               image: item.image_path || undefined,
-              title: item.title,
-              subtitle: item.text || item.description,
+              title: getTranslatedField(item, 'title', locale),
+              subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
               price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DGlbUrl: item.model_3d_url || undefined,
@@ -199,8 +200,8 @@ export default function MenuDisplay() {
           items: specialItems.map(item => ({
             id: item.id,
             image: item.image_path || undefined,
-            title: item.title,
-            subtitle: item.text || item.description,
+            title: getTranslatedField(item, 'title', locale),
+            subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
             price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
             has3D: !!item.model_3d_url || !!item.redirect_3d_url,
             model3DGlbUrl: item.model_3d_url || undefined,
@@ -221,8 +222,8 @@ export default function MenuDisplay() {
           items: sortedAddons.map(addon => ({
             id: addon.id,
             image: addon.image_path || undefined,
-            title: addon.title,
-            subtitle: addon.description || undefined,
+            title: getTranslatedField(addon, 'title', locale),
+            subtitle: getTranslatedField(addon, 'description', locale) || undefined,
             price: `${addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
             has3D: false,
           })),
@@ -234,7 +235,7 @@ export default function MenuDisplay() {
       // Trigger fade in
       setTimeout(() => setIsFading(false), 50);
     }, 150);
-  }, [activeTab, categories, menuDataCache]);
+  }, [activeTab, categories, menuDataCache, locale, t]);
 
   if (categories.length === 0 && !loading) {
     return (
@@ -272,7 +273,7 @@ export default function MenuDisplay() {
                     : "text-white bg-white/10 hover:text-[#FFD65A]"
                 )}
               >
-                {category.title}
+                {getTranslatedField(category, 'title', locale)}
               </button>
             ))}
           </div>
@@ -282,12 +283,12 @@ export default function MenuDisplay() {
       {/* Category Title and Description */}
       {currentCategory && (
         <div className="mb-6">
-          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium">
-            {currentCategory.title}
+          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium capitalize">
+            {getTranslatedField(currentCategory, 'title', locale)}
           </h2>
-          {currentCategory.text && (
+          {getTranslatedField(currentCategory, 'text', locale) && (
             <p className="text-[14px] md:text-[16px] font-forum text-[#FFD65A]/80 mt-2">
-              {currentCategory.text}
+              {getTranslatedField(currentCategory, 'text', locale)}
             </p>
           )}
         </div>
@@ -322,7 +323,7 @@ export default function MenuDisplay() {
                 {/* Section Title - Only show if title is not empty */}
                 {section.title && (
                   <div className="mb-4">
-                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium">
+                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium capitalize">
                       {section.title}
                     </h3>
                     {section.subtitle && (
