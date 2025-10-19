@@ -12,7 +12,7 @@ const sampleReservation = {
   reservation_date: '2025-10-15',
   reservation_time: '19:30',
   special_requests: 'Nous aimerions une table près de la fenêtre, et nous célébrons un anniversaire.',
-  status: 'confirmed' as const,
+  status: 'confirmed' as 'confirmed' | 'pending' | 'cancelled' | 'completed',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 };

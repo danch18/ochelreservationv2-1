@@ -837,7 +837,7 @@ export function SettingsTab() {
 
           setDateStatuses(prev => ({
             ...prev,
-            [dateStr]: data,
+            [dateStr]: data || null,
           }));
         }
       } else {

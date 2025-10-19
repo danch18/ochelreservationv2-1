@@ -155,7 +155,7 @@ export function ManageReservationTab({ reservations, isLoading, onReservationsUp
           arrival_status: type,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', reservation.id);
+        .eq('id', reservation.id!);
 
       if (error) throw error;
 

@@ -28,7 +28,6 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
   // Export state for professional UX
   const [isExporting, setIsExporting] = useState(false);
-  const [showExportSuccess, setShowExportSuccess] = useState(false);
 
   // Bulk delete state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -168,8 +167,8 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
           reservation.status,
           escapeCSVValue(reservation.special_requests),
           reservation.requires_confirmation ? 'Non' : 'Oui',
-          new Date(reservation.created_at).toLocaleString('fr-FR'),
-          new Date(reservation.updated_at).toLocaleString('fr-FR')
+          reservation.created_at ? new Date(reservation.created_at).toLocaleString('fr-FR') : '',
+          reservation.updated_at ? new Date(reservation.updated_at).toLocaleString('fr-FR') : ''
         ].join(','))
       ];
 
