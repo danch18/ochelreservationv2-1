@@ -229,6 +229,8 @@
     "overview": {
       "bulkDelete": "Supprimer par email",
       "bulkDeleting": "Suppression...",
+      "bulkDeleteByDate": "Supprimer par date",
+      "bulkDeletingByDate": "Suppression...",
       "today": "Aujourd'hui",
       "next7days": "7 prochains jours",
       "all": "Tout",
@@ -264,6 +266,41 @@
         "title": "Erreur",
         "close": "Fermer"
       },
+      "deleteDateModal": {
+        "title": "Supprimer par date",
+        "description": "Sélectionnez une date ou une plage de dates pour supprimer les réservations. Seules les dates passées et la date du jour sont autorisées.",
+        "startDateLabel": "Date de début",
+        "endDateLabel": "Date de fin",
+        "optional": "facultatif",
+        "startDateRequired": "La date de début est requise.",
+        "futureDate": "Les dates futures ne sont pas autorisées.",
+        "endBeforeStart": "La date de fin doit être après la date de début.",
+        "hint": "Astuce : Laissez la date de fin vide pour supprimer uniquement les réservations d'une date spécifique.",
+        "cancel": "Annuler",
+        "proceed": "Continuer",
+        "to": "au"
+      },
+      "confirmDateModal": {
+        "title": "Confirmer la suppression",
+        "descriptionRange": "Êtes-vous sûr de vouloir supprimer toutes les réservations entre",
+        "descriptionSingle": "Êtes-vous sûr de vouloir supprimer toutes les réservations du",
+        "warning": "Cette action est irréversible. Toutes les réservations dans cette plage de dates seront définitivement supprimées.",
+        "back": "Retour",
+        "confirm": "Confirmer la suppression",
+        "deleting": "Suppression..."
+      },
+      "successDateModal": {
+        "title": "Suppression réussie",
+        "description": "Suppression réussie de",
+        "reservations": "réservation(s)",
+        "between": "entre",
+        "on": "du",
+        "close": "Fermer"
+      },
+      "errorDateModal": {
+        "title": "Erreur",
+        "close": "Fermer"
+      },
       "export": {
         "noReservations": "Aucune réservation à exporter.",
         "success": "réservations exportées avec succès!",
@@ -287,7 +324,9 @@
         "noReservationsFound": "Aucune réservation trouvée pour l'email:",
         "reservationsDeleted": "réservation(s) supprimée(s) pour",
         "deleteError": "Erreur lors de la suppression. Veuillez réessayer.",
-        "validEmail": "Veuillez entrer une adresse email valide."
+        "validEmail": "Veuillez entrer une adresse email valide.",
+        "noReservationsInRange": "Aucune réservation trouvée entre",
+        "noReservationsOnDate": "Aucune réservation trouvée pour le"
       }
     }
   }

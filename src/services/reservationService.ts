@@ -362,6 +362,51 @@ class ReservationServiceClass {
     }
   }
 
+  // Delete all reservations by date range (hard delete - use with caution)
+  async deleteReservationsByDateRange(startDate: string, endDate: string): Promise<number> {
+    try {
+      if (!startDate?.trim()) {
+        throw new Error('Start date is required');
+      }
+
+      if (!endDate?.trim()) {
+        throw new Error('End date is required');
+      }
+
+      // First, get the reservations to delete to return the count
+      const { data: reservationsToDelete, error: fetchError } = await supabase
+        .from(this.tableName)
+        .select('id')
+        .gte('reservation_date', startDate)
+        .lte('reservation_date', endDate);
+
+      if (fetchError) {
+        this.handleError(fetchError, 'Error fetching reservations to delete');
+      }
+
+      const count = reservationsToDelete?.length || 0;
+
+      if (count === 0) {
+        return 0; // No reservations found in this date range
+      }
+
+      // Delete all reservations in the date range
+      const { error } = await supabase
+        .from(this.tableName)
+        .delete()
+        .gte('reservation_date', startDate)
+        .lte('reservation_date', endDate);
+
+      if (error) {
+        this.handleError(error, 'Error deleting reservations by date range');
+      }
+
+      return count;
+    } catch (error) {
+      this.handleError(error, 'Error deleting reservations by date range');
+    }
+  }
+
   // Get reservation statistics
   async getReservationStats(date?: string): Promise<{
     total: number;

@@ -29,7 +29,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   // Export state for professional UX
   const [isExporting, setIsExporting] = useState(false);
 
-  // Bulk delete state
+  // Bulk delete by email state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -39,6 +39,18 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   const [emailError, setEmailError] = useState('');
   const [deleteResult, setDeleteResult] = useState({ count: 0, email: '' });
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Bulk delete by date state
+  const [showDeleteDateModal, setShowDeleteDateModal] = useState(false);
+  const [showConfirmDateModal, setShowConfirmDateModal] = useState(false);
+  const [showSuccessDateModal, setShowSuccessDateModal] = useState(false);
+  const [showErrorDateModal, setShowErrorDateModal] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [dateError, setDateError] = useState('');
+  const [isDeletingByDate, setIsDeletingByDate] = useState(false);
+  const [deleteDateResult, setDeleteDateResult] = useState({ count: 0, startDate: '', endDate: '' });
+  const [dateErrorMessage, setDateErrorMessage] = useState('');
 
   /**
    * Filters reservations based on selected stats time range
@@ -324,6 +336,168 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   };
 
   /**
+   * Handle delete by date button click
+   */
+  const handleDeleteByDateClick = () => {
+    setShowDeleteDateModal(true);
+    setStartDate('');
+    setEndDate('');
+    setDateError('');
+  };
+
+  /**
+   * Validate date range
+   */
+  const validateDateRange = (start: string, end: string): string | null => {
+    if (!start) {
+      return t('admin.overview.deleteDateModal.startDateRequired');
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const startDateObj = new Date(start);
+    const todayObj = new Date(today);
+
+    // Check if start date is in the future
+    if (startDateObj > todayObj) {
+      return t('admin.overview.deleteDateModal.futureDate');
+    }
+
+    // If end date is provided, validate it
+    if (end) {
+      const endDateObj = new Date(end);
+
+      if (endDateObj > todayObj) {
+        return t('admin.overview.deleteDateModal.futureDate');
+      }
+
+      if (endDateObj < startDateObj) {
+        return t('admin.overview.deleteDateModal.endBeforeStart');
+      }
+    }
+
+    return null;
+  };
+
+  /**
+   * Handle start date change
+   */
+  const handleStartDateChange = (date: string) => {
+    setStartDate(date);
+    const error = validateDateRange(date, endDate);
+    setDateError(error || '');
+  };
+
+  /**
+   * Handle end date change
+   */
+  const handleEndDateChange = (date: string) => {
+    setEndDate(date);
+    const error = validateDateRange(startDate, date);
+    setDateError(error || '');
+  };
+
+  /**
+   * Handle proceeding to date confirmation modal
+   */
+  const handleProceedToDateConfirm = () => {
+    const error = validateDateRange(startDate, endDate);
+
+    if (error) {
+      setDateError(error);
+      return;
+    }
+
+    // Count reservations in the date range
+    const targetReservations = reservations.filter(r => {
+      const resDate = r.reservation_date;
+      if (endDate) {
+        return resDate >= startDate && resDate <= endDate;
+      } else {
+        return resDate === startDate;
+      }
+    });
+
+    if (targetReservations.length === 0) {
+      setDateErrorMessage(
+        endDate
+          ? `${t('admin.overview.toast.noReservationsInRange')} ${startDate} ${t('admin.overview.deleteDateModal.to')} ${endDate}`
+          : `${t('admin.overview.toast.noReservationsOnDate')} ${startDate}`
+      );
+      setShowDeleteDateModal(false);
+      setShowErrorDateModal(true);
+      setStartDate('');
+      setEndDate('');
+      setDateError('');
+      return;
+    }
+
+    setShowDeleteDateModal(false);
+    setShowConfirmDateModal(true);
+  };
+
+  /**
+   * Delete reservations by date range
+   */
+  const deleteReservationsByDate = useCallback(async () => {
+    try {
+      setIsDeletingByDate(true);
+      setShowConfirmDateModal(false);
+
+      // Small delay to show loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const deletedCount = await reservationService.deleteReservationsByDateRange(
+        startDate,
+        endDate || startDate
+      );
+
+      if (deletedCount === 0) {
+        setDateErrorMessage(
+          endDate
+            ? `${t('admin.overview.toast.noReservationsInRange')} ${startDate} ${t('admin.overview.deleteDateModal.to')} ${endDate}`
+            : `${t('admin.overview.toast.noReservationsOnDate')} ${startDate}`
+        );
+        setShowErrorDateModal(true);
+      } else {
+        setDeleteDateResult({
+          count: deletedCount,
+          startDate,
+          endDate: endDate || startDate
+        });
+        setShowSuccessDateModal(true);
+        // Refresh the reservations list
+        onReservationsUpdate();
+      }
+
+      // Close input modal and reset form
+      setShowDeleteDateModal(false);
+      setStartDate('');
+      setEndDate('');
+      setDateError('');
+
+    } catch (error) {
+      console.error('Error deleting reservations by date:', error);
+      setDateErrorMessage(t('admin.overview.toast.deleteError'));
+      setShowErrorDateModal(true);
+    } finally {
+      setIsDeletingByDate(false);
+    }
+  }, [startDate, endDate, onReservationsUpdate, t]);
+
+  /**
+   * Close all date modals and reset state
+   */
+  const closeAllDateModals = () => {
+    setShowDeleteDateModal(false);
+    setShowConfirmDateModal(false);
+    setShowSuccessDateModal(false);
+    setShowErrorDateModal(false);
+    setStartDate('');
+    setEndDate('');
+    setDateError('');
+  };
+
+  /**
    * Show elegant toast notification instead of browser alert
    */
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -360,26 +534,48 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
     <div className="space-y-6 font-forum">
       {/* Stats Time Range Filter Buttons - Controls statistics cards only */}
       <div className="flex justify-between items-center mb-4">
-        {/* Bulk Delete Button */}
-        <button
-          onClick={handleBulkDeleteClick}
-          disabled={isDeleting}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg text-sm font-medium transition-all duration-200 ease-out flex items-center gap-2"
-        >
-          {isDeleting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              {t('admin.overview.bulkDeleting')}
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              {t('admin.overview.bulkDelete')}
-            </>
-          )}
-        </button>
+        {/* Bulk Delete Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={handleBulkDeleteClick}
+            disabled={isDeleting}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg text-sm font-medium transition-all duration-200 ease-out flex items-center gap-2"
+          >
+            {isDeleting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {t('admin.overview.bulkDeleting')}
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                {t('admin.overview.bulkDelete')}
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleDeleteByDateClick}
+            disabled={isDeletingByDate}
+            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white rounded-lg text-sm font-medium transition-all duration-200 ease-out flex items-center gap-2"
+          >
+            {isDeletingByDate ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {t('admin.overview.bulkDeletingByDate')}
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {t('admin.overview.bulkDeleteByDate')}
+              </>
+            )}
+          </button>
+        </div>
 
         {/* Stats Filter Buttons */}
         <div className="flex bg-gray-100 rounded-lg p-1">
@@ -594,6 +790,212 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
                 className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200"
               >
                 {t('admin.overview.errorModal.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Range Input Modal */}
+      {showDeleteDateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.deleteDateModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              {t('admin.overview.deleteDateModal.description')}
+            </p>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin.overview.deleteDateModal.startDateLabel')}
+                </label>
+                <input
+                  id="start-date"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 bg-white ${
+                    dateError
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-orange-500'
+                  }`}
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label htmlFor="end-date" className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('admin.overview.deleteDateModal.endDateLabel')}
+                  <span className="text-gray-500 text-xs ml-1">({t('admin.overview.deleteDateModal.optional')})</span>
+                </label>
+                <input
+                  id="end-date"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  min={startDate}
+                  disabled={!startDate}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                    dateError
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-orange-500'
+                  }`}
+                />
+              </div>
+
+              {dateError && (
+                <p className="text-sm text-red-600">{dateError}</p>
+              )}
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  {t('admin.overview.deleteDateModal.hint')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={closeAllDateModals}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.deleteDateModal.cancel')}
+              </button>
+              <button
+                onClick={handleProceedToDateConfirm}
+                disabled={!startDate || !!dateError}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.deleteDateModal.proceed')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Deletion Confirmation Modal */}
+      {showConfirmDateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.confirmDateModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              {endDate && endDate !== startDate
+                ? `${t('admin.overview.confirmDateModal.descriptionRange')} ${startDate} ${t('admin.overview.deleteDateModal.to')} ${endDate}?`
+                : `${t('admin.overview.confirmDateModal.descriptionSingle')} ${startDate}?`
+              }
+            </p>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+              <p className="text-sm text-yellow-800">
+                {t('admin.overview.confirmDateModal.warning')}
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowConfirmDateModal(false);
+                  setShowDeleteDateModal(true);
+                }}
+                disabled={isDeletingByDate}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.confirmDateModal.back')}
+              </button>
+              <button
+                onClick={deleteReservationsByDate}
+                disabled={isDeletingByDate}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+              >
+                {isDeletingByDate ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {t('admin.overview.confirmDateModal.deleting')}
+                  </>
+                ) : (
+                  t('admin.overview.confirmDateModal.confirm')
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Deletion Success Modal */}
+      {showSuccessDateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.successDateModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              {t('admin.overview.successDateModal.description')} <strong className="text-gray-900">{deleteDateResult.count}</strong> {t('admin.overview.successDateModal.reservations')}
+              {deleteDateResult.endDate && deleteDateResult.endDate !== deleteDateResult.startDate
+                ? ` ${t('admin.overview.successDateModal.between')} ${deleteDateResult.startDate} ${t('admin.overview.deleteDateModal.to')} ${deleteDateResult.endDate}`
+                : ` ${t('admin.overview.successDateModal.on')} ${deleteDateResult.startDate}`
+              }.
+            </p>
+
+            <div className="flex justify-end">
+              <button
+                onClick={closeAllDateModals}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.successDateModal.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Deletion Error Modal */}
+      {showErrorDateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.errorDateModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              {dateErrorMessage}
+            </p>
+
+            <div className="flex justify-end">
+              <button
+                onClick={closeAllDateModals}
+                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.errorDateModal.close')}
               </button>
             </div>
           </div>
