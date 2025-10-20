@@ -27,7 +27,16 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section id="hero" className="relative h-screen w-screen flex items-center justify-center overflow-hidden">
-        {/* Video Background */}
+        {/* Image Background (Alternative to Video) */}
+        <Image
+          src="/images/HeroLatestImage.jpeg"
+          alt="Restaurant hero"
+          fill
+          className="absolute inset-0 w-full h-full object-cover"
+          priority
+        />
+
+        {/* Video Background - COMMENTED OUT FOR EASY RESTORATION
         <video
           className="absolute inset-0 w-full h-full object-cover"
           autoPlay
@@ -38,8 +47,9 @@ export default function HomePage() {
           <source src={content.hero.videoSrc} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+        */}
 
-        {/* Dark Overlay over entire video */}
+        {/* Dark Overlay over entire background */}
         <div className="absolute" style={{
           width: '100vw',
           height: '100vh',
