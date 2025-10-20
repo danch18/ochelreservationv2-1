@@ -239,9 +239,30 @@
         "description": "Cette action supprimera définitivement toutes les réservations associées à l'adresse email spécifiée. Cette action ne peut pas être annulée.",
         "emailLabel": "Adresse email",
         "emailPlaceholder": "Entrez l'adresse email",
+        "emailRequired": "L'adresse email est requise.",
+        "invalidEmail": "Format d'email invalide.",
         "cancel": "Annuler",
+        "proceed": "Continuer",
         "delete": "Supprimer",
         "deleting": "Suppression..."
+      },
+      "confirmModal": {
+        "title": "Confirmer la suppression",
+        "description": "Êtes-vous sûr de vouloir supprimer toutes les réservations pour",
+        "warning": "Cette action est irréversible. Toutes les données seront définitivement supprimées.",
+        "back": "Retour",
+        "confirm": "Confirmer la suppression",
+        "deleting": "Suppression..."
+      },
+      "successModal": {
+        "title": "Suppression réussie",
+        "description": "Suppression réussie de",
+        "reservations": "réservation(s) pour",
+        "close": "Fermer"
+      },
+      "errorModal": {
+        "title": "Erreur",
+        "close": "Fermer"
       },
       "export": {
         "noReservations": "Aucune réservation à exporter.",

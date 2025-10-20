@@ -31,8 +31,14 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
   // Bulk delete state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [deleteEmail, setDeleteEmail] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [deleteResult, setDeleteResult] = useState({ count: 0, email: '' });
+  const [errorMessage, setErrorMessage] = useState('');
 
   /**
    * Filters reservations based on selected stats time range
@@ -203,16 +209,32 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   }, [reservations, isExporting, t]);
 
   /**
+   * Validate email format
+   */
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  /**
+   * Handle email input change with validation
+   */
+  const handleEmailChange = (email: string) => {
+    setDeleteEmail(email);
+    if (email && !validateEmail(email)) {
+      setEmailError(t('admin.overview.deleteModal.invalidEmail'));
+    } else {
+      setEmailError('');
+    }
+  };
+
+  /**
    * Delete all reservations for a specific email
    */
   const deleteReservationsByEmail = useCallback(async (email: string) => {
-    if (!email?.trim()) {
-      showToast(t('admin.overview.toast.validEmail'), 'error');
-      return;
-    }
-
     try {
       setIsDeleting(true);
+      setShowConfirmModal(false);
 
       // Small delay to show loading state for better UX
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -220,20 +242,24 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
       const deletedCount = await reservationService.deleteReservationsByEmail(email);
 
       if (deletedCount === 0) {
-        showToast(`${t('admin.overview.toast.noReservationsFound')} ${email}`, 'warning');
+        setErrorMessage(`${t('admin.overview.toast.noReservationsFound')} ${email}`);
+        setShowErrorModal(true);
       } else {
-        showToast(`${deletedCount} ${t('admin.overview.toast.reservationsDeleted')} ${email}`, 'success');
+        setDeleteResult({ count: deletedCount, email });
+        setShowSuccessModal(true);
         // Refresh the reservations list
         onReservationsUpdate();
       }
 
-      // Close modal and reset form
+      // Close input modal and reset form
       setShowDeleteModal(false);
       setDeleteEmail('');
+      setEmailError('');
 
     } catch (error) {
       console.error('Error deleting reservations:', error);
-      showToast(t('admin.overview.toast.deleteError'), 'error');
+      setErrorMessage(t('admin.overview.toast.deleteError'));
+      setShowErrorModal(true);
     } finally {
       setIsDeleting(false);
     }
@@ -245,6 +271,37 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
   const handleBulkDeleteClick = () => {
     setShowDeleteModal(true);
     setDeleteEmail('');
+    setEmailError('');
+  };
+
+  /**
+   * Handle proceeding to confirmation modal
+   */
+  const handleProceedToConfirm = () => {
+    if (!deleteEmail.trim()) {
+      setEmailError(t('admin.overview.deleteModal.emailRequired'));
+      return;
+    }
+
+    if (!validateEmail(deleteEmail)) {
+      setEmailError(t('admin.overview.deleteModal.invalidEmail'));
+      return;
+    }
+
+    // Find how many reservations exist for this email
+    const reservationsCount = reservations.filter(r => r.email === deleteEmail).length;
+
+    if (reservationsCount === 0) {
+      setErrorMessage(`${t('admin.overview.toast.noReservationsFound')} ${deleteEmail}`);
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
+      setDeleteEmail('');
+      setEmailError('');
+      return;
+    }
+
+    setShowDeleteModal(false);
+    setShowConfirmModal(true);
   };
 
   /**
@@ -252,6 +309,18 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
    */
   const handleBulkDeleteConfirm = () => {
     deleteReservationsByEmail(deleteEmail);
+  };
+
+  /**
+   * Close all modals and reset state
+   */
+  const closeAllModals = () => {
+    setShowDeleteModal(false);
+    setShowConfirmModal(false);
+    setShowSuccessModal(false);
+    setShowErrorModal(false);
+    setDeleteEmail('');
+    setEmailError('');
   };
 
   /**
@@ -362,14 +431,14 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
         onReservationsUpdate={onReservationsUpdate}
       />
 
-      {/* Bulk Delete Modal */}
+      {/* Email Input Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.deleteModal.title')}</h3>
@@ -387,37 +456,144 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
                 id="delete-email"
                 type="email"
                 value={deleteEmail}
-                onChange={(e) => setDeleteEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
                 placeholder={t('admin.overview.deleteModal.emailPlaceholder')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 bg-white ${
+                  emailError
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-red-500'
+                }`}
                 autoFocus
               />
+              {emailError && (
+                <p className="mt-2 text-sm text-red-600">{emailError}</p>
+              )}
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={closeAllModals}
+                className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.deleteModal.cancel')}
+              </button>
+              <button
+                onClick={handleProceedToConfirm}
+                disabled={!deleteEmail.trim() || !!emailError}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.deleteModal.proceed')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.confirmModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              {t('admin.overview.confirmModal.description')} <strong className="text-gray-900">{deleteEmail}</strong>?
+            </p>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+              <p className="text-sm text-yellow-800">
+                {t('admin.overview.confirmModal.warning')}
+              </p>
             </div>
 
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => {
-                  setShowDeleteModal(false);
-                  setDeleteEmail('');
+                  setShowConfirmModal(false);
+                  setShowDeleteModal(true);
                 }}
                 disabled={isDeleting}
                 className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 rounded-lg font-medium transition-all duration-200"
               >
-                {t('admin.overview.deleteModal.cancel')}
+                {t('admin.overview.confirmModal.back')}
               </button>
               <button
                 onClick={handleBulkDeleteConfirm}
-                disabled={isDeleting || !deleteEmail.trim()}
+                disabled={isDeleting}
                 className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
               >
                 {isDeleting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {t('admin.overview.deleteModal.deleting')}
+                    {t('admin.overview.confirmModal.deleting')}
                   </>
                 ) : (
-                  t('admin.overview.deleteModal.delete')
+                  t('admin.overview.confirmModal.confirm')
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.successModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              {t('admin.overview.successModal.description')} <strong className="text-gray-900">{deleteResult.count}</strong> {t('admin.overview.successModal.reservations')} <strong className="text-gray-900">{deleteResult.email}</strong>.
+            </p>
+
+            <div className="flex justify-end">
+              <button
+                onClick={closeAllModals}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.successModal.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">{t('admin.overview.errorModal.title')}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              {errorMessage}
+            </p>
+
+            <div className="flex justify-end">
+              <button
+                onClick={closeAllModals}
+                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                {t('admin.overview.errorModal.close')}
               </button>
             </div>
           </div>
