@@ -629,7 +629,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Email Input Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -687,7 +687,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -740,7 +740,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Success Modal */}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -769,7 +769,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Error Modal */}
       {showErrorModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
@@ -798,7 +798,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Date Range Input Modal */}
       {showDeleteDateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
@@ -886,7 +886,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Date Deletion Confirmation Modal */}
       {showConfirmDateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -942,7 +942,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Date Deletion Success Modal */}
       {showSuccessDateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -975,7 +975,7 @@ export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: O
 
       {/* Date Deletion Error Modal */}
       {showErrorDateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[10000]">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
