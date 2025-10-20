@@ -139,7 +139,7 @@ export default function MenuDisplay() {
       if (generalSubcat) {
         const generalItems = menuData.menuItems
           .filter(item => item.subcategory_id === generalSubcat.id && !item.is_special)
-          .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
+          .sort((a, b) => a.order - b.order);
 
         if (generalItems.length > 0) {
           newSections.push({
@@ -162,12 +162,12 @@ export default function MenuDisplay() {
       // 2. Custom subcategories with their items
       const customSubcats = menuData.subcategories
         .filter(s => !s.title.toLowerCase().includes('general'))
-        .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
+        .sort((a, b) => a.order - b.order);
 
       for (const subcat of customSubcats) {
         const subcatItems = menuData.menuItems
           .filter(item => item.subcategory_id === subcat.id)
-          .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
+          .sort((a, b) => a.order - b.order);
 
         if (subcatItems.length > 0) {
           newSections.push({
@@ -190,7 +190,7 @@ export default function MenuDisplay() {
       // 3. Special items
       const specialItems = menuData.menuItems
         .filter(item => item.is_special)
-        .sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
+        .sort((a, b) => a.order - b.order);
 
       if (specialItems.length > 0) {
         newSections.push({
@@ -212,9 +212,7 @@ export default function MenuDisplay() {
 
       // 4. Add-ons (Supplements)
       if (menuData.addons.length > 0) {
-        const sortedAddons = [...menuData.addons].sort((a, b) =>
-          new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()
-        );
+        const sortedAddons = [...menuData.addons].sort((a, b) => a.order - b.order);
 
         newSections.push({
           title: t('menu.supplements'),

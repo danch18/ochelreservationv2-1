@@ -12,7 +12,7 @@ import { TranslationField } from './translation/TranslationField';
 
 interface CategoryModalProps {
   category?: Category | null;
-  onSave: (category: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onSave: (category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>) => Promise<void>;
   onClose: () => void;
 }
 
@@ -307,7 +307,7 @@ export function CategoriesManagement() {
     setShowModal(true);
   };
 
-  const handleSave = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleSave = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
     if (editingCategory) {
       await categoryService.update(editingCategory.id, categoryData);
     } else {
@@ -367,6 +367,20 @@ export function CategoriesManagement() {
     setCategoryToDelete(null);
   };
 
+  const handleReorder = async (id: number, direction: 'up' | 'down') => {
+    try {
+      setError(null);
+      await categoryService.reorder(id, direction);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+      await loadCategories();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -423,6 +437,9 @@ export function CategoriesManagement() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ordre
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Titre
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
@@ -437,8 +454,35 @@ export function CategoriesManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedCategories.map((category) => (
+                {paginatedCategories.map((category, index) => (
                   <tr key={category.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-700 font-medium">{category.order}</span>
+                        <div className="flex flex-col gap-0.5">
+                          <button
+                            onClick={() => handleReorder(category.id, 'up')}
+                            disabled={index === 0 || deletingId === category.id}
+                            className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Monter"
+                          >
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleReorder(category.id, 'down')}
+                            disabled={index === paginatedCategories.length - 1 || deletingId === category.id}
+                            className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Descendre"
+                          >
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{category.title}</div>
                     </td>

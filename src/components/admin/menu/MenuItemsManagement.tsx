@@ -16,7 +16,7 @@ interface MenuItemModalProps {
   menuItem?: MenuItem | null;
   categories: Category[];
   subcategories: Subcategory[];
-  onSave: (menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onSave: (menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>) => Promise<void>;
   onClose: () => void;
 }
 
@@ -616,7 +616,7 @@ export function MenuItemsManagement() {
     setShowModal(true);
   };
 
-  const handleSave = async (menuItemData: Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleSave = async (menuItemData: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
     if (editingMenuItem) {
       await menuItemService.update(editingMenuItem.id, menuItemData);
     } else {
@@ -658,6 +658,20 @@ export function MenuItemsManagement() {
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);
     setMenuItemToDelete(null);
+  };
+
+  const handleReorder = async (id: number, direction: 'up' | 'down') => {
+    try {
+      setError(null);
+      await menuItemService.reorder(id, direction);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
   };
 
   const getCategoryName = (subcategoryId: number): string => {
@@ -783,6 +797,9 @@ export function MenuItemsManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Ordre
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Image
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -809,25 +826,59 @@ export function MenuItemsManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        {item.image_path ? (
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                            <Image
-                              src={item.image_path}
-                              alt={item.title}
-                              fill
-                              className="object-cover"
-                              unoptimized
-                            />
+                  {paginatedItems.map((item, index) => {
+                    // Check if it's first or last in its subcategory group
+                    const sameSubcatItems = filteredMenuItems.filter(i => i.subcategory_id === item.subcategory_id);
+                    const indexInSubcat = sameSubcatItems.findIndex(i => i.id === item.id);
+                    const isFirst = indexInSubcat === 0;
+                    const isLast = indexInSubcat === sameSubcatItems.length - 1;
+
+                    return (
+                      <tr key={item.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-700 font-medium">{item.order}</span>
+                            <div className="flex flex-col gap-0.5">
+                              <button
+                                onClick={() => handleReorder(item.id, 'up')}
+                                disabled={isFirst || deletingId === item.id}
+                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Monter"
+                              >
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => handleReorder(item.id, 'down')}
+                                disabled={isLast || deletingId === item.id}
+                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Descendre"
+                              >
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
-                        ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">Pas d'image</span>
-                          </div>
-                        )}
-                      </td>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          {item.image_path ? (
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                              <Image
+                                src={item.image_path}
+                                alt={item.title}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">Pas d'image</span>
+                            </div>
+                          )}
+                        </td>
                       <td className="px-4 py-4">
                         <div className="text-sm font-medium text-gray-900">{item.title}</div>
                         {item.description && (
@@ -881,7 +932,8 @@ export function MenuItemsManagement() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -16,7 +16,7 @@ interface AddonModalProps {
   addon?: Addon | null;
   categories: Category[];
   subcategories: Subcategory[];
-  onSave: (addon: Omit<Addon, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onSave: (addon: Omit<Addon, 'id' | 'created_at' | 'updated_at' | 'order'>) => Promise<void>;
   onClose: () => void;
 }
 
@@ -518,7 +518,7 @@ export function AddonsManagement() {
     setShowModal(true);
   };
 
-  const handleSave = async (addonData: Omit<Addon, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleSave = async (addonData: Omit<Addon, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
     if (editingAddon) {
       await addonService.update(editingAddon.id, addonData);
     } else {
@@ -552,6 +552,20 @@ export function AddonsManagement() {
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);
     setAddonToDelete(null);
+  };
+
+  const handleReorder = async (id: number, direction: 'up' | 'down') => {
+    try {
+      setError(null);
+      await addonService.reorder(id, direction);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
   };
 
   const getCategoryName = (subcategoryId: number): string => {
@@ -674,6 +688,9 @@ export function AddonsManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Ordre
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Image
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -697,25 +714,59 @@ export function AddonsManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedAddons.map((addon) => (
-                    <tr key={addon.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        {addon.image_path ? (
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                            <Image
-                              src={addon.image_path}
-                              alt={addon.title}
-                              fill
-                              className="object-cover"
-                              unoptimized
-                            />
+                  {paginatedAddons.map((addon, index) => {
+                    // Check if it's first or last in its subcategory group
+                    const sameSubcatAddons = filteredAddons.filter(a => a.subcategory_id === addon.subcategory_id);
+                    const indexInSubcat = sameSubcatAddons.findIndex(a => a.id === addon.id);
+                    const isFirst = indexInSubcat === 0;
+                    const isLast = indexInSubcat === sameSubcatAddons.length - 1;
+
+                    return (
+                      <tr key={addon.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-700 font-medium">{addon.order}</span>
+                            <div className="flex flex-col gap-0.5">
+                              <button
+                                onClick={() => handleReorder(addon.id, 'up')}
+                                disabled={isFirst || deletingId === addon.id}
+                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Monter"
+                              >
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => handleReorder(addon.id, 'down')}
+                                disabled={isLast || deletingId === addon.id}
+                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Descendre"
+                              >
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
-                        ) : (
-                          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">Pas d'image</span>
-                          </div>
-                        )}
-                      </td>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          {addon.image_path ? (
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                              <Image
+                                src={addon.image_path}
+                                alt={addon.title}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">Pas d'image</span>
+                            </div>
+                          )}
+                        </td>
                       <td className="px-4 py-4">
                         <div className="text-sm font-medium text-gray-900">{addon.title}</div>
                         {addon.description && (
@@ -766,7 +817,8 @@ export function AddonsManagement() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

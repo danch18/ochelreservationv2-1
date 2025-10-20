@@ -13,7 +13,7 @@ import { TranslationField } from './translation/TranslationField';
 interface SubcategoryModalProps {
   subcategory?: Subcategory | null;
   categories: Category[];
-  onSave: (subcategory: Omit<Subcategory, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onSave: (subcategory: Omit<Subcategory, 'id' | 'created_at' | 'updated_at' | 'order'>) => Promise<void>;
   onClose: () => void;
 }
 
@@ -361,7 +361,7 @@ export function SubcategoriesManagement() {
     setShowModal(true);
   };
 
-  const handleSave = async (subcategoryData: Omit<Subcategory, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleSave = async (subcategoryData: Omit<Subcategory, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
     if (editingSubcategory) {
       await subcategoryService.update(editingSubcategory.id, subcategoryData);
     } else {
@@ -403,6 +403,20 @@ export function SubcategoriesManagement() {
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);
     setSubcategoryToDelete(null);
+  };
+
+  const handleReorder = async (id: number, direction: 'up' | 'down') => {
+    try {
+      setError(null);
+      await subcategoryService.reorder(id, direction);
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
   };
 
   if (loading) {
@@ -483,6 +497,9 @@ export function SubcategoriesManagement() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ordre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Titre
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
@@ -500,51 +517,86 @@ export function SubcategoriesManagement() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedSubcategories.map((subcategory) => (
-                      <tr key={subcategory.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{subcategory.title}</div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap hidden lg:table-cell">
-                          <div className="text-sm text-gray-500">{getCategoryName(subcategory.category_id)}</div>
-                        </td>
-                        <td className="px-4 py-4 hidden md:table-cell">
-                          <div className="text-sm text-gray-500 max-w-xs truncate">
-                            {subcategory.text || '-'}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            subcategory.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {subcategory.status === 'active' ? 'Actif' : 'Inactif'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              onClick={() => handleEdit(subcategory)}
-                              variant="outline"
-                              size="sm"
-                              disabled={deletingId === subcategory.id}
-                            >
-                              Modifier
-                            </Button>
-                            <Button
-                              onClick={() => handleDeleteClick(subcategory)}
-                              variant="outline"
-                              size="sm"
-                              disabled={deletingId === subcategory.id}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              {deletingId === subcategory.id ? '...' : 'Supprimer'}
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {paginatedSubcategories.map((subcategory, index) => {
+                      // Check if it's first or last in its category group
+                      const sameCategorySubcats = filteredSubcategories.filter(s => s.category_id === subcategory.category_id);
+                      const indexInCategory = sameCategorySubcats.findIndex(s => s.id === subcategory.id);
+                      const isFirst = indexInCategory === 0;
+                      const isLast = indexInCategory === sameCategorySubcats.length - 1;
+
+                      return (
+                        <tr key={subcategory.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-gray-700 font-medium">{subcategory.order}</span>
+                              <div className="flex flex-col gap-0.5">
+                                <button
+                                  onClick={() => handleReorder(subcategory.id, 'up')}
+                                  disabled={isFirst || deletingId === subcategory.id}
+                                  className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                  aria-label="Monter"
+                                >
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={() => handleReorder(subcategory.id, 'down')}
+                                  disabled={isLast || deletingId === subcategory.id}
+                                  className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                  aria-label="Descendre"
+                                >
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{subcategory.title}</div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap hidden lg:table-cell">
+                            <div className="text-sm text-gray-500">{getCategoryName(subcategory.category_id)}</div>
+                          </td>
+                          <td className="px-4 py-4 hidden md:table-cell">
+                            <div className="text-sm text-gray-500 max-w-xs truncate">
+                              {subcategory.text || '-'}
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              subcategory.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {subcategory.status === 'active' ? 'Actif' : 'Inactif'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                onClick={() => handleEdit(subcategory)}
+                                variant="outline"
+                                size="sm"
+                                disabled={deletingId === subcategory.id}
+                              >
+                                Modifier
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteClick(subcategory)}
+                                variant="outline"
+                                size="sm"
+                                disabled={deletingId === subcategory.id}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                {deletingId === subcategory.id ? '...' : 'Supprimer'}
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
                 </div>

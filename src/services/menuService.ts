@@ -15,6 +15,7 @@ export interface Category {
   text_en?: string | null;
   text_it?: string | null;
   text_es?: string | null;
+  order: number;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -33,6 +34,7 @@ export interface Subcategory {
   text_en?: string | null;
   text_it?: string | null;
   text_es?: string | null;
+  order: number;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -61,6 +63,7 @@ export interface MenuItem {
   is_special: boolean;
   price: number;
   subcategory_id: number;
+  order: number;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -82,6 +85,7 @@ export interface Addon {
   price: number;
   category_id?: number | null;
   subcategory_id?: number | null;
+  order: number;
   status: 'active' | 'inactive';
   created_at?: string;
   updated_at?: string;
@@ -118,10 +122,10 @@ export function getTranslatedField<T extends Record<string, any>>(
 
 export const categoryService = {
   async getAll(): Promise<Category[]> {
-    const { data, error } = await supabase
+    const { data, error} = await supabase
       .from('categories')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -138,10 +142,20 @@ export const categoryService = {
     return data;
   },
 
-  async create(category: Omit<Category, 'id' | 'created_at' | 'updated_at'>): Promise<Category> {
+  async create(category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Category> {
+    // Get the max order value to assign next order
+    const { data: maxOrderData } = await supabase
+      .from('categories')
+      .select('order')
+      .order('order', { ascending: false })
+      .limit(1)
+      .single();
+
+    const nextOrder = (maxOrderData?.order || 0) + 1;
+
     const { data, error } = await supabase
       .from('categories')
-      .insert(category)
+      .insert({ ...category, order: nextOrder })
       .select()
       .single();
 
@@ -169,6 +183,41 @@ export const categoryService = {
 
     if (error) throw error;
   },
+
+  async reorder(id: number, direction: 'up' | 'down'): Promise<void> {
+    // Get current category
+    const current = await this.getById(id);
+    if (!current) throw new Error('Category not found');
+
+    // Get all categories ordered
+    const { data: allCategories } = await supabase
+      .from('categories')
+      .select('id, order')
+      .order('order', { ascending: true });
+
+    if (!allCategories || allCategories.length < 2) return;
+
+    // Find current index
+    const currentIndex = allCategories.findIndex(c => c.id === id);
+    if (currentIndex === -1) return;
+
+    // Determine swap target
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= allCategories.length) return;
+
+    const target = allCategories[targetIndex];
+
+    // Swap order values
+    await supabase
+      .from('categories')
+      .update({ order: target.order })
+      .eq('id', current.id);
+
+    await supabase
+      .from('categories')
+      .update({ order: current.order })
+      .eq('id', target.id);
+  },
 };
 
 // ============================================================================
@@ -180,7 +229,7 @@ export const subcategoryService = {
     const { data, error } = await supabase
       .from('subcategories')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -191,7 +240,7 @@ export const subcategoryService = {
       .from('subcategories')
       .select('*')
       .eq('category_id', categoryId)
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -208,10 +257,21 @@ export const subcategoryService = {
     return data;
   },
 
-  async create(subcategory: Omit<Subcategory, 'id' | 'created_at' | 'updated_at'>): Promise<Subcategory> {
+  async create(subcategory: Omit<Subcategory, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Subcategory> {
+    // Get the max order value within this category to assign next order
+    const { data: maxOrderData } = await supabase
+      .from('subcategories')
+      .select('order')
+      .eq('category_id', subcategory.category_id)
+      .order('order', { ascending: false })
+      .limit(1)
+      .single();
+
+    const nextOrder = (maxOrderData?.order || 0) + 1;
+
     const { data, error } = await supabase
       .from('subcategories')
-      .insert(subcategory)
+      .insert({ ...subcategory, order: nextOrder })
       .select()
       .single();
 
@@ -239,6 +299,42 @@ export const subcategoryService = {
 
     if (error) throw error;
   },
+
+  async reorder(id: number, direction: 'up' | 'down'): Promise<void> {
+    // Get current subcategory
+    const current = await this.getById(id);
+    if (!current) throw new Error('Subcategory not found');
+
+    // Get all subcategories in same category, ordered
+    const { data: allSubcategories } = await supabase
+      .from('subcategories')
+      .select('id, order')
+      .eq('category_id', current.category_id)
+      .order('order', { ascending: true });
+
+    if (!allSubcategories || allSubcategories.length < 2) return;
+
+    // Find current index
+    const currentIndex = allSubcategories.findIndex(s => s.id === id);
+    if (currentIndex === -1) return;
+
+    // Determine swap target
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= allSubcategories.length) return;
+
+    const target = allSubcategories[targetIndex];
+
+    // Swap order values
+    await supabase
+      .from('subcategories')
+      .update({ order: target.order })
+      .eq('id', current.id);
+
+    await supabase
+      .from('subcategories')
+      .update({ order: current.order })
+      .eq('id', target.id);
+  },
 };
 
 // ============================================================================
@@ -250,7 +346,7 @@ export const menuItemService = {
     const { data, error } = await supabase
       .from('menu_items')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -261,7 +357,7 @@ export const menuItemService = {
       .from('menu_items')
       .select('*')
       .eq('subcategory_id', subcategoryId)
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -278,10 +374,21 @@ export const menuItemService = {
     return data;
   },
 
-  async create(menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>): Promise<MenuItem> {
+  async create(menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<MenuItem> {
+    // Get the max order value within this subcategory to assign next order
+    const { data: maxOrderData } = await supabase
+      .from('menu_items')
+      .select('order')
+      .eq('subcategory_id', menuItem.subcategory_id)
+      .order('order', { ascending: false })
+      .limit(1)
+      .single();
+
+    const nextOrder = (maxOrderData?.order || 0) + 1;
+
     const { data, error } = await supabase
       .from('menu_items')
-      .insert(menuItem)
+      .insert({ ...menuItem, order: nextOrder })
       .select()
       .single();
 
@@ -331,6 +438,54 @@ export const menuItemService = {
       );
     }
   },
+
+  async getSpecialItems(): Promise<MenuItem[]> {
+    const { data, error } = await supabase
+      .from('menu_items')
+      .select('*')
+      .eq('is_special', true)
+      .eq('status', 'active')
+      .order('order', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorder(id: number, direction: 'up' | 'down'): Promise<void> {
+    // Get current menu item
+    const current = await this.getById(id);
+    if (!current) throw new Error('Menu item not found');
+
+    // Get all menu items in same subcategory, ordered
+    const { data: allItems } = await supabase
+      .from('menu_items')
+      .select('id, order')
+      .eq('subcategory_id', current.subcategory_id)
+      .order('order', { ascending: true });
+
+    if (!allItems || allItems.length < 2) return;
+
+    // Find current index
+    const currentIndex = allItems.findIndex(i => i.id === id);
+    if (currentIndex === -1) return;
+
+    // Determine swap target
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= allItems.length) return;
+
+    const target = allItems[targetIndex];
+
+    // Swap order values
+    await supabase
+      .from('menu_items')
+      .update({ order: target.order })
+      .eq('id', current.id);
+
+    await supabase
+      .from('menu_items')
+      .update({ order: current.order })
+      .eq('id', target.id);
+  },
 };
 
 // ============================================================================
@@ -377,7 +532,7 @@ export const menuService = {
       .from('categories')
       .select('*')
       .eq('status', 'active')
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -433,7 +588,7 @@ export const addonService = {
     const { data, error } = await supabase
       .from('addons')
       .select('*')
-      .order('created_at', { ascending: true});
+      .order('order', { ascending: true});
 
     if (error) throw error;
     return data || [];
@@ -455,7 +610,7 @@ export const addonService = {
       .from('addons')
       .select('*')
       .or(`category_id.eq.${categoryId},subcategory_id.in.(${subcategoryIds.join(',')})`)
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -466,7 +621,7 @@ export const addonService = {
       .from('addons')
       .select('*')
       .eq('subcategory_id', subcategoryId)
-      .order('created_at', { ascending: true });
+      .order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -483,10 +638,25 @@ export const addonService = {
     return data;
   },
 
-  async create(addon: Omit<Addon, 'id' | 'created_at' | 'updated_at'>): Promise<Addon> {
+  async create(addon: Omit<Addon, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Addon> {
+    // Get the max order value within this subcategory to assign next order
+    // Handle null subcategory_id by using category_id or defaulting to global ordering
+    let nextOrder = 1;
+    if (addon.subcategory_id) {
+      const { data: maxOrderData } = await supabase
+        .from('addons')
+        .select('order')
+        .eq('subcategory_id', addon.subcategory_id)
+        .order('order', { ascending: false })
+        .limit(1)
+        .single();
+
+      nextOrder = (maxOrderData?.order || 0) + 1;
+    }
+
     const { data, error } = await supabase
       .from('addons')
-      .insert(addon)
+      .insert({ ...addon, order: nextOrder })
       .select()
       .single();
 
@@ -535,5 +705,42 @@ export const addonService = {
         console.warn('Failed to delete addon image:', err)
       );
     }
+  },
+
+  async reorder(id: number, direction: 'up' | 'down'): Promise<void> {
+    // Get current addon
+    const current = await this.getById(id);
+    if (!current) throw new Error('Addon not found');
+    if (!current.subcategory_id) throw new Error('Addon must have a subcategory to reorder');
+
+    // Get all addons in same subcategory, ordered
+    const { data: allAddons } = await supabase
+      .from('addons')
+      .select('id, order')
+      .eq('subcategory_id', current.subcategory_id)
+      .order('order', { ascending: true });
+
+    if (!allAddons || allAddons.length < 2) return;
+
+    // Find current index
+    const currentIndex = allAddons.findIndex(a => a.id === id);
+    if (currentIndex === -1) return;
+
+    // Determine swap target
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= allAddons.length) return;
+
+    const target = allAddons[targetIndex];
+
+    // Swap order values
+    await supabase
+      .from('addons')
+      .update({ order: target.order })
+      .eq('id', current.id);
+
+    await supabase
+      .from('addons')
+      .update({ order: current.order })
+      .eq('id', target.id);
   },
 };
