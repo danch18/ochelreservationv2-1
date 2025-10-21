@@ -9,6 +9,23 @@ import { subcategoryService, categoryService, Subcategory, Category } from '@/se
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface SubcategoryModalProps {
   subcategory?: Subcategory | null;
@@ -271,6 +288,133 @@ function SubcategoryModal({ subcategory, categories, onSave, onClose }: Subcateg
   );
 }
 
+interface SortableSubcategoryRowProps {
+  subcategory: Subcategory;
+  sameCategorySubcats: Subcategory[];
+  deletingId: number | null;
+  getCategoryName: (id: number) => string;
+  onEdit: (subcategory: Subcategory) => void;
+  onDelete: (subcategory: Subcategory) => void;
+  onReorder: (id: number, direction: 'up' | 'down') => void;
+}
+
+function SortableSubcategoryRow({
+  subcategory,
+  sameCategorySubcats,
+  deletingId,
+  getCategoryName,
+  onEdit,
+  onDelete,
+  onReorder,
+}: SortableSubcategoryRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: subcategory.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const indexInCategory = sameCategorySubcats.findIndex(s => s.id === subcategory.id);
+  const isFirst = indexInCategory === 0;
+  const isLast = indexInCategory === sameCategorySubcats.length - 1;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-gray-50 ${isDragging ? 'bg-gray-100' : ''}`}
+    >
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="flex items-center gap-2">
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
+            aria-label="Glisser pour réorganiser"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z" />
+            </svg>
+          </button>
+          <span className="text-sm text-gray-700 font-medium">{subcategory.order}</span>
+          <div className="flex flex-col gap-0.5">
+            <button
+              onClick={() => onReorder(subcategory.id, 'up')}
+              disabled={isFirst || deletingId === subcategory.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Monter"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onReorder(subcategory.id, 'down')}
+              disabled={isLast || deletingId === subcategory.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Descendre"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900">{subcategory.title}</div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap hidden lg:table-cell">
+        <div className="text-sm text-gray-500">{getCategoryName(subcategory.category_id)}</div>
+      </td>
+      <td className="px-4 py-4 hidden md:table-cell">
+        <div className="text-sm text-gray-500 max-w-xs truncate">
+          {subcategory.text || '-'}
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+          subcategory.status === 'active'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
+        }`}>
+          {subcategory.status === 'active' ? 'Actif' : 'Inactif'}
+        </span>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => onEdit(subcategory)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === subcategory.id}
+          >
+            Modifier
+          </Button>
+          <Button
+            onClick={() => onDelete(subcategory)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === subcategory.id}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            {deletingId === subcategory.id ? '...' : 'Supprimer'}
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export function SubcategoriesManagement() {
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -336,7 +480,8 @@ export function SubcategoriesManagement() {
       );
     }
 
-    return filtered;
+    // Sort by order for proper display
+    return filtered.sort((a, b) => a.order - b.order);
   }, [subcategories, searchQuery, selectedCategoryId, categories]);
 
   // Pagination
@@ -419,6 +564,84 @@ export function SubcategoriesManagement() {
     }
   };
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Get the dragged subcategory and target subcategory
+    const draggedSubcat = subcategories.find(s => s.id === active.id);
+    const targetSubcat = subcategories.find(s => s.id === over.id);
+
+    if (!draggedSubcat || !targetSubcat) return;
+
+    // Prevent dragging to a different category
+    if (draggedSubcat.category_id !== targetSubcat.category_id) {
+      return;
+    }
+
+    // Only work with subcategories in the same category
+    const sameCategorySubcats = subcategories
+      .filter(s => s.category_id === draggedSubcat.category_id)
+      .sort((a, b) => a.order - b.order);
+
+    const oldIndex = sameCategorySubcats.findIndex(s => s.id === active.id);
+    const newIndex = sameCategorySubcats.findIndex(s => s.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Reorder locally for IMMEDIATE feedback
+    const reorderedSubcats = arrayMove(sameCategorySubcats, oldIndex, newIndex);
+
+    // Update order values - assign sequential orders
+    const updatedSubcats = reorderedSubcats.map((subcat, index) => ({
+      ...subcat,
+      order: sameCategorySubcats[0].order + index, // Start from the first order and increment
+    }));
+
+    // Update local state immediately - create new array with updated objects
+    const newSubcategories = subcategories.map(s => {
+      const updated = updatedSubcats.find(u => u.id === s.id);
+      return updated ? { ...updated } : { ...s };
+    });
+    setSubcategories([...newSubcategories]);
+
+    // Calculate updates for backend - send all items that changed
+    const updates = updatedSubcats.map(subcat => ({
+      id: subcat.id,
+      order: subcat.order,
+    }));
+
+    // Update backend asynchronously
+    try {
+      setError(null);
+      await subcategoryService.updateBulkOrder(updates);
+
+      // Notify all tabs
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+      // Revert on error
+      await loadData();
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -491,116 +714,62 @@ export function SubcategoriesManagement() {
             </div>
           ) : (
             <>
-              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <div className="overflow-x-auto scrollbar-hide">
-                  <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ordre
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Titre
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                        Catégorie
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                        Description
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Statut
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedSubcategories.map((subcategory, index) => {
-                      // Check if it's first or last in its category group
-                      const sameCategorySubcats = filteredSubcategories.filter(s => s.category_id === subcategory.category_id);
-                      const indexInCategory = sameCategorySubcats.findIndex(s => s.id === subcategory.id);
-                      const isFirst = indexInCategory === 0;
-                      const isLast = indexInCategory === sameCategorySubcats.length - 1;
-
-                      return (
-                        <tr key={subcategory.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-700 font-medium">{subcategory.order}</span>
-                              <div className="flex flex-col gap-0.5">
-                                <button
-                                  onClick={() => handleReorder(subcategory.id, 'up')}
-                                  disabled={isFirst || deletingId === subcategory.id}
-                                  className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                  aria-label="Monter"
-                                >
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => handleReorder(subcategory.id, 'down')}
-                                  disabled={isLast || deletingId === subcategory.id}
-                                  className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                  aria-label="Descendre"
-                                >
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{subcategory.title}</div>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap hidden lg:table-cell">
-                            <div className="text-sm text-gray-500">{getCategoryName(subcategory.category_id)}</div>
-                          </td>
-                          <td className="px-4 py-4 hidden md:table-cell">
-                            <div className="text-sm text-gray-500 max-w-xs truncate">
-                              {subcategory.text || '-'}
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              subcategory.status === 'active'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {subcategory.status === 'active' ? 'Actif' : 'Inactif'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                onClick={() => handleEdit(subcategory)}
-                                variant="outline"
-                                size="sm"
-                                disabled={deletingId === subcategory.id}
-                              >
-                                Modifier
-                              </Button>
-                              <Button
-                                onClick={() => handleDeleteClick(subcategory)}
-                                variant="outline"
-                                size="sm"
-                                disabled={deletingId === subcategory.id}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                {deletingId === subcategory.id ? '...' : 'Supprimer'}
-                              </Button>
-                            </div>
-                          </td>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto scrollbar-hide">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Ordre
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Titre
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                            Catégorie
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            Description
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Statut
+                          </th>
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        <SortableContext
+                          items={paginatedSubcategories.map(s => s.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {paginatedSubcategories.map((subcategory) => {
+                            const sameCategorySubcats = filteredSubcategories.filter(s => s.category_id === subcategory.category_id);
+                            return (
+                              <SortableSubcategoryRow
+                                key={subcategory.id}
+                                subcategory={subcategory}
+                                sameCategorySubcats={sameCategorySubcats}
+                                deletingId={deletingId}
+                                getCategoryName={getCategoryName}
+                                onEdit={handleEdit}
+                                onDelete={handleDeleteClick}
+                                onReorder={handleReorder}
+                              />
+                            );
+                          })}
+                        </SortableContext>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              </DndContext>
 
               {/* Pagination */}
               {totalPages > 1 && (

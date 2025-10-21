@@ -345,6 +345,16 @@ export const subcategoryService = {
       .update({ order: current.order })
       .eq('id', target.id);
   },
+
+  async updateBulkOrder(updates: { id: number; order: number }[]): Promise<void> {
+    // Update multiple subcategories' order values in batch
+    for (const update of updates) {
+      await supabase
+        .from('subcategories')
+        .update({ order: update.order })
+        .eq('id', update.id);
+    }
+  },
 };
 
 // ============================================================================
@@ -495,6 +505,16 @@ export const menuItemService = {
       .from('menu_items')
       .update({ order: current.order })
       .eq('id', target.id);
+  },
+
+  async updateBulkOrder(updates: { id: number; order: number }[]): Promise<void> {
+    // Update multiple menu items' order values in batch
+    for (const update of updates) {
+      await supabase
+        .from('menu_items')
+        .update({ order: update.order })
+        .eq('id', update.id);
+    }
   },
 };
 
@@ -752,5 +772,15 @@ export const addonService = {
       .from('addons')
       .update({ order: current.order })
       .eq('id', target.id);
+  },
+
+  async updateBulkOrder(updates: { id: number; order: number }[]): Promise<void> {
+    // Update multiple addons' order values in batch
+    for (const update of updates) {
+      await supabase
+        .from('addons')
+        .update({ order: update.order })
+        .eq('id', update.id);
+    }
   },
 };
