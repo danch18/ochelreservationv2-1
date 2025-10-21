@@ -11,6 +11,23 @@ import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface MenuItemModalProps {
   menuItem?: MenuItem | null;
@@ -487,6 +504,163 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
   );
 }
 
+interface SortableMenuItemRowProps {
+  item: MenuItem;
+  sameSubcatItems: MenuItem[];
+  deletingId: number | null;
+  getCategoryName: (subcategoryId: number) => string;
+  getSubcategoryName: (subcategoryId: number) => string;
+  onEdit: (item: MenuItem) => void;
+  onDelete: (item: MenuItem) => void;
+  onReorder: (id: number, direction: 'up' | 'down') => void;
+}
+
+function SortableMenuItemRow({
+  item,
+  sameSubcatItems,
+  deletingId,
+  getCategoryName,
+  getSubcategoryName,
+  onEdit,
+  onDelete,
+  onReorder,
+}: SortableMenuItemRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const indexInSubcat = sameSubcatItems.findIndex(i => i.id === item.id);
+  const isFirst = indexInSubcat === 0;
+  const isLast = indexInSubcat === sameSubcatItems.length - 1;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-gray-50 ${isDragging ? 'bg-gray-100' : ''}`}
+    >
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="flex items-center gap-2">
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
+            aria-label="Glisser pour réorganiser"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z" />
+            </svg>
+          </button>
+          <span className="text-sm text-gray-700 font-medium">{item.order}</span>
+          <div className="flex flex-col gap-0.5">
+            <button
+              onClick={() => onReorder(item.id, 'up')}
+              disabled={isFirst || deletingId === item.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Monter"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onReorder(item.id, 'down')}
+              disabled={isLast || deletingId === item.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Descendre"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        {item.image_path ? (
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+            <Image
+              src={item.image_path}
+              alt={item.title}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        ) : (
+          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400 text-xs">Pas d'image</span>
+          </div>
+        )}
+      </td>
+      <td className="px-4 py-4">
+        <div className="text-sm font-medium text-gray-900">{item.title}</div>
+        {item.description && (
+          <div className="text-xs text-gray-500 truncate max-w-xs">{item.description}</div>
+        )}
+      </td>
+      <td className="px-4 py-4 hidden md:table-cell">
+        <div className="text-sm text-gray-700">{getCategoryName(item.subcategory_id)}</div>
+      </td>
+      <td className="px-4 py-4 hidden lg:table-cell">
+        <div className="text-sm text-gray-700">{getSubcategoryName(item.subcategory_id)}</div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900">{item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap hidden xl:table-cell">
+        {item.is_special && (
+          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+            Spécial
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+          item.status === 'active'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
+        }`}>
+          {item.status === 'active' ? 'Actif' : 'Inactif'}
+        </span>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => onEdit(item)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === item.id}
+          >
+            Modifier
+          </Button>
+          <Button
+            onClick={() => onDelete(item)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === item.id}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            {deletingId === item.id ? '...' : 'Supprimer'}
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export function MenuItemsManagement() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -591,7 +765,8 @@ export function MenuItemsManagement() {
       });
     }
 
-    return filtered;
+    // Sort by order for proper display
+    return filtered.sort((a, b) => a.order - b.order);
   }, [menuItems, searchQuery, filterCategory, filterSubcategory, categories, subcategories]);
 
   // Pagination
@@ -671,6 +846,84 @@ export function MenuItemsManagement() {
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
+  };
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Get the dragged menu item and target menu item
+    const draggedItem = menuItems.find(i => i.id === active.id);
+    const targetItem = menuItems.find(i => i.id === over.id);
+
+    if (!draggedItem || !targetItem) return;
+
+    // Prevent dragging to a different subcategory
+    if (draggedItem.subcategory_id !== targetItem.subcategory_id) {
+      return;
+    }
+
+    // Only work with menu items in the same subcategory
+    const sameSubcatItems = menuItems
+      .filter(i => i.subcategory_id === draggedItem.subcategory_id)
+      .sort((a, b) => a.order - b.order);
+
+    const oldIndex = sameSubcatItems.findIndex(i => i.id === active.id);
+    const newIndex = sameSubcatItems.findIndex(i => i.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Reorder locally for IMMEDIATE feedback
+    const reorderedItems = arrayMove(sameSubcatItems, oldIndex, newIndex);
+
+    // Update order values - assign sequential orders
+    const updatedItems = reorderedItems.map((item, index) => ({
+      ...item,
+      order: sameSubcatItems[0].order + index,
+    }));
+
+    // Update local state immediately - create new array with updated objects
+    const newMenuItems = menuItems.map(i => {
+      const updated = updatedItems.find(u => u.id === i.id);
+      return updated ? { ...updated } : { ...i };
+    });
+    setMenuItems([...newMenuItems]);
+
+    // Calculate updates for backend - send all items that changed
+    const updates = updatedItems.map(item => ({
+      id: item.id,
+      order: item.order,
+    }));
+
+    // Update backend asynchronously
+    try {
+      setError(null);
+      await menuItemService.updateBulkOrder(updates);
+
+      // Notify all tabs
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+      // Revert on error
+      await loadData();
     }
   };
 
@@ -791,153 +1044,72 @@ export function MenuItemsManagement() {
         </div>
       ) : (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto scrollbar-hide">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ordre
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Image
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Titre
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                      Catégorie
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                      Sous-catégorie
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Prix
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
-                      Spécial
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                      Statut
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedItems.map((item, index) => {
-                    // Check if it's first or last in its subcategory group
-                    const sameSubcatItems = filteredMenuItems.filter(i => i.subcategory_id === item.subcategory_id);
-                    const indexInSubcat = sameSubcatItems.findIndex(i => i.id === item.id);
-                    const isFirst = indexInSubcat === 0;
-                    const isLast = indexInSubcat === sameSubcatItems.length - 1;
-
-                    return (
-                      <tr key={item.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-700 font-medium">{item.order}</span>
-                            <div className="flex flex-col gap-0.5">
-                              <button
-                                onClick={() => handleReorder(item.id, 'up')}
-                                disabled={isFirst || deletingId === item.id}
-                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                aria-label="Monter"
-                              >
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                              <button
-                                onClick={() => handleReorder(item.id, 'down')}
-                                disabled={isLast || deletingId === item.id}
-                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                aria-label="Descendre"
-                              >
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          {item.image_path ? (
-                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                              <Image
-                                src={item.image_path}
-                                alt={item.title}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                              <span className="text-gray-400 text-xs">Pas d'image</span>
-                            </div>
-                          )}
-                        </td>
-                      <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">{item.title}</div>
-                        {item.description && (
-                          <div className="text-xs text-gray-500 truncate max-w-xs">{item.description}</div>
-                        )}
-                      </td>
-                      <td className="px-4 py-4 hidden md:table-cell">
-                        <div className="text-sm text-gray-700">{getCategoryName(item.subcategory_id)}</div>
-                      </td>
-                      <td className="px-4 py-4 hidden lg:table-cell">
-                        <div className="text-sm text-gray-700">{getSubcategoryName(item.subcategory_id)}</div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap hidden xl:table-cell">
-                        {item.is_special && (
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            Spécial
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          item.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {item.status === 'active' ? 'Actif' : 'Inactif'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            onClick={() => handleEdit(item)}
-                            variant="outline"
-                            size="sm"
-                            disabled={deletingId === item.id}
-                          >
-                            Modifier
-                          </Button>
-                          <Button
-                            onClick={() => handleDeleteClick(item)}
-                            variant="outline"
-                            size="sm"
-                            disabled={deletingId === item.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            {deletingId === item.id ? '...' : 'Supprimer'}
-                          </Button>
-                        </div>
-                      </td>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto scrollbar-hide">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ordre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Image
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Titre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                        Catégorie
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Sous-catégorie
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Prix
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
+                        Spécial
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Statut
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    <SortableContext
+                      items={paginatedItems.map(i => i.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {paginatedItems.map((item) => {
+                        const sameSubcatItems = filteredMenuItems.filter(i => i.subcategory_id === item.subcategory_id);
+                        return (
+                          <SortableMenuItemRow
+                            key={item.id}
+                            item={item}
+                            sameSubcatItems={sameSubcatItems}
+                            deletingId={deletingId}
+                            getCategoryName={getCategoryName}
+                            getSubcategoryName={getSubcategoryName}
+                            onEdit={handleEdit}
+                            onDelete={handleDeleteClick}
+                            onReorder={handleReorder}
+                          />
+                        );
+                      })}
+                    </SortableContext>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          </DndContext>
 
           {/* Pagination */}
           {totalPages > 1 && (
