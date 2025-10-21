@@ -16,10 +16,13 @@ interface OverviewTabProps {
 
 export function OverviewTab({ reservations, isLoading, onReservationsUpdate }: OverviewTabProps) {
   const { t } = useTranslation();
+  // Get current date in YYYY-MM-DD format for default filter
+  const getCurrentDate = () => new Date().toISOString().split('T')[0];
+
   // Filter state for reservation table (independent from stats filter)
   const [filters, setFilters] = useState({
     status: '',
-    date: '',
+    date: getCurrentDate(), // Set current date as default
     search: ''
   });
 
