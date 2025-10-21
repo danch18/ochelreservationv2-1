@@ -11,6 +11,23 @@ import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface AddonModalProps {
   addon?: Addon | null;
@@ -395,6 +412,160 @@ function AddonModal({ addon, categories, subcategories, onSave, onClose }: Addon
   );
 }
 
+interface SortableAddonRowProps {
+  addon: Addon;
+  sameSubcatAddons: Addon[];
+  deletingId: number | null;
+  getCategoryName: (subcategoryId: number) => string;
+  getSubcategoryName: (subcategoryId: number) => string;
+  onEdit: (addon: Addon) => void;
+  onDelete: (addon: Addon) => void;
+  onReorder: (id: number, direction: 'up' | 'down') => void;
+}
+
+function SortableAddonRow({
+  addon,
+  sameSubcatAddons,
+  deletingId,
+  getCategoryName,
+  getSubcategoryName,
+  onEdit,
+  onDelete,
+  onReorder,
+}: SortableAddonRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: addon.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const indexInSubcat = sameSubcatAddons.findIndex(a => a.id === addon.id);
+  const isFirst = indexInSubcat === 0;
+  const isLast = indexInSubcat === sameSubcatAddons.length - 1;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-gray-50 ${isDragging ? 'bg-gray-100' : ''}`}
+    >
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="flex items-center gap-2">
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
+            aria-label="Glisser pour réorganiser"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z" />
+            </svg>
+          </button>
+          <span className="text-sm text-gray-700 font-medium">{addon.order}</span>
+          <div className="flex flex-col gap-0.5">
+            <button
+              onClick={() => onReorder(addon.id, 'up')}
+              disabled={isFirst || deletingId === addon.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Monter"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onReorder(addon.id, 'down')}
+              disabled={isLast || deletingId === addon.id}
+              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Descendre"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        {addon.image_path ? (
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+            <Image
+              src={addon.image_path}
+              alt={addon.title}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        ) : (
+          <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400 text-xs">Pas d'image</span>
+          </div>
+        )}
+      </td>
+      <td className="px-4 py-4">
+        <div className="text-sm font-medium text-gray-900">{addon.title}</div>
+        {addon.description && (
+          <div className="text-xs text-gray-500 truncate max-w-xs">{addon.description}</div>
+        )}
+      </td>
+      <td className="px-4 py-4 hidden md:table-cell">
+        <div className="text-sm text-gray-700">
+          {addon.subcategory_id ? getCategoryName(addon.subcategory_id) : 'N/A'}
+        </div>
+      </td>
+      <td className="px-4 py-4 hidden lg:table-cell">
+        <div className="text-sm text-gray-700">
+          {addon.subcategory_id ? getSubcategoryName(addon.subcategory_id) : 'N/A'}
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900">{addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+          addon.status === 'active'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
+        }`}>
+          {addon.status === 'active' ? 'Actif' : 'Inactif'}
+        </span>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => onEdit(addon)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === addon.id}
+          >
+            Modifier
+          </Button>
+          <Button
+            onClick={() => onDelete(addon)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === addon.id}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            {deletingId === addon.id ? '...' : 'Supprimer'}
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export function AddonsManagement() {
   const [addons, setAddons] = useState<Addon[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -493,7 +664,8 @@ export function AddonsManagement() {
       });
     }
 
-    return filtered;
+    // Sort by order for proper display
+    return filtered.sort((a, b) => a.order - b.order);
   }, [addons, searchQuery, filterCategory, filterSubcategory, generalSubcategoryId, categories, subcategories]);
 
   // Pagination
@@ -565,6 +737,85 @@ export function AddonsManagement() {
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+    }
+  };
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Get the dragged addon and target addon
+    const draggedAddon = addons.find(a => a.id === active.id);
+    const targetAddon = addons.find(a => a.id === over.id);
+
+    if (!draggedAddon || !targetAddon) return;
+    if (!draggedAddon.subcategory_id || !targetAddon.subcategory_id) return;
+
+    // Prevent dragging to a different subcategory
+    if (draggedAddon.subcategory_id !== targetAddon.subcategory_id) {
+      return;
+    }
+
+    // Only work with addons in the same subcategory
+    const sameSubcatAddons = addons
+      .filter(a => a.subcategory_id === draggedAddon.subcategory_id)
+      .sort((a, b) => a.order - b.order);
+
+    const oldIndex = sameSubcatAddons.findIndex(a => a.id === active.id);
+    const newIndex = sameSubcatAddons.findIndex(a => a.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Reorder locally for IMMEDIATE feedback
+    const reorderedAddons = arrayMove(sameSubcatAddons, oldIndex, newIndex);
+
+    // Update order values - assign sequential orders
+    const updatedAddons = reorderedAddons.map((addon, index) => ({
+      ...addon,
+      order: sameSubcatAddons[0].order + index,
+    }));
+
+    // Update local state immediately - create new array with updated objects
+    const newAddons = addons.map(a => {
+      const updated = updatedAddons.find(u => u.id === a.id);
+      return updated ? { ...updated } : { ...a };
+    });
+    setAddons([...newAddons]);
+
+    // Calculate updates for backend - send all items that changed
+    const updates = updatedAddons.map(addon => ({
+      id: addon.id,
+      order: addon.order,
+    }));
+
+    // Update backend asynchronously
+    try {
+      setError(null);
+      await addonService.updateBulkOrder(updates);
+
+      // Notify all tabs
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+      // Revert on error
+      await loadData();
     }
   };
 
@@ -682,147 +933,69 @@ export function AddonsManagement() {
         </div>
       ) : (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto scrollbar-hide">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ordre
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Image
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Titre
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                      Catégorie
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                      Sous-catégorie
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Prix
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                      Statut
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedAddons.map((addon, index) => {
-                    // Check if it's first or last in its subcategory group
-                    const sameSubcatAddons = filteredAddons.filter(a => a.subcategory_id === addon.subcategory_id);
-                    const indexInSubcat = sameSubcatAddons.findIndex(a => a.id === addon.id);
-                    const isFirst = indexInSubcat === 0;
-                    const isLast = indexInSubcat === sameSubcatAddons.length - 1;
-
-                    return (
-                      <tr key={addon.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-700 font-medium">{addon.order}</span>
-                            <div className="flex flex-col gap-0.5">
-                              <button
-                                onClick={() => handleReorder(addon.id, 'up')}
-                                disabled={isFirst || deletingId === addon.id}
-                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                aria-label="Monter"
-                              >
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                              <button
-                                onClick={() => handleReorder(addon.id, 'down')}
-                                disabled={isLast || deletingId === addon.id}
-                                className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                                aria-label="Descendre"
-                              >
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          {addon.image_path ? (
-                            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                              <Image
-                                src={addon.image_path}
-                                alt={addon.title}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">
-                              <span className="text-gray-400 text-xs">Pas d'image</span>
-                            </div>
-                          )}
-                        </td>
-                      <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">{addon.title}</div>
-                        {addon.description && (
-                          <div className="text-xs text-gray-500 truncate max-w-xs">{addon.description}</div>
-                        )}
-                      </td>
-                      <td className="px-4 py-4 hidden md:table-cell">
-                        <div className="text-sm text-gray-700">
-                          {addon.subcategory_id ? getCategoryName(addon.subcategory_id) : 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 hidden lg:table-cell">
-                        <div className="text-sm text-gray-700">
-                          {addon.subcategory_id ? getSubcategoryName(addon.subcategory_id) : 'N/A'}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          addon.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {addon.status === 'active' ? 'Actif' : 'Inactif'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            onClick={() => handleEdit(addon)}
-                            variant="outline"
-                            size="sm"
-                            disabled={deletingId === addon.id}
-                          >
-                            Modifier
-                          </Button>
-                          <Button
-                            onClick={() => handleDeleteClick(addon)}
-                            variant="outline"
-                            size="sm"
-                            disabled={deletingId === addon.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            {deletingId === addon.id ? '...' : 'Supprimer'}
-                          </Button>
-                        </div>
-                      </td>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto scrollbar-hide">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ordre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Image
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Titre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                        Catégorie
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Sous-catégorie
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Prix
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Statut
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    <SortableContext
+                      items={paginatedAddons.map(a => a.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {paginatedAddons.map((addon) => {
+                        const sameSubcatAddons = filteredAddons.filter(a => a.subcategory_id === addon.subcategory_id);
+                        return (
+                          <SortableAddonRow
+                            key={addon.id}
+                            addon={addon}
+                            sameSubcatAddons={sameSubcatAddons}
+                            deletingId={deletingId}
+                            getCategoryName={getCategoryName}
+                            getSubcategoryName={getSubcategoryName}
+                            onEdit={handleEdit}
+                            onDelete={handleDeleteClick}
+                            onReorder={handleReorder}
+                          />
+                        );
+                      })}
+                    </SortableContext>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          </DndContext>
 
           {/* Pagination */}
           {totalPages > 1 && (
