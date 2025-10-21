@@ -233,7 +233,7 @@ export default function MenuDisplay() {
       // Trigger fade in
       setTimeout(() => setIsFading(false), 50);
     }, 150);
-  }, [activeTab, categories, menuDataCache, locale, t]);
+  }, [activeTab, categories, locale, t]);
 
   if (categories.length === 0 && !loading) {
     return (
