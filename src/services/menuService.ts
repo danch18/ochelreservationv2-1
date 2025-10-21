@@ -218,6 +218,16 @@ export const categoryService = {
       .update({ order: current.order })
       .eq('id', target.id);
   },
+
+  async updateBulkOrder(updates: { id: number; order: number }[]): Promise<void> {
+    // Update multiple categories' order values in batch
+    for (const update of updates) {
+      await supabase
+        .from('categories')
+        .update({ order: update.order })
+        .eq('id', update.id);
+    }
+  },
 };
 
 // ============================================================================
