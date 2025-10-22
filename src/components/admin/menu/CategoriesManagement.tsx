@@ -9,6 +9,23 @@ import { categoryService, subcategoryService, Category } from '@/services/menuSe
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface CategoryModalProps {
   category?: Category | null;
@@ -242,6 +259,126 @@ function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
   );
 }
 
+interface SortableCategoryRowProps {
+  category: Category;
+  index: number;
+  totalItems: number;
+  deletingId: number | null;
+  onEdit: (category: Category) => void;
+  onDelete: (category: Category) => void;
+  onReorder: (id: number, direction: 'up' | 'down') => void;
+}
+
+function SortableCategoryRow({
+  category,
+  index,
+  totalItems,
+  deletingId,
+  onEdit,
+  onDelete,
+  onReorder,
+}: SortableCategoryRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-gray-50 ${isDragging ? 'bg-gray-100' : ''}`}
+    >
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="flex items-center gap-2">
+          {/* Drag Handle */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
+            aria-label="Glisser pour réorganiser"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z" />
+            </svg>
+          </button>
+          <span className="text-sm text-gray-700 font-medium">{category.order}</span>
+          <div className="flex flex-col gap-0.5">
+            <button
+              onClick={() => onReorder(category.id, 'up')}
+              disabled={index === 0 || deletingId === category.id}
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Monter"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onReorder(category.id, 'down')}
+              disabled={index === totalItems - 1 || deletingId === category.id}
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              aria-label="Descendre"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900">{category.title}</div>
+      </td>
+      <td className="px-4 py-4 hidden md:table-cell">
+        <div className="text-sm text-gray-500 max-w-xs truncate">
+          {category.text || '-'}
+        </div>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap">
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+          category.status === 'active'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
+        }`}>
+          {category.status === 'active' ? 'Actif' : 'Inactif'}
+        </span>
+      </td>
+      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex justify-end gap-2">
+          <Button
+            onClick={() => onEdit(category)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === category.id}
+          >
+            Modifier
+          </Button>
+          <Button
+            onClick={() => onDelete(category)}
+            variant="outline"
+            size="sm"
+            disabled={deletingId === category.id}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            {deletingId === category.id ? '...' : 'Supprimer'}
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export function CategoriesManagement() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -381,6 +518,67 @@ export function CategoriesManagement() {
     }
   };
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px of movement required before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Find the old and new index in the full categories list
+    const oldIndex = categories.findIndex(cat => cat.id === active.id);
+    const newIndex = categories.findIndex(cat => cat.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    // Reorder locally for IMMEDIATE feedback (optimistic update)
+    const reorderedCategories = arrayMove(categories, oldIndex, newIndex);
+
+    // Update order values for all affected items
+    const updatedCategories = reorderedCategories.map((cat, index) => ({
+      ...cat,
+      order: categories[index].order, // Swap order values to match new positions
+    }));
+
+    // Update local state immediately for instant UX
+    setCategories(updatedCategories);
+
+    // Calculate updates for backend
+    const updates = updatedCategories
+      .filter((cat, index) => cat.id !== categories[index].id) // Only send changed items
+      .map(cat => ({
+        id: cat.id,
+        order: cat.order,
+      }));
+
+    // Update backend asynchronously
+    try {
+      setError(null);
+      await categoryService.updateBulkOrder(updates);
+
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors du réordonnancement');
+      // Revert to original state on error
+      await loadCategories();
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -431,102 +629,56 @@ export function CategoriesManagement() {
         </div>
       ) : (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto scrollbar-hide">
-              <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ordre
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Titre
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    Description
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedCategories.map((category, index) => (
-                  <tr key={category.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-700 font-medium">{category.order}</span>
-                        <div className="flex flex-col gap-0.5">
-                          <button
-                            onClick={() => handleReorder(category.id, 'up')}
-                            disabled={index === 0 || deletingId === category.id}
-                            className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                            aria-label="Monter"
-                          >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleReorder(category.id, 'down')}
-                            disabled={index === paginatedCategories.length - 1 || deletingId === category.id}
-                            className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                            aria-label="Descendre"
-                          >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{category.title}</div>
-                    </td>
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      <div className="text-sm text-gray-500 max-w-xs truncate">
-                        {category.text || '-'}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        category.status === 'active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {category.status === 'active' ? 'Actif' : 'Inactif'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          onClick={() => handleEdit(category)}
-                          variant="outline"
-                          size="sm"
-                          disabled={deletingId === category.id}
-                        >
-                          Modifier
-                        </Button>
-                        <Button
-                          onClick={() => handleDeleteClick(category)}
-                          variant="outline"
-                          size="sm"
-                          disabled={deletingId === category.id}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          {deletingId === category.id ? '...' : 'Supprimer'}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto scrollbar-hide">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ordre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Titre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                        Description
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Statut
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    <SortableContext
+                      items={paginatedCategories.map(cat => cat.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {paginatedCategories.map((category, index) => (
+                        <SortableCategoryRow
+                          key={category.id}
+                          category={category}
+                          index={index}
+                          totalItems={paginatedCategories.length}
+                          deletingId={deletingId}
+                          onEdit={handleEdit}
+                          onDelete={handleDeleteClick}
+                          onReorder={handleReorder}
+                        />
+                      ))}
+                    </SortableContext>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          </DndContext>
 
           {/* Pagination */}
           {totalPages > 1 && (
