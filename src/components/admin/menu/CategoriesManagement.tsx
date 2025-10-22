@@ -317,7 +317,7 @@ function SortableCategoryRow({
             <button
               onClick={() => onReorder(category.id, 'up')}
               disabled={index === 0 || deletingId === category.id}
-              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Monter"
             >
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -327,7 +327,7 @@ function SortableCategoryRow({
             <button
               onClick={() => onReorder(category.id, 'down')}
               disabled={index === totalItems - 1 || deletingId === category.id}
-              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Descendre"
             >
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">

@@ -476,7 +476,7 @@ function SortableAddonRow({
             <button
               onClick={() => onReorder(addon.id, 'up')}
               disabled={isFirst || deletingId === addon.id}
-              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Monter"
             >
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -486,7 +486,7 @@ function SortableAddonRow({
             <button
               onClick={() => onReorder(addon.id, 'down')}
               disabled={isLast || deletingId === addon.id}
-              className="p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="hidden p-0.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label="Descendre"
             >
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
