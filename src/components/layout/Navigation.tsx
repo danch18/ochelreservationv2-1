@@ -42,7 +42,8 @@ const defaultPrimaryItems: NavigationItem[] = [
 
 const defaultDesktopItems: NavigationItem[] = [
   { label: 'nav.menu', href: '/menu' },
-  { label: 'nav.reservation', href: '#reservation', isReservation: true },
+  // TEMPORARILY HIDDEN - Uncomment below to restore reservation button
+  // { label: 'nav.reservation', href: '#reservation', isReservation: true },
   { label: 'nav.delivery', href: '#delivery', isDelivery: true },
 ];
 
@@ -317,7 +318,8 @@ export default function Navigation({
                 {t('nav.menu')}
               </Link>
 
-              <button
+              {/* TEMPORARILY HIDDEN - Uncomment below to restore reservation button */}
+              {/* <button
                 onClick={() => {
                   handleLinkClick();
                   const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
@@ -337,7 +339,7 @@ export default function Navigation({
                 }}
               >
                 {t('nav.reservation')}
-              </button>
+              </button> */}
 
               <button
                 onClick={() => {
