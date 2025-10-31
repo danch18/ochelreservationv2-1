@@ -13,9 +13,13 @@ export function GlobalReservationButton() {
     return null;
   }
 
-  return (
+  // TEMPORARILY HIDDEN - Uncomment below to restore the reservation button
+  return null;
+
+  // Original return statement (commented out for easy restoration)
+  /* return (
     <div className="fixed inset-0 pointer-events-none z-50">
       <ReservationPopup />
     </div>
-  );
+  ); */
 }
