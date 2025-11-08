@@ -1,0 +1,123 @@
+[
+  {
+    "id": "e8620af3-26e3-470c-92e3-f21045c361dd",
+    "setting_key": "auto_confirm_guest_limit",
+    "setting_value": "4",
+    "description": "Maximum number of guests for automatic confirmation. Groups larger than this require admin approval.",
+    "created_at": "2025-09-08T00:43:37.674923+00:00",
+    "updated_at": "2025-10-30T09:09:15.984+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "8676c45c-2616-4954-8d95-18379d50a6f3",
+    "setting_key": "weekly_schedule_0",
+    "setting_value": "{\"day_of_week\":0,\"is_open\":false,\"use_split_hours\":false,\"single_opening\":\"11:00\",\"single_closing\":\"19:00\",\"morning_opening\":\"12:00\",\"morning_closing\":\"14:00\",\"afternoon_opening\":\"19:00\",\"afternoon_closing\":\"22:00\"}",
+    "description": "Weekly schedule configuration for day 0 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-08T06:49:52.979506+00:00",
+    "updated_at": "2025-10-30T09:25:14.35+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "e7c4f016-4764-49d0-9fca-306523ba3fc8",
+    "setting_key": "weekly_schedule_1",
+    "setting_value": "{\"day_of_week\":1,\"is_open\":false,\"use_split_hours\":true,\"single_opening\":\"12:00\",\"single_closing\":\"20:00\",\"morning_opening\":\"12:00\",\"morning_closing\":\"12:30\",\"afternoon_opening\":\"13:15\",\"afternoon_closing\":\"20:00\"}",
+    "description": "Weekly schedule configuration for day 1 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-08T06:57:25.657496+00:00",
+    "updated_at": "2025-10-30T09:25:18.771+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "7637485f-ab3c-4a09-ba12-c7a2d8811d53",
+    "setting_key": "weekly_schedule_3",
+    "setting_value": "{\"day_of_week\":3,\"is_open\":false,\"use_split_hours\":true,\"single_opening\":\"12:00\",\"single_closing\":\"20:00\",\"morning_opening\":\"12:00\",\"morning_closing\":\"12:30\",\"afternoon_opening\":\"13:15\",\"afternoon_closing\":\"19:30\"}",
+    "description": "Weekly schedule configuration for day 3 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-08T12:20:15.734909+00:00",
+    "updated_at": "2025-10-30T09:25:27.917+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "9a8e765b-398d-4715-9a60-a52677dfd1ee",
+    "setting_key": "weekly_schedule_4",
+    "setting_value": "{\"day_of_week\":4,\"is_open\":false,\"use_split_hours\":true,\"single_opening\":\"12:00\",\"single_closing\":\"20:00\",\"morning_opening\":\"12:00\",\"morning_closing\":\"12:30\",\"afternoon_opening\":\"13:15\",\"afternoon_closing\":\"19:30\"}",
+    "description": "Weekly schedule configuration for day 4 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-08T12:20:20.647208+00:00",
+    "updated_at": "2025-10-30T09:25:32.484+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "d2909de5-3dc0-4bda-bd2c-2c71b6223193",
+    "setting_key": "header_text_1",
+    "setting_value": "Bienvenue au Magnifiko",
+    "description": "Header text for reservation form",
+    "created_at": "2025-09-10T04:55:36.896922+00:00",
+    "updated_at": "2025-10-30T09:09:18.816+00:00",
+    "setting_value_en": "Welcome to Magnifiko",
+    "setting_value_it": "Benvenuti a Magnifiko",
+    "setting_value_es": "Bienvenido a Magnifiko"
+  },
+  {
+    "id": "6841c2f4-0f86-4d6a-8f12-d57bf011ab6d",
+    "setting_key": "header_text_2",
+    "setting_value": "À partir de maintenant, plus besoin de réserver pour venir au restaurant 😊",
+    "description": "Header text for reservation form",
+    "created_at": "2025-09-10T04:55:37.155776+00:00",
+    "updated_at": "2025-10-30T09:09:19.056+00:00",
+    "setting_value_en": "Reserve your table in a few clicks (no reservation after 8 p.m.)",
+    "setting_value_it": "Prenota il tuo tavolo in pochi click (nessuna prenotazione dopo le 20:00)",
+    "setting_value_es": "Reserva tu mesa en unos pocos clics (no hay reserva después de las 20 h)"
+  },
+  {
+    "id": "9c94f423-9ab9-450f-a79a-6d5dd352b40c",
+    "setting_key": "header_text_3",
+    "setting_value": "Le soir, chaque table est disponible pour une durée de 1h30, afin que tout le monde puisse profiter du restaurant dans les meilleures conditions et réduire le temps d’attente à l’extérieur 😊",
+    "description": "Header text for reservation form",
+    "created_at": "2025-09-10T04:55:37.409475+00:00",
+    "updated_at": "2025-10-30T09:09:19.126+00:00",
+    "setting_value_en": "For all",
+    "setting_value_it": "Per tutti",
+    "setting_value_es": "A pesar de"
+  },
+  {
+    "id": "523a4999-a3f0-480e-b0f3-223b5e0319b0",
+    "setting_key": "weekly_schedule_2",
+    "setting_value": "{\"day_of_week\":2,\"is_open\":false,\"use_split_hours\":true,\"single_opening\":\"12:00\",\"single_closing\":\"20:00\",\"morning_opening\":\"12:00\",\"morning_closing\":\"12:30\",\"afternoon_opening\":\"13:15\",\"afternoon_closing\":\"19:30\"}",
+    "description": "Weekly schedule configuration for day 2 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-11T03:18:59.646016+00:00",
+    "updated_at": "2025-10-30T09:25:24.133+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "ce24ffdf-2ade-4f23-9222-93990ffe11e1",
+    "setting_key": "weekly_schedule_5",
+    "setting_value": "{\"day_of_week\":5,\"is_open\":false,\"use_split_hours\":false,\"single_opening\":\"14:00\",\"single_closing\":\"19:00\",\"morning_opening\":\"10:00\",\"morning_closing\":\"14:00\",\"afternoon_opening\":\"19:00\",\"afternoon_closing\":\"22:00\"}",
+    "description": "Weekly schedule configuration for day 5 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-11T04:04:50.295064+00:00",
+    "updated_at": "2025-10-31T15:14:01.721+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  },
+  {
+    "id": "5ace562a-ddc1-44d9-af30-df7dd64a4ed0",
+    "setting_key": "weekly_schedule_6",
+    "setting_value": "{\"day_of_week\":6,\"is_open\":false,\"use_split_hours\":false,\"single_opening\":\"11:00\",\"single_closing\":\"19:30\",\"morning_opening\":\"10:00\",\"morning_closing\":\"15:00\",\"afternoon_opening\":\"19:00\",\"afternoon_closing\":\"21:00\"}",
+    "description": "Weekly schedule configuration for day 6 (0=Sunday, 1=Monday, etc.)",
+    "created_at": "2025-09-11T04:04:52.879352+00:00",
+    "updated_at": "2025-10-30T09:08:57.541+00:00",
+    "setting_value_en": null,
+    "setting_value_it": null,
+    "setting_value_es": null
+  }
+]

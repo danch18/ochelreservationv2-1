@@ -1,0 +1,2597 @@
+{
+  "database_schema_export": {
+    "sections": [
+      {
+        "data": [
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "nextval('addons_id_seq'::regclass)",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "title",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "addons",
+            "column_name": "description",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "image_path",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": 500
+          },
+          {
+            "udt_name": "numeric",
+            "data_type": "numeric",
+            "table_name": "addons",
+            "column_name": "price",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "category_id",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "subcategory_id",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "status",
+            "is_nullable": "YES",
+            "column_default": "'active'::character varying",
+            "ordinal_position": 8,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "addons",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 9,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "addons",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 10,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "created_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 11,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "updated_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 12,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "title_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 13,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "title_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 14,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "addons",
+            "column_name": "title_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 15,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "addons",
+            "column_name": "description_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 16,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "addons",
+            "column_name": "description_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 17,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "addons",
+            "column_name": "description_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 18,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "addons",
+            "column_name": "order",
+            "is_nullable": "YES",
+            "column_default": "0",
+            "ordinal_position": 19,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "admin_roles",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "gen_random_uuid()",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "admin_roles",
+            "column_name": "user_id",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "admin_roles",
+            "column_name": "role",
+            "is_nullable": "NO",
+            "column_default": "'admin'::character varying",
+            "ordinal_position": 3,
+            "character_maximum_length": 50
+          },
+          {
+            "udt_name": "jsonb",
+            "data_type": "jsonb",
+            "table_name": "admin_roles",
+            "column_name": "permissions",
+            "is_nullable": "YES",
+            "column_default": "'[]'::jsonb",
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "admin_roles",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "admin_roles",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "categories",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "nextval('categories_id_seq'::regclass)",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "categories",
+            "column_name": "title",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "categories",
+            "column_name": "text",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "categories",
+            "column_name": "status",
+            "is_nullable": "YES",
+            "column_default": "'active'::character varying",
+            "ordinal_position": 4,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "categories",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "categories",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "categories",
+            "column_name": "created_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "categories",
+            "column_name": "updated_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "categories",
+            "column_name": "title_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 9,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "categories",
+            "column_name": "title_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 10,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "categories",
+            "column_name": "title_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 11,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "categories",
+            "column_name": "text_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 12,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "categories",
+            "column_name": "text_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 13,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "categories",
+            "column_name": "text_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 14,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "categories",
+            "column_name": "order",
+            "is_nullable": "YES",
+            "column_default": "0",
+            "ordinal_position": 15,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "closed_dates",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "gen_random_uuid()",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "date",
+            "data_type": "date",
+            "table_name": "closed_dates",
+            "column_name": "date",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "closed_dates",
+            "column_name": "reason",
+            "is_nullable": "YES",
+            "column_default": "'Restaurant closed'::text",
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "closed_dates",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "closed_dates",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "opening_time",
+            "is_nullable": "YES",
+            "column_default": "'10:00:00'::time without time zone",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "closing_time",
+            "is_nullable": "YES",
+            "column_default": "'20:00:00'::time without time zone",
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "closed_dates",
+            "column_name": "is_closed",
+            "is_nullable": "NO",
+            "column_default": "true",
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "morning_opening",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 9,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "morning_closing",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 10,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "afternoon_opening",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 11,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "closed_dates",
+            "column_name": "afternoon_closing",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 12,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "closed_dates",
+            "column_name": "use_split_hours",
+            "is_nullable": "YES",
+            "column_default": "false",
+            "ordinal_position": 13,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "closed_dates",
+            "column_name": "is_manual_override",
+            "is_nullable": "YES",
+            "column_default": "false",
+            "ordinal_position": 15,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "date_availability",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "gen_random_uuid()",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "date",
+            "data_type": "date",
+            "table_name": "date_availability",
+            "column_name": "date",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "date_availability",
+            "column_name": "is_available",
+            "is_nullable": "NO",
+            "column_default": "true",
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "date_availability",
+            "column_name": "reason",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "date_availability",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "date_availability",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "menu_items",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "nextval('menu_items_id_seq'::regclass)",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "title",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "text",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "description",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "image_path",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 5,
+            "character_maximum_length": 500
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "model_3d_url",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "redirect_3d_url",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "additional_image_url",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "menu_items",
+            "column_name": "is_special",
+            "is_nullable": "YES",
+            "column_default": "false",
+            "ordinal_position": 9,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "numeric",
+            "data_type": "numeric",
+            "table_name": "menu_items",
+            "column_name": "price",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 10,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "menu_items",
+            "column_name": "subcategory_id",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 11,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "status",
+            "is_nullable": "YES",
+            "column_default": "'active'::character varying",
+            "ordinal_position": 12,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "menu_items",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 13,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "menu_items",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 14,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "menu_items",
+            "column_name": "created_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 15,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "menu_items",
+            "column_name": "updated_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 16,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "title_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 17,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "title_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 18,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "menu_items",
+            "column_name": "title_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 19,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "text_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 20,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "text_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 21,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "text_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 22,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "description_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 23,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "description_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 24,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "menu_items",
+            "column_name": "description_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 25,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "menu_items",
+            "column_name": "order",
+            "is_nullable": "YES",
+            "column_default": "0",
+            "ordinal_position": 26,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "reservations",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "gen_random_uuid()",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "reservations",
+            "column_name": "name",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "reservations",
+            "column_name": "email",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "reservations",
+            "column_name": "phone",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "date",
+            "data_type": "date",
+            "table_name": "reservations",
+            "column_name": "reservation_date",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "time",
+            "data_type": "time without time zone",
+            "table_name": "reservations",
+            "column_name": "reservation_time",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "reservations",
+            "column_name": "guests",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "reservations",
+            "column_name": "special_requests",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "reservations",
+            "column_name": "status",
+            "is_nullable": "YES",
+            "column_default": "'pending'::character varying",
+            "ordinal_position": 9,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "reservations",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 10,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "reservations",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 11,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "reservations",
+            "column_name": "confirmed_at",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 12,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "reservations",
+            "column_name": "confirmed_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 13,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "bool",
+            "data_type": "boolean",
+            "table_name": "reservations",
+            "column_name": "requires_confirmation",
+            "is_nullable": "YES",
+            "column_default": "false",
+            "ordinal_position": 14,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "reservations",
+            "column_name": "arrival_status",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 15,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "uuid",
+            "data_type": "uuid",
+            "table_name": "restaurant_settings",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "gen_random_uuid()",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "restaurant_settings",
+            "column_name": "setting_key",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": 100
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "restaurant_settings",
+            "column_name": "setting_value",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "restaurant_settings",
+            "column_name": "description",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "restaurant_settings",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 5,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "restaurant_settings",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "restaurant_settings",
+            "column_name": "setting_value_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "restaurant_settings",
+            "column_name": "setting_value_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "restaurant_settings",
+            "column_name": "setting_value_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 9,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "subcategories",
+            "column_name": "id",
+            "is_nullable": "NO",
+            "column_default": "nextval('subcategories_id_seq'::regclass)",
+            "ordinal_position": 1,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "subcategories",
+            "column_name": "category_id",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 2,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "subcategories",
+            "column_name": "title",
+            "is_nullable": "NO",
+            "column_default": null,
+            "ordinal_position": 3,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "subcategories",
+            "column_name": "text",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 4,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "subcategories",
+            "column_name": "status",
+            "is_nullable": "YES",
+            "column_default": "'active'::character varying",
+            "ordinal_position": 5,
+            "character_maximum_length": 20
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "subcategories",
+            "column_name": "created_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 6,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "timestamptz",
+            "data_type": "timestamp with time zone",
+            "table_name": "subcategories",
+            "column_name": "updated_at",
+            "is_nullable": "YES",
+            "column_default": "now()",
+            "ordinal_position": 7,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "subcategories",
+            "column_name": "created_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 8,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "subcategories",
+            "column_name": "updated_by",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 9,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "subcategories",
+            "column_name": "title_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 10,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "subcategories",
+            "column_name": "title_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 11,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "varchar",
+            "data_type": "character varying",
+            "table_name": "subcategories",
+            "column_name": "title_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 12,
+            "character_maximum_length": 255
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "subcategories",
+            "column_name": "text_en",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 13,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "subcategories",
+            "column_name": "text_it",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 14,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "text",
+            "data_type": "text",
+            "table_name": "subcategories",
+            "column_name": "text_es",
+            "is_nullable": "YES",
+            "column_default": null,
+            "ordinal_position": 15,
+            "character_maximum_length": null
+          },
+          {
+            "udt_name": "int4",
+            "data_type": "integer",
+            "table_name": "subcategories",
+            "column_name": "order",
+            "is_nullable": "YES",
+            "column_default": "0",
+            "ordinal_position": 16,
+            "character_maximum_length": null
+          }
+        ],
+        "section": "TABLE_COLUMNS"
+      },
+      {
+        "data": [
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "addons",
+            "foreign_column": "status",
+            "constraint_name": "addons_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64352_5_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64352_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64352_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "addons",
+            "foreign_column": "subcategory_id",
+            "constraint_name": "addons_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "addons",
+            "foreign_column": "category_id",
+            "constraint_name": "addons_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "addons",
+            "column_name": "subcategory_id",
+            "delete_rule": "CASCADE",
+            "update_rule": "NO ACTION",
+            "foreign_table": "subcategories",
+            "foreign_column": "id",
+            "constraint_name": "addons_subcategory_id_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "addons",
+            "column_name": "category_id",
+            "delete_rule": "CASCADE",
+            "update_rule": "NO ACTION",
+            "foreign_table": "categories",
+            "foreign_column": "id",
+            "constraint_name": "addons_category_id_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "addons",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "addons",
+            "foreign_column": "id",
+            "constraint_name": "addons_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "addons",
+            "column_name": "title",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "addons",
+            "foreign_column": "title",
+            "constraint_name": "addons_title_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "admin_roles",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_28581_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "admin_roles",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_28581_3_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "admin_roles",
+            "column_name": "user_id",
+            "delete_rule": "CASCADE",
+            "update_rule": "NO ACTION",
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "admin_roles_user_id_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "admin_roles",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "admin_roles",
+            "foreign_column": "id",
+            "constraint_name": "admin_roles_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "admin_roles",
+            "column_name": "user_id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "admin_roles",
+            "foreign_column": "user_id",
+            "constraint_name": "admin_roles_user_id_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "categories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64294_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "categories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "categories",
+            "foreign_column": "status",
+            "constraint_name": "categories_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "categories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64294_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "categories",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "categories",
+            "foreign_column": "id",
+            "constraint_name": "categories_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "categories",
+            "column_name": "title",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "categories",
+            "foreign_column": "title",
+            "constraint_name": "categories_title_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_20764_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_20764_8_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_20764_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "closed_dates",
+            "foreign_column": "id",
+            "constraint_name": "closed_dates_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": "date",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "closed_dates",
+            "foreign_column": "date",
+            "constraint_name": "closed_dates_date_unique",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "closed_dates",
+            "column_name": "date",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "closed_dates",
+            "foreign_column": "date",
+            "constraint_name": "closed_dates_date_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "date_availability",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_19576_3_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "date_availability",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_19576_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "date_availability",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_19576_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "date_availability",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "date_availability",
+            "foreign_column": "id",
+            "constraint_name": "date_availability_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "date_availability",
+            "column_name": "date",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "date_availability",
+            "foreign_column": "date",
+            "constraint_name": "date_availability_date_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64330_11_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "menu_items",
+            "foreign_column": "status",
+            "constraint_name": "menu_items_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64330_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64330_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64330_10_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": "subcategory_id",
+            "delete_rule": "CASCADE",
+            "update_rule": "NO ACTION",
+            "foreign_table": "subcategories",
+            "foreign_column": "id",
+            "constraint_name": "menu_items_subcategory_id_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "menu_items",
+            "foreign_column": "id",
+            "constraint_name": "menu_items_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "menu_items",
+            "column_name": "title",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "menu_items",
+            "foreign_column": "title",
+            "constraint_name": "menu_items_title_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_7_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_3_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_5_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_6_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "reservations",
+            "foreign_column": "status",
+            "constraint_name": "reservations_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "reservations",
+            "foreign_column": "guests",
+            "constraint_name": "reservations_guests_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "reservations",
+            "foreign_column": "arrival_status",
+            "constraint_name": "reservations_arrival_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_17281_4_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": "confirmed_by",
+            "delete_rule": "NO ACTION",
+            "update_rule": "NO ACTION",
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "reservations_confirmed_by_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "reservations",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "reservations",
+            "foreign_column": "id",
+            "constraint_name": "reservations_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_37572_3_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_37572_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_37572_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "restaurant_settings",
+            "foreign_column": "id",
+            "constraint_name": "restaurant_settings_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "column_name": "setting_key",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "restaurant_settings",
+            "foreign_column": "setting_key",
+            "constraint_name": "restaurant_settings_setting_key_key",
+            "constraint_type": "UNIQUE"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64309_1_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64309_3_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": null,
+            "foreign_column": null,
+            "constraint_name": "2200_64309_2_not_null",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": null,
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "subcategories",
+            "foreign_column": "status",
+            "constraint_name": "subcategories_status_check",
+            "constraint_type": "CHECK"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": "category_id",
+            "delete_rule": "CASCADE",
+            "update_rule": "NO ACTION",
+            "foreign_table": "categories",
+            "foreign_column": "id",
+            "constraint_name": "subcategories_category_id_fkey",
+            "constraint_type": "FOREIGN KEY"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": "id",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "subcategories",
+            "foreign_column": "id",
+            "constraint_name": "subcategories_pkey",
+            "constraint_type": "PRIMARY KEY"
+          },
+          {
+            "table_name": "subcategories",
+            "column_name": "title",
+            "delete_rule": null,
+            "update_rule": null,
+            "foreign_table": "subcategories",
+            "foreign_column": "title",
+            "constraint_name": "subcategories_title_key",
+            "constraint_type": "UNIQUE"
+          }
+        ],
+        "section": "CONSTRAINTS"
+      },
+      {
+        "data": [
+          {
+            "index_name": "addons_pkey",
+            "table_name": "addons",
+            "index_definition": "CREATE UNIQUE INDEX addons_pkey ON public.addons USING btree (id)"
+          },
+          {
+            "index_name": "addons_title_key",
+            "table_name": "addons",
+            "index_definition": "CREATE UNIQUE INDEX addons_title_key ON public.addons USING btree (title)"
+          },
+          {
+            "index_name": "idx_addons_category_id",
+            "table_name": "addons",
+            "index_definition": "CREATE INDEX idx_addons_category_id ON public.addons USING btree (category_id)"
+          },
+          {
+            "index_name": "idx_addons_subcategory_id",
+            "table_name": "addons",
+            "index_definition": "CREATE INDEX idx_addons_subcategory_id ON public.addons USING btree (subcategory_id)"
+          },
+          {
+            "index_name": "idx_addons_subcategory_order",
+            "table_name": "addons",
+            "index_definition": "CREATE INDEX idx_addons_subcategory_order ON public.addons USING btree (subcategory_id, \"order\")"
+          },
+          {
+            "index_name": "admin_roles_pkey",
+            "table_name": "admin_roles",
+            "index_definition": "CREATE UNIQUE INDEX admin_roles_pkey ON public.admin_roles USING btree (id)"
+          },
+          {
+            "index_name": "admin_roles_user_id_key",
+            "table_name": "admin_roles",
+            "index_definition": "CREATE UNIQUE INDEX admin_roles_user_id_key ON public.admin_roles USING btree (user_id)"
+          },
+          {
+            "index_name": "categories_pkey",
+            "table_name": "categories",
+            "index_definition": "CREATE UNIQUE INDEX categories_pkey ON public.categories USING btree (id)"
+          },
+          {
+            "index_name": "categories_title_key",
+            "table_name": "categories",
+            "index_definition": "CREATE UNIQUE INDEX categories_title_key ON public.categories USING btree (title)"
+          },
+          {
+            "index_name": "idx_categories_order",
+            "table_name": "categories",
+            "index_definition": "CREATE INDEX idx_categories_order ON public.categories USING btree (\"order\")"
+          },
+          {
+            "index_name": "closed_dates_date_key",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE UNIQUE INDEX closed_dates_date_key ON public.closed_dates USING btree (date)"
+          },
+          {
+            "index_name": "closed_dates_date_unique",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE UNIQUE INDEX closed_dates_date_unique ON public.closed_dates USING btree (date)"
+          },
+          {
+            "index_name": "closed_dates_pkey",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE UNIQUE INDEX closed_dates_pkey ON public.closed_dates USING btree (id)"
+          },
+          {
+            "index_name": "idx_closed_dates_date",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE INDEX idx_closed_dates_date ON public.closed_dates USING btree (date)"
+          },
+          {
+            "index_name": "idx_closed_dates_date_range",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE INDEX idx_closed_dates_date_range ON public.closed_dates USING btree (date)"
+          },
+          {
+            "index_name": "idx_closed_dates_is_closed",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE INDEX idx_closed_dates_is_closed ON public.closed_dates USING btree (is_closed)"
+          },
+          {
+            "index_name": "idx_closed_dates_manual_override",
+            "table_name": "closed_dates",
+            "index_definition": "CREATE INDEX idx_closed_dates_manual_override ON public.closed_dates USING btree (is_manual_override)"
+          },
+          {
+            "index_name": "date_availability_date_key",
+            "table_name": "date_availability",
+            "index_definition": "CREATE UNIQUE INDEX date_availability_date_key ON public.date_availability USING btree (date)"
+          },
+          {
+            "index_name": "date_availability_pkey",
+            "table_name": "date_availability",
+            "index_definition": "CREATE UNIQUE INDEX date_availability_pkey ON public.date_availability USING btree (id)"
+          },
+          {
+            "index_name": "idx_date_availability_date",
+            "table_name": "date_availability",
+            "index_definition": "CREATE INDEX idx_date_availability_date ON public.date_availability USING btree (date)"
+          },
+          {
+            "index_name": "idx_menu_items_special_order",
+            "table_name": "menu_items",
+            "index_definition": "CREATE INDEX idx_menu_items_special_order ON public.menu_items USING btree (is_special, \"order\") WHERE (is_special = true)"
+          },
+          {
+            "index_name": "idx_menu_items_subcategory_id",
+            "table_name": "menu_items",
+            "index_definition": "CREATE INDEX idx_menu_items_subcategory_id ON public.menu_items USING btree (subcategory_id)"
+          },
+          {
+            "index_name": "idx_menu_items_subcategory_order",
+            "table_name": "menu_items",
+            "index_definition": "CREATE INDEX idx_menu_items_subcategory_order ON public.menu_items USING btree (subcategory_id, \"order\")"
+          },
+          {
+            "index_name": "menu_items_pkey",
+            "table_name": "menu_items",
+            "index_definition": "CREATE UNIQUE INDEX menu_items_pkey ON public.menu_items USING btree (id)"
+          },
+          {
+            "index_name": "menu_items_title_key",
+            "table_name": "menu_items",
+            "index_definition": "CREATE UNIQUE INDEX menu_items_title_key ON public.menu_items USING btree (title)"
+          },
+          {
+            "index_name": "idx_reservations_date",
+            "table_name": "reservations",
+            "index_definition": "CREATE INDEX idx_reservations_date ON public.reservations USING btree (reservation_date)"
+          },
+          {
+            "index_name": "idx_reservations_email",
+            "table_name": "reservations",
+            "index_definition": "CREATE INDEX idx_reservations_email ON public.reservations USING btree (email)"
+          },
+          {
+            "index_name": "reservations_pkey",
+            "table_name": "reservations",
+            "index_definition": "CREATE UNIQUE INDEX reservations_pkey ON public.reservations USING btree (id)"
+          },
+          {
+            "index_name": "restaurant_settings_pkey",
+            "table_name": "restaurant_settings",
+            "index_definition": "CREATE UNIQUE INDEX restaurant_settings_pkey ON public.restaurant_settings USING btree (id)"
+          },
+          {
+            "index_name": "restaurant_settings_setting_key_key",
+            "table_name": "restaurant_settings",
+            "index_definition": "CREATE UNIQUE INDEX restaurant_settings_setting_key_key ON public.restaurant_settings USING btree (setting_key)"
+          },
+          {
+            "index_name": "idx_subcategories_category_id",
+            "table_name": "subcategories",
+            "index_definition": "CREATE INDEX idx_subcategories_category_id ON public.subcategories USING btree (category_id)"
+          },
+          {
+            "index_name": "idx_subcategories_category_order",
+            "table_name": "subcategories",
+            "index_definition": "CREATE INDEX idx_subcategories_category_order ON public.subcategories USING btree (category_id, \"order\")"
+          },
+          {
+            "index_name": "subcategories_pkey",
+            "table_name": "subcategories",
+            "index_definition": "CREATE UNIQUE INDEX subcategories_pkey ON public.subcategories USING btree (id)"
+          },
+          {
+            "index_name": "subcategories_title_key",
+            "table_name": "subcategories",
+            "index_definition": "CREATE UNIQUE INDEX subcategories_title_key ON public.subcategories USING btree (title)"
+          }
+        ],
+        "section": "INDEXES"
+      },
+      {
+        "data": [
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.current_user_role()\n RETURNS character varying\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nBEGIN\n  RETURN (\n    SELECT role FROM public.admin_roles \n    WHERE user_id = auth.uid()\n    LIMIT 1\n  );\nEND;\n$function$\n",
+            "function_name": "current_user_role"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.is_admin(user_uuid uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nBEGIN\n  RETURN EXISTS (\n    SELECT 1 FROM public.admin_roles \n    WHERE user_id = user_uuid \n    AND role IN ('admin', 'super_admin')\n  );\nEND;\n$function$\n",
+            "function_name": "is_admin"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.setup_admin_role(user_email text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nDECLARE\n  target_user_id uuid;\nBEGIN\n  -- Get the user ID from auth.users\n  SELECT id INTO target_user_id FROM auth.users WHERE email = user_email;\n  \n  IF target_user_id IS NULL THEN\n    RAISE EXCEPTION 'User with email % not found', user_email;\n  END IF;\n  \n  -- Insert or update admin role\n  INSERT INTO admin_roles (user_id, role, permissions)\n  VALUES (\n    target_user_id, \n    'super_admin', \n    '[\"manage_reservations\", \"manage_settings\", \"manage_admins\"]'::jsonb\n  )\n  ON CONFLICT (user_id) \n  DO UPDATE SET \n    role = 'super_admin',\n    permissions = '[\"manage_reservations\", \"manage_settings\", \"manage_admins\"]'::jsonb,\n    updated_at = now();\n    \n  RAISE NOTICE 'Admin role setup complete for user: %', user_email;\nEND;\n$function$\n",
+            "function_name": "setup_admin_role"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_addons_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$function$\n",
+            "function_name": "update_addons_updated_at"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_categories_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$function$\n",
+            "function_name": "update_categories_updated_at"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_closed_dates_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\n  BEGIN\n    NEW.updated_at = NOW();\n    RETURN NEW;\n  END;\n  $function$\n",
+            "function_name": "update_closed_dates_updated_at"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_menu_items_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$function$\n",
+            "function_name": "update_menu_items_updated_at"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_subcategories_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$function$\n",
+            "function_name": "update_subcategories_updated_at"
+          },
+          {
+            "definition": "CREATE OR REPLACE FUNCTION public.update_updated_at_column()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = now();\n  RETURN NEW;\nEND;\n$function$\n",
+            "function_name": "update_updated_at_column"
+          }
+        ],
+        "section": "FUNCTIONS"
+      },
+      {
+        "data": [
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_addons_updated_at()",
+            "table_name": "addons",
+            "orientation": "ROW",
+            "trigger_name": "update_addons_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_categories_updated_at()",
+            "table_name": "categories",
+            "orientation": "ROW",
+            "trigger_name": "update_categories_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_closed_dates_updated_at()",
+            "table_name": "closed_dates",
+            "orientation": "ROW",
+            "trigger_name": "update_closed_dates_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_updated_at_column()",
+            "table_name": "date_availability",
+            "orientation": "ROW",
+            "trigger_name": "update_date_availability_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_menu_items_updated_at()",
+            "table_name": "menu_items",
+            "orientation": "ROW",
+            "trigger_name": "update_menu_items_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_updated_at_column()",
+            "table_name": "reservations",
+            "orientation": "ROW",
+            "trigger_name": "update_reservations_updated_at"
+          },
+          {
+            "event": "UPDATE",
+            "timing": "BEFORE",
+            "statement": "EXECUTE FUNCTION update_subcategories_updated_at()",
+            "table_name": "subcategories",
+            "orientation": "ROW",
+            "trigger_name": "update_subcategories_updated_at"
+          }
+        ],
+        "section": "TRIGGERS"
+      },
+      {
+        "data": [
+          {
+            "table_name": "addons",
+            "rls_enabled": false
+          },
+          {
+            "table_name": "admin_roles",
+            "rls_enabled": true
+          },
+          {
+            "table_name": "categories",
+            "rls_enabled": false
+          },
+          {
+            "table_name": "closed_dates",
+            "rls_enabled": true
+          },
+          {
+            "table_name": "date_availability",
+            "rls_enabled": true
+          },
+          {
+            "table_name": "menu_items",
+            "rls_enabled": false
+          },
+          {
+            "table_name": "reservations",
+            "rls_enabled": true
+          },
+          {
+            "table_name": "restaurant_settings",
+            "rls_enabled": true
+          },
+          {
+            "table_name": "subcategories",
+            "rls_enabled": false
+          }
+        ],
+        "section": "RLS_ENABLED"
+      },
+      {
+        "data": [
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "addons",
+            "policy_name": "Allow authenticated users to manage addons",
+            "using_expression": "(auth.role() = 'authenticated'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "addons",
+            "policy_name": "Allow public read access to addons",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "admin_roles",
+            "policy_name": "Admin roles are manageable by super admins",
+            "using_expression": "(EXISTS ( SELECT 1\n   FROM admin_roles ar\n  WHERE ((ar.user_id = auth.uid()) AND ((ar.role)::text = 'super_admin'::text))))",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "admin_roles",
+            "policy_name": "Allow authenticated users to view admin roles",
+            "using_expression": "(auth.uid() IS NOT NULL)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "categories",
+            "policy_name": "Allow authenticated users to manage categories",
+            "using_expression": "(auth.role() = 'authenticated'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "categories",
+            "policy_name": "Allow public read access to categories",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "closed_dates",
+            "policy_name": "Admins can manage closed dates",
+            "using_expression": "is_admin(auth.uid())",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "closed_dates",
+            "policy_name": "Allow authenticated users to manage closed_dates",
+            "using_expression": "(auth.role() = 'authenticated'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "closed_dates",
+            "policy_name": "Allow public read access to closed_dates",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "closed_dates",
+            "policy_name": "Public can view closed dates",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "date_availability",
+            "policy_name": "Admins can manage date availability",
+            "using_expression": "is_admin(auth.uid())",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "date_availability",
+            "policy_name": "Allow all operations on date_availability",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "date_availability",
+            "policy_name": "Public can view date availability",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "menu_items",
+            "policy_name": "Allow authenticated users to manage menu_items",
+            "using_expression": "(auth.role() = 'authenticated'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "menu_items",
+            "policy_name": "Allow public read access to menu_items",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "reservations",
+            "policy_name": "Admins can manage all reservations",
+            "using_expression": "is_admin(auth.uid())",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "reservations",
+            "policy_name": "Enable all operations for reservations",
+            "using_expression": "true",
+            "with_check_expression": "true"
+          },
+          {
+            "roles": null,
+            "command": "INSERT",
+            "table_name": "reservations",
+            "policy_name": "Public can insert reservations",
+            "using_expression": null,
+            "with_check_expression": "true"
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "reservations",
+            "policy_name": "Public can view their own reservations",
+            "using_expression": "(((email)::text = ((current_setting('request.jwt.claims'::text, true))::json ->> 'email'::text)) OR is_admin(auth.uid()))",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "UPDATE",
+            "table_name": "reservations",
+            "policy_name": "Users can update their own reservations",
+            "using_expression": "(((email)::text = ((current_setting('request.jwt.claims'::text, true))::json ->> 'email'::text)) OR is_admin(auth.uid()))",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "DELETE",
+            "table_name": "restaurant_settings",
+            "policy_name": "Authenticated users can delete restaurant settings",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "INSERT",
+            "table_name": "restaurant_settings",
+            "policy_name": "Authenticated users can insert restaurant settings",
+            "using_expression": null,
+            "with_check_expression": "true"
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "SELECT",
+            "table_name": "restaurant_settings",
+            "policy_name": "Authenticated users can read restaurant settings",
+            "using_expression": "true",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "UPDATE",
+            "table_name": "restaurant_settings",
+            "policy_name": "Authenticated users can update restaurant settings",
+            "using_expression": "true",
+            "with_check_expression": "true"
+          },
+          {
+            "roles": null,
+            "command": "ALL",
+            "table_name": "subcategories",
+            "policy_name": "Allow authenticated users to manage subcategories",
+            "using_expression": "(auth.role() = 'authenticated'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "table_name": "subcategories",
+            "policy_name": "Allow public read access to subcategories",
+            "using_expression": "true",
+            "with_check_expression": null
+          }
+        ],
+        "section": "RLS_POLICIES"
+      },
+      {
+        "data": [
+          {
+            "table_name": "addons",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "categories",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "closed_dates",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "menu_items",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "reservations",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "restaurant_settings",
+            "publication": "supabase_realtime"
+          },
+          {
+            "table_name": "subcategories",
+            "publication": "supabase_realtime"
+          }
+        ],
+        "section": "REALTIME_PUBLICATIONS"
+      },
+      {
+        "data": [
+          {
+            "id": "menu-images",
+            "name": "menu-images",
+            "public": true,
+            "file_size_limit": 10485760,
+            "allowed_mime_types": [
+              "image/jpeg",
+              "image/jpg",
+              "image/png",
+              "image/gif",
+              "image/webp"
+            ]
+          }
+        ],
+        "section": "STORAGE_BUCKETS"
+      },
+      {
+        "data": [
+          {
+            "roles": [
+              "anon"
+            ],
+            "command": "DELETE",
+            "policy_name": "Allow anon delete menu images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "anon"
+            ],
+            "command": "UPDATE",
+            "policy_name": "Allow anon update menu images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "anon"
+            ],
+            "command": "INSERT",
+            "policy_name": "Allow anon upload menu images",
+            "using_expression": null,
+            "with_check_expression": "(bucket_id = 'menu-images'::text)"
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "DELETE",
+            "policy_name": "Authenticated users can delete from menu-images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "DELETE",
+            "policy_name": "Authenticated users can delete menu images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "UPDATE",
+            "policy_name": "Authenticated users can update in menu-images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": "(bucket_id = 'menu-images'::text)"
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "UPDATE",
+            "policy_name": "Authenticated users can update menu images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "INSERT",
+            "policy_name": "Authenticated users can upload menu images",
+            "using_expression": null,
+            "with_check_expression": "(bucket_id = 'menu-images'::text)"
+          },
+          {
+            "roles": [
+              "authenticated"
+            ],
+            "command": "INSERT",
+            "policy_name": "Authenticated users can upload to menu-images",
+            "using_expression": null,
+            "with_check_expression": "(bucket_id = 'menu-images'::text)"
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "policy_name": "Public can read menu images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          },
+          {
+            "roles": null,
+            "command": "SELECT",
+            "policy_name": "Public read access for menu-images",
+            "using_expression": "(bucket_id = 'menu-images'::text)",
+            "with_check_expression": null
+          }
+        ],
+        "section": "STORAGE_POLICIES"
+      }
+    ],
+    "exported_at": "2025-11-07T23:20:45.517061+00:00"
+  }
+}

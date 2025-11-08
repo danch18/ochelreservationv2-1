@@ -1,0 +1,14 @@
+[
+  {
+    "id": "aaff7f58-f453-4ead-98af-4b20a09cfc83",
+    "user_id": "49f64bfc-8a29-4fb6-836c-55f3a2ed2cda",
+    "role": "super_admin",
+    "permissions": [
+      "manage_reservations",
+      "manage_settings",
+      "manage_admins"
+    ],
+    "created_at": "2025-08-31T21:30:53.193478+00:00",
+    "updated_at": "2025-08-31T21:30:53.193478+00:00"
+  }
+]

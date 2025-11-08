@@ -1,0 +1,78 @@
+╔════════════════════════════════════════════════════════════════╗
+║                 MIGRATION QUICK START GUIDE                    ║
+╚════════════════════════════════════════════════════════════════╝
+
+✅ ALL FILES READY - NO ERRORS IN SQL
+
+📁 Location: database/migration/clean/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Drop existing tables (NEW Supabase SQL Editor)
+────────────────────────────────────────────────────────────────
+$ cat 0-drop-all-tables.sql
+→ Copy output → Paste in SQL Editor → Run
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: Create schema (NEW Supabase SQL Editor)
+────────────────────────────────────────────────────────────────
+$ cat schema.sql
+→ Copy output → Paste in SQL Editor → Run
+Creates: 7 tables + 9 functions + RLS policies
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: Create storage (NEW Supabase SQL Editor)
+────────────────────────────────────────────────────────────────
+$ cat storage.sql
+→ Copy output → Paste in SQL Editor → Run
+Creates: menu-images bucket + 11 policies
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 4: Create admin_roles (NEW Supabase SQL Editor)
+────────────────────────────────────────────────────────────────
+$ cat EXACT-admin_roles.sql
+→ Copy output → Paste in SQL Editor → Run
+→ EXACT recreation from old DB (no triggers, full permissions)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 5: Insert admin user (NEW Supabase SQL Editor)
+────────────────────────────────────────────────────────────────
+1. Go to: Dashboard → Authentication → Users
+2. Create/invite user → Copy UUID
+3. Run in SQL Editor:
+
+INSERT INTO admin_roles (user_id, role, permissions)
+VALUES (
+  'PASTE-YOUR-UUID-HERE',
+  'super_admin',
+  '["manage_reservations","manage_settings","manage_admins"]'::jsonb
+);
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 6: Import data (Command line)
+────────────────────────────────────────────────────────────────
+$ npx tsx 6-import-data.ts
+Imports: 289 rows (skips admin_roles - already inserted)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 7: Upload storage (Command line)
+────────────────────────────────────────────────────────────────
+$ npx tsx 7-upload-storage.ts
+Uploads: 105 image files (~25MB)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ DONE! Migration complete in ~10 minutes
+
+Next: Update .env → Deploy app → Test → Pause old project
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 Full docs: SCHEMA-READY.md
+🛠️  Troubleshooting: Check error messages - all SQL is validated
