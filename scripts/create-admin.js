@@ -4,7 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 async function createAdminUser() {
   // Get Supabase configuration
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://jhugrvpaizlzeemazuna.supabase.co';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://oblfrzmgwsxqogackdee.supabase.co';
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseServiceKey) {
