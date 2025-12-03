@@ -8,7 +8,7 @@ import PdfViewer from '@/components/PdfViewer';
 
 export default function PiccoloPage() {
     const { t } = useTranslation();
-    const pdfPath = '/assets/piccolo.pdf';
+    const pdfPath = '/assets/Menu Piccolo Magnifiko.pdf';
 
     return (
         <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full flex flex-col">
