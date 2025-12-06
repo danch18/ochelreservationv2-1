@@ -29,7 +29,7 @@ export default function PiccoloPage() {
                     <h1 className="font-eb-garamond text-4xl md:text-6xl text-center mb-4 text-[#FFF2CC]">
                         Piccolo Magnifiko
                     </h1>
-                    <div className="mb-2">
+                    <div className="mb-4">
                         <Image
                             src="/icons/halal certificate logo.png"
                             alt="Halal Certificate"
@@ -38,9 +38,6 @@ export default function PiccoloPage() {
                             className="object-contain"
                         />
                     </div>
-                    <p className="font-forum text-xl text-center mb-4 text-[#FFF2CC]">
-                        Certifié Achahada
-                    </p>
                     <p className="font-forum text-xl text-center mb-8 text-[#EAEAEA]">
                         60 Rue Jean-Baptiste Pigalle, 75009 Paris
                     </p>
