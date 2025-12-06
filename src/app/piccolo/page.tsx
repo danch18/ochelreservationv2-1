@@ -28,6 +28,9 @@ export default function PiccoloPage() {
                     <h1 className="font-eb-garamond text-4xl md:text-6xl text-center mb-4 text-[#FFF2CC]">
                         Piccolo Magnifiko
                     </h1>
+                    <p className="font-forum text-xl text-center mb-4 text-[#FFF2CC]">
+                        Certifié Achahada
+                    </p>
                     <p className="font-forum text-xl text-center mb-8 text-[#EAEAEA]">
                         60 Rue Jean-Baptiste Pigalle, 75009 Paris
                     </p>
