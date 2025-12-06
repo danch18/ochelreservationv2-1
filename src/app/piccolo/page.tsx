@@ -5,6 +5,7 @@ import { Navigation } from '@/components/layout';
 import { PublicFooter } from '@/components/common/PublicFooter';
 import { useTranslation } from '@/contexts/LanguageContext';
 import PdfViewer from '@/components/PdfViewer';
+import Image from 'next/image';
 
 export default function PiccoloPage() {
     const { t } = useTranslation();
@@ -28,6 +29,15 @@ export default function PiccoloPage() {
                     <h1 className="font-eb-garamond text-4xl md:text-6xl text-center mb-4 text-[#FFF2CC]">
                         Piccolo Magnifiko
                     </h1>
+                    <div className="mb-2">
+                        <Image
+                            src="/icons/halal certificate logo.png"
+                            alt="Halal Certificate"
+                            width={100}
+                            height={100}
+                            className="object-contain"
+                        />
+                    </div>
                     <p className="font-forum text-xl text-center mb-4 text-[#FFF2CC]">
                         Certifié Achahada
                     </p>
