@@ -45,8 +45,6 @@ const defaultDesktopItems: NavigationItem[] = [
   // TEMPORARILY HIDDEN - Uncomment below to restore reservation button
   // { label: 'nav.reservation', href: '#reservation', isReservation: true },
   { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-  // TEMPORARILY HIDDEN - Uncomment below to restore Piccolo link
-  // { label: 'nav.piccolo', href: '/piccolo' },
 ];
 
 const defaultSecondaryItems: NavigationItem[] = [
@@ -357,24 +355,6 @@ export default function Navigation({
               >
                 {t('nav.delivery')}
               </button>
-
-              {/* TEMPORARILY HIDDEN - Uncomment below to restore Piccolo link */}
-              {/* <Link
-                href="/piccolo"
-                onClick={handleLinkClick}
-                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer"
-                style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.5rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {t('nav.piccolo')}
-              </Link> */}
 
               {primaryItems.map((item, index) => (
                 <Link
