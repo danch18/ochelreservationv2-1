@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "title": "BIENVENUE CHEZ\n PICCOLO MAGNIFIKO",
+    "videoSrc": "/assets/heroBackground.mp4"
+  },
+  "experience": {
+    "subtitle": "Notre Histoire",
+    "title": "UNE EXPÉRIENCE UNIQUE AU CŒUR DE PARIS",
+    "description": "Piccolo Magnifiko est né d'un rêve : créer un lieu où l'authenticité de l'Italie rencontre le respect des règles halal, dans un cadre moderne, familial et chaleureux. Nous sommes bien plus qu'un restaurant : nous sommes une référence de la cuisine italienne halal à Paris, un espace de partage pour les amateurs de pâtes à l'italienne, de pizzas artisanales Napolitaine, de desserts traditionnels et de produits 100% halal et certifiés.",
+    "images": {
+      "interior": "/images/piccolo/Interior.webp",
+      "pasta": "/images/piccolo/Pasta.webp"
+    },
+    "badge": "DEPUIS 2024"
+  },
+  "menu": {
+    "subtitle": "Notre Menu",
+    "title": "LUNCH",
+    "items": [
+      {
+        "title": "NOS PASTA",
+        "description": "Nos pâtes importées d'Italie sont sublimées par les sauces maison préparées par notre chef.",
+        "note": "✓ Sans gluten disponible avec toutes nos pâtes",
+        "image": "/images/piccolo/Nos Pasta.webp"
+      },
+      {
+        "title": "PIZZAS NAPOLITAINES",
+        "description": "Pizzas napolitaines cuites à la pierre, avec des farines italiennes de qualité supérieure et notre mozzarella fior di latte.",
+        "image": "/images/piccolo/Pizzas Napolitaines.webp"
+      },
+      {
+        "title": "DESSERTS ITALIENS",
+        "description": "Découvrez nos desserts traditionnels italiens, des fraises à la crème aux panna cotta artisanales, préparés avec amour.",
+        "image": "/images/piccolo/Deserts Italiens.webp"
+      }
+    ],
+    "button": {
+      "text": "Voir notre menu complet"
+    }
+  },
+  "hours": {
+    "subtitle": "On vous attend",
+    "title": "TOUS LES JOURS",
+    "hours": "11H - MINUIT",
+    "note": "(Sauf Vendredi: 14h - Minuit)",
+    "backgroundImage": "/images/piccolo/restaurant-evening.webp"
+  },
+  "secrets": {
+    "subtitle": "Notre Histoire",
+    "title": "SECRETS DE SAVEUR",
+    "paragraphs": [
+      "Nous croyons que le secret des bonnes pâtes réside aussi dans la sauce, c'est pourquoi toutes nos sauces sont préparées sur place en utilisant uniquement les meilleurs ingrédients. Que vous préfériez une Amatriciana classique, une carbonara crémeuse ou une délicieuse bolognaise, nous avons une sauce qui saura satisfaire vos papilles.",
+      "Dans notre restaurant, nous proposons une variété de formes et de tailles de pâtes artisanales, chacune avec sa propre texture et saveur unique. Que vous préfériez de simples spaghettis ou de copieux tonnarelli, notre sélection de plats de pâtes saura vous plaire."
+    ],
+    "image": "/images/piccolo/Secrets de Saveur.webp"
+  },
+  "testimonials": {
+    "subtitle": "Nos Spécialités",
+    "title": "Des saveurs authentiques",
+    "items": [
+      {
+        "rating": 5,
+        "title": "Excellent restaurant",
+        "description": "\"Un excellent restaurant italien halal au cœur de Paris. La nourriture est délicieuse et le service impeccable.\"",
+        "author": {
+          "name": "Client Piccolo",
+          "title": "Google Review",
+          "image": "/images/piccolo/testimonial/client-1.png"
+        },
+        "link": "#"
+      }
+    ]
+  }
+}
