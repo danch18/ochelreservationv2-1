@@ -3,7 +3,7 @@
  * Defines settings for each restaurant location
  */
 
-export type RestaurantId = 'magnifiko' | 'piccolo';
+export type RestaurantId = 'magnifiko' | 'piccolo' | 'piccolo-next';
 
 export interface RestaurantConfig {
   id: RestaurantId;
@@ -153,6 +153,53 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
 
     contentFile: '/data/content-piccolo.json',
   },
+
+  'piccolo-next': {
+    id: 'piccolo-next',
+    name: 'Piccolo',
+    displayName: 'Piccolo Magnifiko',
+    description: 'Restaurant Italien Halal à Paris',
+
+    address: {
+      street: '60 Rue Jean-Baptiste Pigalle',
+      city: 'Paris',
+      postalCode: '75009',
+      country: 'France',
+    },
+    phone: '01 XX XX XX XX', // TODO: Add Piccolo phone
+    email: 'contact@piccolo-magnifiko.fr', // TODO: Add Piccolo email
+
+    hours: {
+      regular: '11h - Minuit',
+      special: 'Vendredi: 14h - Minuit',
+    },
+
+    logo: {
+      src: '/icons/PiccoloLogo.png', // TODO: Add Piccolo logo
+      alt: 'Piccolo Magnifiko Restaurant',
+      width: 50,
+      height: 17,
+    },
+
+    social: {
+      instagram: '#', // TODO: Add Piccolo Instagram
+      facebook: '#',
+      tiktok: '#',
+    },
+
+    metadata: {
+      title: 'Piccolo Magnifiko - Restaurant Italien Halal à Paris',
+      description: 'Piccolo Magnifiko - Cuisine italienne halal authentique au cœur de Paris. Pizzas napolitaines, pâtes fraîches et desserts italiens.',
+    },
+
+    features: {
+      hasReservation: false,
+      hasDelivery: true,
+      hasCertification: true,
+    },
+
+    contentFile: '/data/content-piccolo.json',
+  },
 };
 
 /**
@@ -164,10 +211,14 @@ export function getRestaurantConfig(id: RestaurantId): RestaurantConfig {
 
 /**
  * Get restaurant ID from URL path
- * /piccolo/* -> 'piccolo'
+ * /piccolo-next/* -> 'piccolo-next' (new full restaurant site in development)
+ * /piccolo -> 'piccolo' (current PDF menu page)
  * /* -> 'magnifiko'
  */
 export function getRestaurantIdFromPath(pathname: string): RestaurantId {
+  if (pathname.startsWith('/piccolo-next')) {
+    return 'piccolo-next';
+  }
   if (pathname.startsWith('/piccolo')) {
     return 'piccolo';
   }

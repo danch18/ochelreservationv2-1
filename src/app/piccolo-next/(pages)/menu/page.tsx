@@ -8,12 +8,13 @@ import { useTranslation } from '@/contexts/LanguageContext';
 import { getRestaurantConfig } from '@/config/restaurants';
 
 /**
- * Piccolo Menu Page
+ * Piccolo Menu Page (Development Version)
+ * This is at /piccolo-next/menu
  * Displays Piccolo restaurant menu items
  */
-export default function PiccoloMenuPage() {
+export default function PiccoloNextMenuPage() {
   const { t } = useTranslation();
-  const restaurantConfig = getRestaurantConfig('piccolo');
+  const restaurantConfig = getRestaurantConfig('piccolo-next');
 
   useEffect(() => {
     // Ensure proper scrolling context for sticky positioning
@@ -74,7 +75,7 @@ export default function PiccoloMenuPage() {
 
           {/* Content Section - Right on desktop, Bottom on mobile/tablet */}
           <div className="w-full lg:w-1/2 bg-[#000000] pt-[100px] min-h-screen">
-            <MenuDisplay restaurantId="piccolo" />
+            <MenuDisplay restaurantId="piccolo-next" />
           </div>
         </div>
       </div>

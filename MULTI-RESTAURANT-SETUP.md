@@ -15,10 +15,13 @@ magnifiko.fr/                    → Magnifiko Homepage
 magnifiko.fr/menu                → Magnifiko Menu
 magnifiko.fr/Certifications-halal→ Magnifiko Certifications
 
-magnifiko.fr/piccolo             → Piccolo Homepage
-magnifiko.fr/piccolo/menu        → Piccolo Menu
-magnifiko.fr/piccolo/certifications → Piccolo Certifications
+magnifiko.fr/piccolo             → Piccolo PDF Menu (CURRENT - Live)
+magnifiko.fr/piccolo-next        → Piccolo Homepage (DEVELOPMENT - New full site)
+magnifiko.fr/piccolo-next/menu   → Piccolo Menu (DEVELOPMENT)
+magnifiko.fr/piccolo-next/certifications → Piccolo Certifications (DEVELOPMENT)
 ```
+
+**Note:** The `/piccolo-next` routes contain the new full restaurant site. Once content and images are ready, we can switch `/piccolo` to use the full site instead of the PDF.
 
 ## File Structure
 
@@ -30,11 +33,14 @@ src/app/
 ├── (public)/
 │   ├── menu/page.tsx                  # Magnifiko Menu
 │   └── Certifications-halal/page.tsx  # Magnifiko Certifications
-└── piccolo/
-    ├── page.tsx                       # Piccolo Homepage
+├── piccolo/
+│   ├── page.tsx                       # Piccolo PDF Menu (CURRENT - Live)
+│   └── page-old-pdf.tsx.backup        # Backup of PDF page
+└── piccolo-next/                      # DEVELOPMENT - New full Piccolo site
+    ├── page.tsx                       # Piccolo Homepage (Development)
     └── (pages)/
-        ├── menu/page.tsx              # Piccolo Menu
-        └── certifications/page.tsx    # Piccolo Certifications
+        ├── menu/page.tsx              # Piccolo Menu (Development)
+        └── certifications/page.tsx    # Piccolo Certifications (Development)
 ```
 
 ### Configuration Files
@@ -310,6 +316,41 @@ Yes! The current implementation is safe because:
 **Issue: Content doesn't update**
 - Check: Correct content file is being loaded (`content-piccolo.json` vs `content-magnifiko.json`)
 - Verify: Component is receiving correct `restaurantId` prop
+
+## Switching from /piccolo-next to /piccolo
+
+When you're ready to make the new full Piccolo site live at `/piccolo`:
+
+1. **Backup the current PDF page** (already done - it's saved as `page-old-pdf.tsx.backup`)
+
+2. **Update the pages:**
+   ```bash
+   # Delete current PDF page
+   rm src/app/piccolo/page.tsx
+
+   # Move piccolo-next pages to piccolo
+   mv src/app/piccolo-next/page.tsx src/app/piccolo/page.tsx
+   mv src/app/piccolo-next/(pages) src/app/piccolo/
+
+   # Remove piccolo-next directory
+   rm -rf src/app/piccolo-next
+   ```
+
+3. **Update restaurant IDs in the moved files:**
+   - Change `restaurantId="piccolo-next"` to `restaurantId="piccolo"`
+   - Update function names from `PiccoloNext*` to `Piccolo*`
+
+4. **Update configuration:**
+   - Remove `'piccolo-next'` from RestaurantId type in `src/config/restaurants.ts`
+   - Remove the `piccolo-next` configuration object
+   - Update `getRestaurantIdFromPath` to remove piccolo-next handling
+
+5. **Test thoroughly:**
+   - Visit `/piccolo` - should show the new full homepage
+   - Visit `/piccolo/menu` - should show the menu page
+   - Visit `/piccolo/certifications` - should show certifications
+
+6. **Commit and deploy**
 
 ## Support
 
