@@ -18,11 +18,11 @@ export default function PiccoloPage() {
                     href="https://widget.thefork.com/en/46f7a53e-30fb-4d0b-a4f3-9242e1455b71?step=date"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-auto px-4 py-3 rounded-full flex items-center justify-center text-[#FFF2CC] text-base font-medium transform hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap hover:opacity-90 font-forum"
+                    className="w-auto px-4 py-3 rounded-full flex items-center justify-center text-[#FFF2CC] text-base font-semibold transform hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap hover:opacity-90 font-forum"
                     style={{ backgroundColor: '#F34A23' }}
                 >
                     <Image
-                        src="/icons/logo.png"
+                        src="/icons/Ochel logo white.png"
                         alt="Logo"
                         width={24}
                         height={24}
