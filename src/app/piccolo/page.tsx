@@ -22,7 +22,7 @@ export default function PiccoloPage() {
                     style={{ backgroundColor: '#F34A23' }}
                 >
                     <Image
-                        src="/icons/Ochel logo white.png"
+                        src="/icons/Logo Black White.png"
                         alt="Logo"
                         width={24}
                         height={24}
