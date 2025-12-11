@@ -211,8 +211,8 @@ export default function Footer({
               <Image
                 src="/icons/ochelFullLogoWhite.png"
                 alt="Ochel"
-                width={60}
-                height={20}
+                width={48}
+                height={16}
                 className="object-contain"
               />
             </Link>
