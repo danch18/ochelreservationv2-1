@@ -194,18 +194,37 @@ export default function Footer({
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-[#4a3f35] mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-[#4a3f35] mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-forum text-[#8a7a68] text-sm">
             {copyright}
           </p>
-          
+
+          {/* Powered by Ochel */}
+          <div className="flex items-center gap-2">
+            <span className="font-forum text-[#8a7a68] text-sm">Site propulsé par</span>
+            <Link
+              href="https://ochel.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <Image
+                src="/icons/ochelFullLogoWhite.png"
+                alt="Ochel"
+                width={60}
+                height={20}
+                className="object-contain"
+              />
+            </Link>
+          </div>
+
           {/* Social Links */}
           {socialLinks && socialLinks.length > 0 && (
             <div className="flex space-x-6 mt-4 md:mt-0">
               {socialLinks.map((social, index) => (
-                <Link 
+                <Link
                   key={index}
-                  href={social.href} 
+                  href={social.href}
                   className="text-[#8a7a68] hover:text-white transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
