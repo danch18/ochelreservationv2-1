@@ -2,20 +2,42 @@
 
 import Image from 'next/image';
 import { Navigation } from '@/components/layout';
+import { PublicFooter } from '@/components/common/PublicFooter';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { getRestaurantConfig, RestaurantId } from '@/config/restaurants';
 
-export default function CertificationsHalalPage() {
+interface CertificationsHalalPageProps {
+  restaurantId?: RestaurantId;
+}
+
+export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: CertificationsHalalPageProps) {
   const { t } = useTranslation();
+  const restaurantConfig = getRestaurantConfig(restaurantId);
+
+  // Custom navigation items for piccolo-next
+  const primaryItems = restaurantId === 'piccolo-next'
+    ? [{ label: 'nav.certifications', href: '/piccolo-next/certifications' }]
+    : [{ label: 'nav.certifications', href: '/Certifications-halal' }];
+
+  const desktopItems = restaurantId === 'piccolo-next'
+    ? [
+        { label: 'nav.menu', href: '/piccolo-next/menu' },
+        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+      ]
+    : [
+        { label: 'nav.menu', href: '/menu' },
+        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+        { label: 'nav.piccolo', href: '/piccolo' },
+      ];
+
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
       {/* Navigation */}
       <Navigation
-        logo={{
-          src: "/icons/MagnifikoLogo.png",
-          alt: "Magnifiko Restaurant",
-          width: 50,
-          height: 17
-        }}
+        logo={restaurantConfig.logo}
+        logoLink={restaurantId === 'piccolo-next' ? '/piccolo-next' : '/'}
+        primaryItems={primaryItems}
+        desktopItems={desktopItems}
       />
 
       {/* Main Content Section */}
@@ -107,6 +129,8 @@ export default function CertificationsHalalPage() {
         </div>
       </section>
 
+      {/* Footer */}
+      <PublicFooter restaurantId={restaurantId} />
     </div>
   );
 }

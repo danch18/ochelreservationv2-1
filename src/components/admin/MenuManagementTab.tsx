@@ -6,6 +6,7 @@ import { CategoriesManagement } from './menu/CategoriesManagement';
 import { SubcategoriesManagement } from './menu/SubcategoriesManagement';
 import { MenuItemsManagement } from './menu/MenuItemsManagement';
 import { AddonsManagement } from './menu/AddonsManagement';
+import { RestaurantId } from '@/config/restaurants';
 
 const menuTabs = [
   { id: 'categories', label: 'Catégories', icon: '📁' },
@@ -14,16 +15,24 @@ const menuTabs = [
   { id: 'addons', label: 'Add-ons', icon: '➕' },
 ];
 
-export function MenuManagementTab() {
+interface MenuManagementTabProps {
+  restaurantId: RestaurantId;
+}
+
+export function MenuManagementTab({ restaurantId }: MenuManagementTabProps) {
   const [activeTab, setActiveTab] = useState('categories');
+
+  const restaurantName = restaurantId === 'piccolo-next' ? 'Piccolo Magnifiko' : 'Magnifiko';
 
   return (
     <div className="space-y-6 font-forum">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Gestion du Menu</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Gestion du Menu - {restaurantName}
+        </h2>
         <p className="text-gray-600">
-          Gérez les catégories, sous-catégories, éléments de menu et add-ons du restaurant
+          Gérez les catégories, sous-catégories, éléments de menu et add-ons du restaurant {restaurantName}
         </p>
       </div>
 
@@ -70,10 +79,10 @@ export function MenuManagementTab() {
 
       {/* Tab Content */}
       <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-        {activeTab === 'categories' && <CategoriesManagement />}
-        {activeTab === 'subcategories' && <SubcategoriesManagement />}
-        {activeTab === 'items' && <MenuItemsManagement />}
-        {activeTab === 'addons' && <AddonsManagement />}
+        {activeTab === 'categories' && <CategoriesManagement restaurantId={restaurantId} />}
+        {activeTab === 'subcategories' && <SubcategoriesManagement restaurantId={restaurantId} />}
+        {activeTab === 'items' && <MenuItemsManagement restaurantId={restaurantId} />}
+        {activeTab === 'addons' && <AddonsManagement restaurantId={restaurantId} />}
       </div>
     </div>
   );

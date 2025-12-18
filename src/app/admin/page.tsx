@@ -63,7 +63,11 @@ export default function AdminPage() {
               )}
 
               {activeTab === 'menu' && (
-                <MenuManagementTab />
+                <MenuManagementTab restaurantId="magnifiko" />
+              )}
+
+              {activeTab === 'piccolo-menu' && (
+                <MenuManagementTab restaurantId="piccolo-next" />
               )}
             </div>
           </div>
@@ -94,7 +98,11 @@ export default function AdminPage() {
                 )}
 
                 {activeTab === 'menu' && (
-                  <MenuManagementTab />
+                  <MenuManagementTab restaurantId="magnifiko" />
+                )}
+
+                {activeTab === 'piccolo-menu' && (
+                  <MenuManagementTab restaurantId="piccolo-next" />
                 )}
               </div>
             </div>

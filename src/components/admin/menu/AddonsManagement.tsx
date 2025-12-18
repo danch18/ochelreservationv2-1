@@ -566,7 +566,11 @@ function SortableAddonRow({
   );
 }
 
-export function AddonsManagement() {
+interface AddonsManagementProps {
+  restaurantId: string;
+}
+
+export function AddonsManagement({ restaurantId }: AddonsManagementProps) {
   const [addons, setAddons] = useState<Addon[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -592,9 +596,9 @@ export function AddonsManagement() {
       setLoading(true);
       setError(null);
       const [addonsData, catsData, subcatsData] = await Promise.all([
-        addonService.getAll(),
-        categoryService.getAll(),
-        subcategoryService.getAll(),
+        addonService.getAll(restaurantId),
+        categoryService.getAll(restaurantId),
+        subcategoryService.getAll(restaurantId),
       ]);
       setAddons(addonsData);
       setCategories(catsData);
@@ -694,7 +698,10 @@ export function AddonsManagement() {
     if (editingAddon) {
       await addonService.update(editingAddon.id, addonData);
     } else {
-      await addonService.create(addonData);
+      await addonService.create({
+        ...addonData,
+        restaurant_id: restaurantId,
+      });
     }
     await loadData();
   };

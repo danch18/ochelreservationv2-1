@@ -176,7 +176,7 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
 
     logo: {
       src: '/icons/PiccoloLogo.png', // TODO: Add Piccolo logo
-      alt: 'Piccolo Magnifiko Restaurant',
+      alt: '',
       width: 50,
       height: 17,
     },

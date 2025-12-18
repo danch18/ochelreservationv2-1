@@ -15,6 +15,7 @@ export interface Category {
   text_en?: string | null;
   text_it?: string | null;
   text_es?: string | null;
+  restaurant_id: string;
   order: number;
   status: 'active' | 'inactive';
   created_at?: string;
@@ -34,6 +35,7 @@ export interface Subcategory {
   text_en?: string | null;
   text_it?: string | null;
   text_es?: string | null;
+  restaurant_id: string;
   order: number;
   status: 'active' | 'inactive';
   created_at?: string;
@@ -63,6 +65,7 @@ export interface MenuItem {
   is_special: boolean;
   price: number;
   subcategory_id: number;
+  restaurant_id: string;
   order: number;
   status: 'active' | 'inactive';
   created_at?: string;
@@ -85,6 +88,7 @@ export interface Addon {
   price: number;
   category_id?: number | null;
   subcategory_id?: number | null;
+  restaurant_id: string;
   order: number;
   status: 'active' | 'inactive';
   created_at?: string;
@@ -121,11 +125,17 @@ export function getTranslatedField<T extends Record<string, any>>(
 // ============================================================================
 
 export const categoryService = {
-  async getAll(): Promise<Category[]> {
-    const { data, error} = await supabase
+  async getAll(restaurantId?: string): Promise<Category[]> {
+    let query = supabase
       .from('categories')
-      .select('*')
-      .order('order', { ascending: true });
+      .select('*');
+
+    // Filter by restaurant_id if provided
+    if (restaurantId) {
+      query = query.eq('restaurant_id', restaurantId);
+    }
+
+    const { data, error } = await query.order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -143,13 +153,14 @@ export const categoryService = {
   },
 
   async create(category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Category> {
-    // Get the max order value to assign next order
+    // Get the max order value to assign next order (filtered by restaurant_id)
     const { data: maxOrderData } = await supabase
       .from('categories')
       .select('order')
+      .eq('restaurant_id', category.restaurant_id)
       .order('order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
@@ -235,11 +246,17 @@ export const categoryService = {
 // ============================================================================
 
 export const subcategoryService = {
-  async getAll(): Promise<Subcategory[]> {
-    const { data, error } = await supabase
+  async getAll(restaurantId?: string): Promise<Subcategory[]> {
+    let query = supabase
       .from('subcategories')
-      .select('*')
-      .order('order', { ascending: true });
+      .select('*');
+
+    // Filter by restaurant_id if provided
+    if (restaurantId) {
+      query = query.eq('restaurant_id', restaurantId);
+    }
+
+    const { data, error } = await query.order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -268,14 +285,15 @@ export const subcategoryService = {
   },
 
   async create(subcategory: Omit<Subcategory, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Subcategory> {
-    // Get the max order value within this category to assign next order
+    // Get the max order value within this category to assign next order (filtered by restaurant_id)
     const { data: maxOrderData } = await supabase
       .from('subcategories')
       .select('order')
       .eq('category_id', subcategory.category_id)
+      .eq('restaurant_id', subcategory.restaurant_id)
       .order('order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
@@ -362,11 +380,17 @@ export const subcategoryService = {
 // ============================================================================
 
 export const menuItemService = {
-  async getAll(): Promise<MenuItem[]> {
-    const { data, error } = await supabase
+  async getAll(restaurantId?: string): Promise<MenuItem[]> {
+    let query = supabase
       .from('menu_items')
-      .select('*')
-      .order('order', { ascending: true });
+      .select('*');
+
+    // Filter by restaurant_id if provided
+    if (restaurantId) {
+      query = query.eq('restaurant_id', restaurantId);
+    }
+
+    const { data, error } = await query.order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -395,14 +419,15 @@ export const menuItemService = {
   },
 
   async create(menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<MenuItem> {
-    // Get the max order value within this subcategory to assign next order
+    // Get the max order value within this subcategory to assign next order (filtered by restaurant_id)
     const { data: maxOrderData } = await supabase
       .from('menu_items')
       .select('order')
       .eq('subcategory_id', menuItem.subcategory_id)
+      .eq('restaurant_id', menuItem.restaurant_id)
       .order('order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
@@ -557,24 +582,29 @@ export const menuService = {
     };
   },
 
-  async getActiveCategories(): Promise<Category[]> {
-    const { data, error } = await supabase
+  async getActiveCategories(restaurantId?: string): Promise<Category[]> {
+    let query = supabase
       .from('categories')
       .select('*')
-      .eq('status', 'active')
-      .order('order', { ascending: true });
+      .eq('status', 'active');
+
+    if (restaurantId) {
+      query = query.eq('restaurant_id', restaurantId);
+    }
+
+    const { data, error } = await query.order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
   },
 
-  async getAllMenuData(): Promise<Map<number, MenuData>> {
+  async getAllMenuData(restaurantId?: string): Promise<Map<number, MenuData>> {
     // Fetch all data in one go
     const [categories, subcategories, menuItems, addons] = await Promise.all([
-      this.getActiveCategories(),
-      subcategoryService.getAll(),
-      menuItemService.getAll(),
-      addonService.getAll(),
+      this.getActiveCategories(restaurantId),
+      subcategoryService.getAll(restaurantId),
+      menuItemService.getAll(restaurantId),
+      addonService.getAll(restaurantId),
     ]);
 
     // Build a map of category ID to menu data
@@ -614,11 +644,17 @@ export const menuService = {
 // ============================================================================
 
 export const addonService = {
-  async getAll(): Promise<Addon[]> {
-    const { data, error } = await supabase
+  async getAll(restaurantId?: string): Promise<Addon[]> {
+    let query = supabase
       .from('addons')
-      .select('*')
-      .order('order', { ascending: true});
+      .select('*');
+
+    // Filter by restaurant_id if provided
+    if (restaurantId) {
+      query = query.eq('restaurant_id', restaurantId);
+    }
+
+    const { data, error } = await query.order('order', { ascending: true });
 
     if (error) throw error;
     return data || [];
@@ -669,7 +705,7 @@ export const addonService = {
   },
 
   async create(addon: Omit<Addon, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<Addon> {
-    // Get the max order value within this subcategory to assign next order
+    // Get the max order value within this subcategory to assign next order (filtered by restaurant_id)
     // Handle null subcategory_id by using category_id or defaulting to global ordering
     let nextOrder = 1;
     if (addon.subcategory_id) {
@@ -677,9 +713,10 @@ export const addonService = {
         .from('addons')
         .select('order')
         .eq('subcategory_id', addon.subcategory_id)
+        .eq('restaurant_id', addon.restaurant_id)
         .order('order', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       nextOrder = (maxOrderData?.order || 0) + 1;
     }

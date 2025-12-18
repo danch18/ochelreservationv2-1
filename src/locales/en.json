@@ -205,8 +205,10 @@
       "settingsMobile": "Settings",
       "manage": "Reservation Management",
       "manageMobile": "Management",
-      "menu": "Menu Management",
-      "menuMobile": "Menu"
+      "menu": "Magnifiko Menu",
+      "menuMobile": "Magnifiko",
+      "piccoloMenu": "Piccolo Menu",
+      "piccoloMenuMobile": "Piccolo"
     },
     "stats": {
       "total": "Total",

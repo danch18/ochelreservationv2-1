@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { cn } from '@/lib';
 import MenuDisplay from '@/components/menu/MenuDisplay';
 import { Navigation } from '@/components/layout';
+import { PublicFooter } from '@/components/common/PublicFooter';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { getRestaurantConfig } from '@/config/restaurants';
+import Image from 'next/image';
 
 /**
  * Piccolo Menu Page (Development Version)
@@ -15,6 +17,16 @@ import { getRestaurantConfig } from '@/config/restaurants';
 export default function PiccoloNextMenuPage() {
   const { t } = useTranslation();
   const restaurantConfig = getRestaurantConfig('piccolo-next');
+
+  // Custom navigation items for piccolo-next
+  const primaryItems = [
+    { label: 'nav.certifications', href: '/piccolo-next/certifications' },
+  ];
+
+  const desktopItems = [
+    { label: 'nav.menu', href: '/piccolo-next/menu' },
+    { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+  ];
 
   useEffect(() => {
     // Ensure proper scrolling context for sticky positioning
@@ -40,9 +52,33 @@ export default function PiccoloNextMenuPage() {
 
   return (
     <>
+      {/* Fixed Reservation Button */}
+      <div className="fixed bottom-2 right-2 z-[9999] pointer-events-auto flex items-end justify-end">
+        <a
+          href="https://widget.thefork.com/en/46f7a53e-30fb-4d0b-a4f3-9242e1455b71?step=date"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-auto px-4 py-3 rounded-full flex items-center justify-center text-[#FFF2CC] text-base font-semibold transform hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap hover:opacity-90 font-forum"
+          style={{ backgroundColor: '#F34A23' }}
+        >
+          <Image
+            src="/icons/Logo Black White.png"
+            alt=""
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
+          <div className="w-px h-6 bg-[#FFF2CC] mx-3"></div>
+          Réserver une table
+        </a>
+      </div>
+
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
+        logoLink="/piccolo-next"
+        primaryItems={primaryItems}
+        desktopItems={desktopItems}
       />
 
       {/* Main Layout - Two Equal Sections */}
@@ -79,6 +115,9 @@ export default function PiccoloNextMenuPage() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <PublicFooter restaurantId="piccolo-next" />
     </>
   );
 }

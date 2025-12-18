@@ -415,7 +415,11 @@ function SortableSubcategoryRow({
   );
 }
 
-export function SubcategoriesManagement() {
+interface SubcategoriesManagementProps {
+  restaurantId: string;
+}
+
+export function SubcategoriesManagement({ restaurantId }: SubcategoriesManagementProps) {
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -437,8 +441,8 @@ export function SubcategoriesManagement() {
       setLoading(true);
       setError(null);
       const [subcatsData, catsData] = await Promise.all([
-        subcategoryService.getAll(),
-        categoryService.getAll(),
+        subcategoryService.getAll(restaurantId),
+        categoryService.getAll(restaurantId),
       ]);
       setSubcategories(subcatsData);
       setCategories(catsData);
@@ -510,7 +514,10 @@ export function SubcategoriesManagement() {
     if (editingSubcategory) {
       await subcategoryService.update(editingSubcategory.id, subcategoryData);
     } else {
-      await subcategoryService.create(subcategoryData);
+      await subcategoryService.create({
+        ...subcategoryData,
+        restaurant_id: restaurantId,
+      });
     }
     // Notify all tabs that menu data has changed
     const menuUpdateChannel = new BroadcastChannel('menu-data-updates');

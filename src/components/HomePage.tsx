@@ -9,20 +9,40 @@ import MenuCard from '@/components/MenuCard';
 import SectionHeader from '@/components/SectionHeader';
 import content from '@/data/content.json';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { getRestaurantConfig, RestaurantId } from '@/config/restaurants';
 
-export default function HomePage() {
+interface HomePageProps {
+  restaurantId?: RestaurantId;
+}
+
+export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) {
   const { t } = useTranslation();
-  
+  const restaurantConfig = getRestaurantConfig(restaurantId);
+
+  // Custom navigation items for piccolo-next
+  const primaryItems = restaurantId === 'piccolo-next'
+    ? [{ label: 'nav.certifications', href: '/piccolo-next/certifications' }]
+    : [{ label: 'nav.certifications', href: '/Certifications-halal' }];
+
+  const desktopItems = restaurantId === 'piccolo-next'
+    ? [
+        { label: 'nav.menu', href: '/piccolo-next/menu' },
+        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+      ]
+    : [
+        { label: 'nav.menu', href: '/menu' },
+        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+        { label: 'nav.piccolo', href: '/piccolo' },
+      ];
+
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
       {/* Navigation */}
-      <Navigation 
-        logo={{
-          src: "/icons/MagnifikoLogo.png",
-          alt: "Magnifiko Restaurant",
-          width: 50,
-          height: 17
-        }}
+      <Navigation
+        logo={restaurantConfig.logo}
+        logoLink={restaurantId === 'piccolo-next' ? '/piccolo-next' : '/'}
+        primaryItems={primaryItems}
+        desktopItems={desktopItems}
       />
 
       {/* Hero Section */}
@@ -60,7 +80,7 @@ export default function HomePage() {
 
         <div className="relative z-10 text-center">
           <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4 whitespace-pre-line" suppressHydrationWarning>
-            {t('home.hero.title')}
+            {restaurantId === 'piccolo-next' ? 'BIENVENUE CHEZ\nPICCOLO MAGNIFIKO' : t('home.hero.title')}
           </h1>
         </div>
       </section>
@@ -93,7 +113,7 @@ export default function HomePage() {
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                {t('home.experience.title')}
+                {restaurantId === 'piccolo-next' ? "Une expérience unique au cœur de Paris" : t('home.experience.title')}
               </h2>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -165,7 +185,7 @@ export default function HomePage() {
 
           {/* View Menu Button */}
           <div className="flex justify-center mt-6">
-            <Link href="/menu">
+            <Link href={restaurantId === 'piccolo-next' ? '/piccolo-next/menu' : '/menu'}>
               <button style={{
                 display: 'flex',
                 height: '2.5rem',
@@ -181,7 +201,7 @@ export default function HomePage() {
                 border: 'none',
                 cursor: 'pointer'
               }}>
-                {t('home.menu.button')}
+                {restaurantId === 'piccolo-next' ? "Dirige vers le Menu Piccolo Magnifiko" : t('home.menu.button')}
               </button>
             </Link>
           </div>
@@ -235,7 +255,7 @@ export default function HomePage() {
             textTransform: 'uppercase',
             marginBottom: '8px'
           }} suppressHydrationWarning>
-            {t('home.hours.hours')}
+            {restaurantId === 'piccolo-next' ? "11H-23H" : t('home.hours.hours')}
           </h3>
           <p style={{
             color: '#EAEAEA',
@@ -246,7 +266,7 @@ export default function HomePage() {
             fontWeight: 400,
             lineHeight: '1.40625rem'
           }}>
-            {t('home.hours.note')}
+            {restaurantId === 'piccolo-next' ? "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)" : t('home.hours.note')}
           </p>
         </div>
       </section>
@@ -342,7 +362,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <PublicFooter />
+      <PublicFooter restaurantId={restaurantId} />
     </div>
   );
 }

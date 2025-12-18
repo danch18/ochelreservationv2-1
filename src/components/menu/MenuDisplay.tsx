@@ -30,7 +30,13 @@ interface MenuDisplaySection {
   }[];
 }
 
-export default function MenuDisplay() {
+// ... imports
+
+interface MenuDisplayProps {
+  restaurantId?: string;
+}
+
+export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
   const { t, locale } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
@@ -54,7 +60,7 @@ export default function MenuDisplay() {
         setError(null);
 
         // Fetch fresh data (no caching - using realtime updates instead)
-        const allMenuData = await menuService.getAllMenuData();
+        const allMenuData = await menuService.getAllMenuData(restaurantId);
 
         setMenuDataCache(allMenuData);
 
@@ -105,7 +111,7 @@ export default function MenuDisplay() {
     return () => {
       supabase.removeChannel(menuChannel);
     };
-  }, []);
+  }, [restaurantId]);
 
   // Build sections when active tab changes (no API call)
   useEffect(() => {

@@ -379,7 +379,11 @@ function SortableCategoryRow({
   );
 }
 
-export function CategoriesManagement() {
+interface CategoriesManagementProps {
+  restaurantId: string;
+}
+
+export function CategoriesManagement({ restaurantId }: CategoriesManagementProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -398,7 +402,7 @@ export function CategoriesManagement() {
     try {
       setLoading(true);
       setError(null);
-      const data = await categoryService.getAll();
+      const data = await categoryService.getAll(restaurantId);
       setCategories(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
@@ -448,8 +452,11 @@ export function CategoriesManagement() {
     if (editingCategory) {
       await categoryService.update(editingCategory.id, categoryData);
     } else {
-      // Create the category
-      const newCategory = await categoryService.create(categoryData);
+      // Create the category with restaurant_id
+      const newCategory = await categoryService.create({
+        ...categoryData,
+        restaurant_id: restaurantId,
+      });
 
       // Auto-create a "General" subcategory for the new category
       try {
@@ -457,6 +464,7 @@ export function CategoriesManagement() {
           title: `${categoryData.title} - General`,
           text: null,
           category_id: newCategory.id,
+          restaurant_id: restaurantId,
           status: 'active',
           created_by: null,
           updated_by: null,

@@ -16,6 +16,7 @@ export function AdminTabs({ activeTab, onTabChange }: AdminTabsProps) {
     { id: 'settings', labelKey: 'admin.tabs.settings', mobileLabelKey: 'admin.tabs.settingsMobile', icon: '⚙️' },
     { id: 'manage', labelKey: 'admin.tabs.manage', mobileLabelKey: 'admin.tabs.manageMobile', icon: '🍽️' },
     { id: 'menu', labelKey: 'admin.tabs.menu', mobileLabelKey: 'admin.tabs.menuMobile', icon: '📋' },
+    { id: 'piccolo-menu', labelKey: 'admin.tabs.piccoloMenu', mobileLabelKey: 'admin.tabs.piccoloMenuMobile', icon: '🍕' },
   ];
   return (
     <div className="font-forum">

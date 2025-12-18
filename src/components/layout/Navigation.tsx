@@ -22,8 +22,10 @@ export interface NavigationProps {
     width?: number;
     height?: number;
   };
+  logoLink?: string;
   brandText?: string;
   primaryItems?: NavigationItem[];
+  desktopItems?: NavigationItem[];
   secondaryItems?: NavigationItem[];
   contactInfo?: {
     address: string[];
@@ -70,8 +72,10 @@ const defaultSocialLinks: NavigationItem[] = [
 
 export default function Navigation({
   logo,
+  logoLink = '/',
   brandText = 'lm.',
   primaryItems = defaultPrimaryItems,
+  desktopItems = defaultDesktopItems,
   secondaryItems = defaultSecondaryItems,
   contactInfo = defaultContactInfo,
   socialLinks = defaultSocialLinks,
@@ -131,7 +135,7 @@ export default function Navigation({
             {/* Logo/Brand */}
             <div className="flex items-center">
               {logo ? (
-                <Link href="/">
+                <Link href={logoLink}>
                   <Image
                     src={logo.src}
                     alt={logo.alt}
@@ -141,7 +145,7 @@ export default function Navigation({
                   />
                 </Link>
               ) : (
-                <Link href="/">
+                <Link href={logoLink}>
                   <div className="font-eb-garamond text-2xl font-bold tracking-wider text-white cursor-pointer">
                     {brandText}
                   </div>
@@ -160,21 +164,23 @@ export default function Navigation({
             <div className="md:hidden">
               <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
                 <div style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
-                  <Link
-                    href="/menu"
-                    className="hover:text-[#d4af37] transition-colors"
-                    style={{
-                      color: '#FFF',
-                      fontFamily: 'Forum',
-                      fontSize: '0.875rem',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      lineHeight: '1.4rem',
-                      letterSpacing: '-0.0175rem'
-                    }}
-                  >
-                    {t('nav.menu')}
-                  </Link>
+                  {desktopItems.find(item => item.label === 'nav.menu') && (
+                    <Link
+                      href={desktopItems.find(item => item.label === 'nav.menu')!.href}
+                      className="hover:text-[#d4af37] transition-colors"
+                      style={{
+                        color: '#FFF',
+                        fontFamily: 'Forum',
+                        fontSize: '0.875rem',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        lineHeight: '1.4rem',
+                        letterSpacing: '-0.0175rem'
+                      }}
+                    >
+                      {t('nav.menu')}
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -183,7 +189,7 @@ export default function Navigation({
           {/* Desktop: Show all items */}
           <div className="hidden md:block">
             <div className="px-6 py-2" style={{ borderRadius: '3.75rem', background: '#101010', border: '1px solid rgba(255, 255, 255, 0.10)', display: 'flex', gap: '0' }}>
-              {defaultDesktopItems.map((item, index) => (
+              {desktopItems.map((item, index) => (
                 <div key={index} style={{ display: 'flex', padding: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
                   {item.isReservation ? (
                     <button
@@ -298,81 +304,70 @@ export default function Navigation({
 
             {/* Mobile only: Menu, Reservation, Livraison, then Certifications halal */}
             <div className="md:hidden space-y-4">
-              <Link
-                href="/menu"
-                onClick={handleLinkClick}
-                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer"
-                style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.5rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {t('nav.menu')}
-              </Link>
-
-              {/* TEMPORARILY HIDDEN - Uncomment below to restore reservation button */}
-              {/* <button
-                onClick={() => {
-                  handleLinkClick();
-                  const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
-                  if (reservationButton) {
-                    reservationButton.click();
-                  }
-                }}
-                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
-                style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.5rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {t('nav.reservation')}
-              </button> */}
-
-              <button
-                onClick={() => {
-                  handleLinkClick();
-                  openDeliveryPopup();
-                }}
-                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
-                style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.5rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {t('nav.delivery')}
-              </button>
-
-              <Link
-                href="/piccolo"
-                onClick={handleLinkClick}
-                className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer"
-                style={{
-                  color: '#FFF2CC',
-                  fontFamily: 'Forum',
-                  fontSize: '1.5rem',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  lineHeight: '1.8rem',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {t('nav.piccolo')}
-              </Link>
+              {desktopItems.map((item, index) => (
+                <div key={index}>
+                  {item.isReservation ? (
+                    <button
+                      onClick={() => {
+                        handleLinkClick();
+                        const reservationButton = document.querySelector('[data-reservation-button]') as HTMLButtonElement;
+                        if (reservationButton) {
+                          reservationButton.click();
+                        }
+                      }}
+                      className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                      style={{
+                        color: '#FFF2CC',
+                        fontFamily: 'Forum',
+                        fontSize: '1.5rem',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        lineHeight: '1.8rem',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {t(item.label)}
+                    </button>
+                  ) : item.isDelivery ? (
+                    <button
+                      onClick={() => {
+                        handleLinkClick();
+                        openDeliveryPopup();
+                      }}
+                      className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer bg-transparent border-none p-0"
+                      style={{
+                        color: '#FFF2CC',
+                        fontFamily: 'Forum',
+                        fontSize: '1.5rem',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        lineHeight: '1.8rem',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {t(item.label)}
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={handleLinkClick}
+                      className="block w-full hover:text-[#d4af37] transition-colors cursor-pointer"
+                      style={{
+                        color: '#FFF2CC',
+                        fontFamily: 'Forum',
+                        fontSize: '1.5rem',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        lineHeight: '1.8rem',
+                        textTransform: 'uppercase'
+                      }}
+                      {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                    >
+                      {t(item.label)}
+                    </Link>
+                  )}
+                </div>
+              ))}
 
               {primaryItems.map((item, index) => (
                 <Link

@@ -661,7 +661,11 @@ function SortableMenuItemRow({
   );
 }
 
-export function MenuItemsManagement() {
+interface MenuItemsManagementProps {
+  restaurantId: string;
+}
+
+export function MenuItemsManagement({ restaurantId }: MenuItemsManagementProps) {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -687,9 +691,9 @@ export function MenuItemsManagement() {
       setLoading(true);
       setError(null);
       const [itemsData, catsData, subcatsData] = await Promise.all([
-        menuItemService.getAll(),
-        categoryService.getAll(),
-        subcategoryService.getAll(),
+        menuItemService.getAll(restaurantId),
+        categoryService.getAll(restaurantId),
+        subcategoryService.getAll(restaurantId),
       ]);
       setMenuItems(itemsData);
       setCategories(catsData);
@@ -795,7 +799,10 @@ export function MenuItemsManagement() {
     if (editingMenuItem) {
       await menuItemService.update(editingMenuItem.id, menuItemData);
     } else {
-      await menuItemService.create(menuItemData);
+      await menuItemService.create({
+        ...menuItemData,
+        restaurant_id: restaurantId,
+      });
     }
     // Notify all tabs that menu data has changed
     const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
