@@ -72,7 +72,7 @@ export default function MenuPage() {
 
           {/* Content Section - Right on desktop, Bottom on mobile/tablet */}
           <div className="w-full lg:w-1/2 bg-[#000000] pt-[100px] min-h-screen">
-            <MenuDisplay />
+            <MenuDisplay restaurantId="magnifiko" />
           </div>
         </div>
       </div>

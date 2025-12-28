@@ -33,7 +33,7 @@ interface MenuDisplaySection {
 // ... imports
 
 interface MenuDisplayProps {
-  restaurantId?: string;
+  restaurantId: string;
 }
 
 export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
