@@ -17,10 +17,10 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
     <div id="contact">
       <Footer
         logo={{
-          src: isPiccolo ? "/icons/PiccoloLogo.png" : "/icons/MagnifikoLogo.png",
-          alt: isPiccolo ? "" : "Magnifiko Restaurant",
-          width: 100,
-          height: 34
+          src: isPiccolo ? "/images/piccolo/PICCOLO MAGNIFKO LOGO.svg" : "/icons/MagnifikoLogo.png",
+          alt: isPiccolo ? "Piccolo Magnifiko" : "Magnifiko Restaurant",
+          width: isPiccolo ? 100 : 100,
+          height: isPiccolo ? 100 : 34
         }}
         brandInfo={{
           name: isPiccolo ? "Piccolo Magnifiko" : "Magnifiko",

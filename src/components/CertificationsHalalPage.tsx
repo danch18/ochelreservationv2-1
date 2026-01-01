@@ -47,7 +47,7 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
             {/* Left Column - Image */}
             <div className="relative w-full" style={{ aspectRatio: '348/297' }}>
               <Image
-                src="/images/certificate.webp"
+                src={restaurantId === 'piccolo-next' ? '/images/piccolo/certifications/Piccolo Halal Certificate.jpeg' : '/images/certificate.webp'}
                 alt="Certifications Halal"
                 fill
                 className="object-cover rounded-lg"

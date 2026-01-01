@@ -128,10 +128,10 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
     },
 
     logo: {
-      src: '/icons/PiccoloLogo.png', // TODO: Add Piccolo logo
+      src: '/images/piccolo/PICCOLO MAGNIFKO LOGO.svg',
       alt: 'Piccolo Magnifiko Restaurant',
       width: 50,
-      height: 17,
+      height: 50,
     },
 
     social: {
@@ -175,10 +175,10 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
     },
 
     logo: {
-      src: '/icons/PiccoloLogo.png', // TODO: Add Piccolo logo
-      alt: '',
+      src: '/images/piccolo/PICCOLO MAGNIFKO LOGO.svg',
+      alt: 'Piccolo Magnifiko',
       width: 50,
-      height: 17,
+      height: 50,
     },
 
     social: {

@@ -10,6 +10,7 @@ import SectionHeader from '@/components/SectionHeader';
 import content from '@/data/content.json';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { getRestaurantConfig, RestaurantId } from '@/config/restaurants';
+import { LocationSelectionPopup } from '@/components/LocationSelectionPopup';
 
 interface HomePageProps {
   restaurantId?: RestaurantId;
@@ -37,6 +38,10 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
 
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
+      {/* Location Selection Popup - Only show on main Magnifiko page */}
+      {/* TEMPORARILY HIDDEN - TO RESTORE: Uncomment the line below */}
+      {/* {restaurantId === 'magnifiko' && <LocationSelectionPopup />} */}
+
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
@@ -49,7 +54,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
       <section id="hero" className="relative h-screen w-screen flex items-center justify-center overflow-hidden">
         {/* Image Background (Alternative to Video) */}
         <Image
-          src="/images/HeroLatestImage.jpeg"
+          src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Home Hero.jpeg' : '/images/HeroLatestImage.jpeg'}
           alt="Restaurant hero"
           fill
           className="absolute inset-0 w-full h-full object-cover"
@@ -130,7 +135,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             {/* Center Column - Restaurant Interior */}
             <div className="relative w-full" style={{ aspectRatio: '348/447' }}>
               <Image
-                src={content.experience.images.interior}
+                src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Entrance.jpeg' : content.experience.images.interior}
                 alt="Restaurant interior"
                 fill
                 className="object-cover rounded-lg"
@@ -142,7 +147,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             <div className="flex flex-col h-full" style={{ gap: '16px' }}>
               <div className="relative flex-1" style={{ minHeight: '370px' }}>
                 <Image
-                  src={content.experience.images.pasta}
+                  src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.experience.images.pasta}
                   alt="Pasta dish"
                   fill
                   className="object-cover rounded-lg"
@@ -212,7 +217,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
       <section id="hours" className="relative py-32 w-full overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src={content.hours.backgroundImage}
+            src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.hours.backgroundImage}
             alt="Restaurant interior evening"
             fill
             className="object-cover"
