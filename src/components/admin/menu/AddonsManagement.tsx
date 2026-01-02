@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
-import { addonService, categoryService, subcategoryService, Addon, Category, Subcategory } from '@/services/menuService';
+import { Addon, Category, Subcategory } from '@/services/menuService';
+import { getMenuServices } from '@/services/menuServiceSelector';
+import { RestaurantId } from '@/config/restaurants';
 import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
@@ -575,10 +577,14 @@ function SortableAddonRow({
 }
 
 interface AddonsManagementProps {
-  restaurantId: string;
+  restaurantId: RestaurantId;
 }
 
 export function AddonsManagement({ restaurantId }: AddonsManagementProps) {
+  // Get the appropriate services based on restaurant
+  const services = getMenuServices(restaurantId);
+  const { addonService, categoryService, subcategoryService } = services;
+
   const [addons, setAddons] = useState<Addon[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -604,9 +610,9 @@ export function AddonsManagement({ restaurantId }: AddonsManagementProps) {
       setLoading(true);
       setError(null);
       const [addonsData, catsData, subcatsData] = await Promise.all([
-        addonService.getAll(restaurantId),
-        categoryService.getAll(restaurantId),
-        subcategoryService.getAll(restaurantId),
+        addonService.getAll(),
+        categoryService.getAll(),
+        subcategoryService.getAll(),
       ]);
       setAddons(addonsData);
       setCategories(catsData);

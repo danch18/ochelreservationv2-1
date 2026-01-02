@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
-import { categoryService, subcategoryService, Category } from '@/services/menuService';
+import { Category } from '@/services/menuService';
+import { getMenuServices } from '@/services/menuServiceSelector';
+import { RestaurantId } from '@/config/restaurants';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
@@ -386,10 +388,14 @@ function SortableCategoryRow({
 }
 
 interface CategoriesManagementProps {
-  restaurantId: string;
+  restaurantId: RestaurantId;
 }
 
 export function CategoriesManagement({ restaurantId }: CategoriesManagementProps) {
+  // Get the appropriate services based on restaurant
+  const services = getMenuServices(restaurantId);
+  const { categoryService, subcategoryService } = services;
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -408,7 +414,7 @@ export function CategoriesManagement({ restaurantId }: CategoriesManagementProps
     try {
       setLoading(true);
       setError(null);
-      const data = await categoryService.getAll(restaurantId);
+      const data = await categoryService.getAll();
       setCategories(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement');

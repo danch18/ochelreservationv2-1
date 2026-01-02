@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
-import { subcategoryService, categoryService, Subcategory, Category } from '@/services/menuService';
+import { Subcategory, Category } from '@/services/menuService';
+import { getMenuServices } from '@/services/menuServiceSelector';
+import { RestaurantId } from '@/config/restaurants';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
@@ -422,10 +424,14 @@ function SortableSubcategoryRow({
 }
 
 interface SubcategoriesManagementProps {
-  restaurantId: string;
+  restaurantId: RestaurantId;
 }
 
 export function SubcategoriesManagement({ restaurantId }: SubcategoriesManagementProps) {
+  // Get the appropriate services based on restaurant
+  const services = getMenuServices(restaurantId);
+  const { subcategoryService, categoryService } = services;
+
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -447,8 +453,8 @@ export function SubcategoriesManagement({ restaurantId }: SubcategoriesManagemen
       setLoading(true);
       setError(null);
       const [subcatsData, catsData] = await Promise.all([
-        subcategoryService.getAll(restaurantId),
-        categoryService.getAll(restaurantId),
+        subcategoryService.getAll(),
+        categoryService.getAll(),
       ]);
       setSubcategories(subcatsData);
       setCategories(catsData);

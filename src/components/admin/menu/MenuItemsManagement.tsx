@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Alert } from '@/components/ui/Alert';
-import { menuItemService, categoryService, subcategoryService, MenuItem, Category, Subcategory } from '@/services/menuService';
+import { MenuItem, Category, Subcategory } from '@/services/menuService';
+import { getMenuServices } from '@/services/menuServiceSelector';
+import { RestaurantId } from '@/config/restaurants';
 import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
@@ -670,10 +672,14 @@ function SortableMenuItemRow({
 }
 
 interface MenuItemsManagementProps {
-  restaurantId: string;
+  restaurantId: RestaurantId;
 }
 
 export function MenuItemsManagement({ restaurantId }: MenuItemsManagementProps) {
+  // Get the appropriate services based on restaurant
+  const services = getMenuServices(restaurantId);
+  const { menuItemService, categoryService, subcategoryService } = services;
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -699,9 +705,9 @@ export function MenuItemsManagement({ restaurantId }: MenuItemsManagementProps) 
       setLoading(true);
       setError(null);
       const [itemsData, catsData, subcatsData] = await Promise.all([
-        menuItemService.getAll(restaurantId),
-        categoryService.getAll(restaurantId),
-        subcategoryService.getAll(restaurantId),
+        menuItemService.getAll(),
+        categoryService.getAll(),
+        subcategoryService.getAll(),
       ]);
       setMenuItems(itemsData);
       setCategories(catsData);

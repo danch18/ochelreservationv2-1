@@ -5,13 +5,14 @@ import { cn } from '@/lib';
 import MenuItemCard from './MenuItemCard';
 import MenuItemSkeleton from './MenuItemSkeleton';
 import {
-  menuService,
   getTranslatedField,
   type Category,
   type MenuItem,
   type Addon,
   type Subcategory
 } from '@/services/menuService';
+import { getMenuServices } from '@/services/menuServiceSelector';
+import { RestaurantId } from '@/config/restaurants';
 import { useTranslation } from '@/contexts/LanguageContext';
 
 interface MenuDisplaySection {
@@ -33,10 +34,14 @@ interface MenuDisplaySection {
 // ... imports
 
 interface MenuDisplayProps {
-  restaurantId: string;
+  restaurantId: RestaurantId;
 }
 
 export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
+  // Get the appropriate services based on restaurant
+  const services = getMenuServices(restaurantId);
+  const { menuService } = services;
+
   const { t, locale } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
@@ -60,7 +65,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
         setError(null);
 
         // Fetch fresh data (no caching - using realtime updates instead)
-        const allMenuData = await menuService.getAllMenuData(restaurantId);
+        const allMenuData = await menuService.getAllMenuData();
 
         setMenuDataCache(allMenuData);
 
