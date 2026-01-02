@@ -9,6 +9,7 @@ import { subcategoryService, categoryService, Subcategory, Category } from '@/se
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import { removeRestaurantSuffix } from '@/utils/restaurantNamespace';
 import {
   DndContext,
   closestCenter,
@@ -37,21 +38,24 @@ interface SubcategoryModalProps {
 function SubcategoryModal({ subcategory, categories, onSave, onClose }: SubcategoryModalProps) {
   const [categoryId, setCategoryId] = useState(subcategory?.category_id || categories[0]?.id || 0);
 
+  // Strip restaurant suffix for display in admin panel
+  const restaurantId = subcategory?.restaurant_id;
+
   // French (source)
-  const [title, setTitle] = useState(subcategory?.title || '');
-  const [text, setText] = useState(subcategory?.text || '');
+  const [title, setTitle] = useState(removeRestaurantSuffix(subcategory?.title, restaurantId) || '');
+  const [text, setText] = useState(removeRestaurantSuffix(subcategory?.text, restaurantId) || '');
 
   // English
-  const [titleEn, setTitleEn] = useState(subcategory?.title_en || '');
-  const [textEn, setTextEn] = useState(subcategory?.text_en || '');
+  const [titleEn, setTitleEn] = useState(removeRestaurantSuffix(subcategory?.title_en, restaurantId) || '');
+  const [textEn, setTextEn] = useState(removeRestaurantSuffix(subcategory?.text_en, restaurantId) || '');
 
   // Italian
-  const [titleIt, setTitleIt] = useState(subcategory?.title_it || '');
-  const [textIt, setTextIt] = useState(subcategory?.text_it || '');
+  const [titleIt, setTitleIt] = useState(removeRestaurantSuffix(subcategory?.title_it, restaurantId) || '');
+  const [textIt, setTextIt] = useState(removeRestaurantSuffix(subcategory?.text_it, restaurantId) || '');
 
   // Spanish
-  const [titleEs, setTitleEs] = useState(subcategory?.title_es || '');
-  const [textEs, setTextEs] = useState(subcategory?.text_es || '');
+  const [titleEs, setTitleEs] = useState(removeRestaurantSuffix(subcategory?.title_es, restaurantId) || '');
+  const [textEs, setTextEs] = useState(removeRestaurantSuffix(subcategory?.text_es, restaurantId) || '');
 
   // Active language tab
   const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
@@ -371,14 +375,16 @@ function SortableSubcategoryRow({
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <div className="text-sm font-medium text-gray-900">{subcategory.title}</div>
+        <div className="text-sm font-medium text-gray-900">
+          {removeRestaurantSuffix(subcategory.title, subcategory.restaurant_id) || subcategory.title}
+        </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap hidden lg:table-cell">
         <div className="text-sm text-gray-500">{getCategoryName(subcategory.category_id)}</div>
       </td>
       <td className="px-4 py-4 hidden md:table-cell">
         <div className="text-sm text-gray-500 max-w-xs truncate">
-          {subcategory.text || '-'}
+          {removeRestaurantSuffix(subcategory.text, subcategory.restaurant_id) || subcategory.text || '-'}
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">

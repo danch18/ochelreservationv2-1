@@ -11,6 +11,7 @@ import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import { removeRestaurantSuffix } from '@/utils/restaurantNamespace';
 import {
   DndContext,
   closestCenter,
@@ -38,21 +39,24 @@ interface AddonModalProps {
 }
 
 function AddonModal({ addon, categories, subcategories, onSave, onClose }: AddonModalProps) {
+  // Strip restaurant suffix for display in admin panel
+  const restaurantId = addon?.restaurant_id;
+
   // French (source)
-  const [title, setTitle] = useState(addon?.title || '');
-  const [description, setDescription] = useState(addon?.description || '');
+  const [title, setTitle] = useState(removeRestaurantSuffix(addon?.title, restaurantId) || '');
+  const [description, setDescription] = useState(removeRestaurantSuffix(addon?.description, restaurantId) || '');
 
   // English
-  const [titleEn, setTitleEn] = useState(addon?.title_en || '');
-  const [descriptionEn, setDescriptionEn] = useState(addon?.description_en || '');
+  const [titleEn, setTitleEn] = useState(removeRestaurantSuffix(addon?.title_en, restaurantId) || '');
+  const [descriptionEn, setDescriptionEn] = useState(removeRestaurantSuffix(addon?.description_en, restaurantId) || '');
 
   // Italian
-  const [titleIt, setTitleIt] = useState(addon?.title_it || '');
-  const [descriptionIt, setDescriptionIt] = useState(addon?.description_it || '');
+  const [titleIt, setTitleIt] = useState(removeRestaurantSuffix(addon?.title_it, restaurantId) || '');
+  const [descriptionIt, setDescriptionIt] = useState(removeRestaurantSuffix(addon?.description_it, restaurantId) || '');
 
   // Spanish
-  const [titleEs, setTitleEs] = useState(addon?.title_es || '');
-  const [descriptionEs, setDescriptionEs] = useState(addon?.description_es || '');
+  const [titleEs, setTitleEs] = useState(removeRestaurantSuffix(addon?.title_es, restaurantId) || '');
+  const [descriptionEs, setDescriptionEs] = useState(removeRestaurantSuffix(addon?.description_es, restaurantId) || '');
 
   // Active language tab
   const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
@@ -514,9 +518,13 @@ function SortableAddonRow({
         )}
       </td>
       <td className="px-4 py-4">
-        <div className="text-sm font-medium text-gray-900">{addon.title}</div>
+        <div className="text-sm font-medium text-gray-900">
+          {removeRestaurantSuffix(addon.title, addon.restaurant_id) || addon.title}
+        </div>
         {addon.description && (
-          <div className="text-xs text-gray-500 truncate max-w-xs">{addon.description}</div>
+          <div className="text-xs text-gray-500 truncate max-w-xs">
+            {removeRestaurantSuffix(addon.description, addon.restaurant_id) || addon.description}
+          </div>
         )}
       </td>
       <td className="px-4 py-4 hidden md:table-cell">

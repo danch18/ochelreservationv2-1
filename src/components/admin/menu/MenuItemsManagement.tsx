@@ -11,6 +11,7 @@ import { ImageUpload } from './ImageUpload';
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import { removeRestaurantSuffix } from '@/utils/restaurantNamespace';
 import {
   DndContext,
   closestCenter,
@@ -38,25 +39,28 @@ interface MenuItemModalProps {
 }
 
 function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }: MenuItemModalProps) {
+  // Strip restaurant suffix for display in admin panel
+  const restaurantId = menuItem?.restaurant_id;
+
   // French (source)
-  const [title, setTitle] = useState(menuItem?.title || '');
-  const [text, setText] = useState(menuItem?.text || '');
-  const [description, setDescription] = useState(menuItem?.description || '');
+  const [title, setTitle] = useState(removeRestaurantSuffix(menuItem?.title, restaurantId) || '');
+  const [text, setText] = useState(removeRestaurantSuffix(menuItem?.text, restaurantId) || '');
+  const [description, setDescription] = useState(removeRestaurantSuffix(menuItem?.description, restaurantId) || '');
 
   // English
-  const [titleEn, setTitleEn] = useState(menuItem?.title_en || '');
-  const [textEn, setTextEn] = useState(menuItem?.text_en || '');
-  const [descriptionEn, setDescriptionEn] = useState(menuItem?.description_en || '');
+  const [titleEn, setTitleEn] = useState(removeRestaurantSuffix(menuItem?.title_en, restaurantId) || '');
+  const [textEn, setTextEn] = useState(removeRestaurantSuffix(menuItem?.text_en, restaurantId) || '');
+  const [descriptionEn, setDescriptionEn] = useState(removeRestaurantSuffix(menuItem?.description_en, restaurantId) || '');
 
   // Italian
-  const [titleIt, setTitleIt] = useState(menuItem?.title_it || '');
-  const [textIt, setTextIt] = useState(menuItem?.text_it || '');
-  const [descriptionIt, setDescriptionIt] = useState(menuItem?.description_it || '');
+  const [titleIt, setTitleIt] = useState(removeRestaurantSuffix(menuItem?.title_it, restaurantId) || '');
+  const [textIt, setTextIt] = useState(removeRestaurantSuffix(menuItem?.text_it, restaurantId) || '');
+  const [descriptionIt, setDescriptionIt] = useState(removeRestaurantSuffix(menuItem?.description_it, restaurantId) || '');
 
   // Spanish
-  const [titleEs, setTitleEs] = useState(menuItem?.title_es || '');
-  const [textEs, setTextEs] = useState(menuItem?.text_es || '');
-  const [descriptionEs, setDescriptionEs] = useState(menuItem?.description_es || '');
+  const [titleEs, setTitleEs] = useState(removeRestaurantSuffix(menuItem?.title_es, restaurantId) || '');
+  const [textEs, setTextEs] = useState(removeRestaurantSuffix(menuItem?.text_es, restaurantId) || '');
+  const [descriptionEs, setDescriptionEs] = useState(removeRestaurantSuffix(menuItem?.description_es, restaurantId) || '');
 
   // Active language tab
   const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
@@ -183,7 +187,7 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
       await onSave({
         title: title.trim(),
         text: text.trim() || null,
-        description: description.trim() || null,
+        description: description.trim() || '',
         title_en: titleEn.trim() || null,
         text_en: textEn.trim() || null,
         description_en: descriptionEn.trim() || null,
@@ -282,12 +286,12 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
+                  Description <span className="text-gray-400 text-xs">(optionnel)</span>
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Description complète du plat..."
+                  placeholder="Description complète du plat... (optionnel)"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F34A23] focus:border-transparent text-gray-900 placeholder:text-gray-400"
                   rows={3}
                 />
@@ -606,9 +610,13 @@ function SortableMenuItemRow({
         )}
       </td>
       <td className="px-4 py-4">
-        <div className="text-sm font-medium text-gray-900">{item.title}</div>
+        <div className="text-sm font-medium text-gray-900">
+          {removeRestaurantSuffix(item.title, item.restaurant_id) || item.title}
+        </div>
         {item.description && (
-          <div className="text-xs text-gray-500 truncate max-w-xs">{item.description}</div>
+          <div className="text-xs text-gray-500 truncate max-w-xs">
+            {removeRestaurantSuffix(item.description, item.restaurant_id) || item.description}
+          </div>
         )}
       </td>
       <td className="px-4 py-4 hidden md:table-cell">

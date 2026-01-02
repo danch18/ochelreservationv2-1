@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { deleteImage, isSupabaseUrl } from '@/lib/storage';
+import { addSuffixToFields, removeRestaurantSuffix } from '@/utils/restaurantNamespace';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -104,20 +105,28 @@ export interface Addon {
 /**
  * Get translated field value based on locale
  * Falls back to French if translation not available
+ * Automatically removes restaurant suffix (e.g., " piccolo") from display
  */
 export function getTranslatedField<T extends Record<string, any>>(
   item: T,
   field: string,
   locale: 'fr' | 'en' | 'it' | 'es'
 ): string {
+  let value: string;
+
   // For French, return the original field
   if (locale === 'fr') {
-    return (item[field] as string) || '';
+    value = (item[field] as string) || '';
+  } else {
+    // For other languages, try translated field first, fallback to French
+    const translatedField = `${field}_${locale}`;
+    value = (item[translatedField] as string) || (item[field] as string) || '';
   }
 
-  // For other languages, try translated field first, fallback to French
-  const translatedField = `${field}_${locale}`;
-  return (item[translatedField] as string) || (item[field] as string) || '';
+  // Remove restaurant suffix for display
+  // Get restaurant_id from item if available
+  const restaurantId = (item as any).restaurant_id;
+  return removeRestaurantSuffix(value, restaurantId) || '';
 }
 
 // ============================================================================
@@ -164,9 +173,16 @@ export const categoryService = {
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
+    // Add restaurant suffix to all title and text fields for piccolo
+    const categoryWithSuffix = addSuffixToFields(
+      category,
+      category.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es']
+    );
+
     const { data, error } = await supabase
       .from('categories')
-      .insert({ ...category, order: nextOrder })
+      .insert({ ...categoryWithSuffix, order: nextOrder })
       .select()
       .single();
 
@@ -175,9 +191,20 @@ export const categoryService = {
   },
 
   async update(id: number, category: Partial<Category>): Promise<Category> {
+    // Get existing category to determine restaurant_id
+    const existing = await this.getById(id);
+    if (!existing) throw new Error('Category not found');
+
+    // Add restaurant suffix to all title and text fields for piccolo
+    const categoryWithSuffix = addSuffixToFields(
+      category,
+      existing.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es']
+    );
+
     const { data, error } = await supabase
       .from('categories')
-      .update(category)
+      .update(categoryWithSuffix)
       .eq('id', id)
       .select()
       .single();
@@ -297,9 +324,16 @@ export const subcategoryService = {
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
+    // Add restaurant suffix to all title and text fields for piccolo
+    const subcategoryWithSuffix = addSuffixToFields(
+      subcategory,
+      subcategory.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es']
+    );
+
     const { data, error } = await supabase
       .from('subcategories')
-      .insert({ ...subcategory, order: nextOrder })
+      .insert({ ...subcategoryWithSuffix, order: nextOrder })
       .select()
       .single();
 
@@ -308,9 +342,20 @@ export const subcategoryService = {
   },
 
   async update(id: number, subcategory: Partial<Subcategory>): Promise<Subcategory> {
+    // Get existing subcategory to determine restaurant_id
+    const existing = await this.getById(id);
+    if (!existing) throw new Error('Subcategory not found');
+
+    // Add restaurant suffix to all title and text fields for piccolo
+    const subcategoryWithSuffix = addSuffixToFields(
+      subcategory,
+      existing.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es']
+    );
+
     const { data, error } = await supabase
       .from('subcategories')
-      .update(subcategory)
+      .update(subcategoryWithSuffix)
       .eq('id', id)
       .select()
       .single();
@@ -431,31 +476,58 @@ export const menuItemService = {
 
     const nextOrder = (maxOrderData?.order || 0) + 1;
 
+    // Add restaurant suffix to all title, text, and description fields for piccolo
+    const menuItemWithSuffix = addSuffixToFields(
+      menuItem,
+      menuItem.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
+    );
+
     const { data, error } = await supabase
       .from('menu_items')
-      .insert({ ...menuItem, order: nextOrder })
+      .insert({ ...menuItemWithSuffix, order: nextOrder })
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // Provide better error messages for common issues
+      if (error.code === '23505') {
+        // Unique constraint violation
+        if (error.message.includes('title_restaurant_id')) {
+          throw new Error(`Un élément avec le titre "${menuItem.title}" existe déjà pour ce restaurant. Veuillez utiliser un titre différent.`);
+        }
+        throw new Error('Ce titre existe déjà. Veuillez utiliser un titre différent.');
+      }
+      throw error;
+    }
     return data;
   },
 
   async update(id: number, menuItem: Partial<MenuItem>): Promise<MenuItem> {
+    // Get existing menu item to determine restaurant_id
+    const existing = await this.getById(id);
+    if (!existing) throw new Error('Menu item not found');
+
     // If updating image_path, delete the old image from storage
     if (menuItem.image_path !== undefined) {
-      const oldItem = await this.getById(id);
-      if (oldItem?.image_path && isSupabaseUrl(oldItem.image_path) && oldItem.image_path !== menuItem.image_path) {
+      if (existing?.image_path && isSupabaseUrl(existing.image_path) && existing.image_path !== menuItem.image_path) {
         // Delete old image asynchronously (don't wait)
-        deleteImage(oldItem.image_path).catch(err =>
+        deleteImage(existing.image_path).catch(err =>
           console.warn('Failed to delete old menu item image:', err)
         );
       }
     }
 
+    // Add restaurant suffix to all title, text, and description fields for piccolo
+    const menuItemWithSuffix = addSuffixToFields(
+      menuItem,
+      existing.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
+    );
+
     const { data, error } = await supabase
       .from('menu_items')
-      .update(menuItem)
+      .update(menuItemWithSuffix)
       .eq('id', id)
       .select()
       .single();
@@ -721,9 +793,16 @@ export const addonService = {
       nextOrder = (maxOrderData?.order || 0) + 1;
     }
 
+    // Add restaurant suffix to all title and description fields for piccolo
+    const addonWithSuffix = addSuffixToFields(
+      addon,
+      addon.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'description', 'description_en', 'description_it', 'description_es']
+    );
+
     const { data, error } = await supabase
       .from('addons')
-      .insert({ ...addon, order: nextOrder })
+      .insert({ ...addonWithSuffix, order: nextOrder })
       .select()
       .single();
 
@@ -732,20 +811,30 @@ export const addonService = {
   },
 
   async update(id: number, addon: Partial<Addon>): Promise<Addon> {
+    // Get existing addon to determine restaurant_id
+    const existing = await this.getById(id);
+    if (!existing) throw new Error('Addon not found');
+
     // If updating image_path, delete the old image from storage
     if (addon.image_path !== undefined) {
-      const oldAddon = await this.getById(id);
-      if (oldAddon?.image_path && isSupabaseUrl(oldAddon.image_path) && oldAddon.image_path !== addon.image_path) {
+      if (existing?.image_path && isSupabaseUrl(existing.image_path) && existing.image_path !== addon.image_path) {
         // Delete old image asynchronously (don't wait)
-        deleteImage(oldAddon.image_path).catch(err =>
+        deleteImage(existing.image_path).catch(err =>
           console.warn('Failed to delete old addon image:', err)
         );
       }
     }
 
+    // Add restaurant suffix to all title and description fields for piccolo
+    const addonWithSuffix = addSuffixToFields(
+      addon,
+      existing.restaurant_id,
+      ['title', 'title_en', 'title_it', 'title_es', 'description', 'description_en', 'description_it', 'description_es']
+    );
+
     const { data, error } = await supabase
       .from('addons')
-      .update(addon)
+      .update(addonWithSuffix)
       .eq('id', id)
       .select()
       .single();

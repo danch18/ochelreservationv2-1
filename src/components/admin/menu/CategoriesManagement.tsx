@@ -9,6 +9,7 @@ import { categoryService, subcategoryService, Category } from '@/services/menuSe
 import { ConfirmationModal } from './ConfirmationModal';
 import { LanguageTabs } from './translation/LanguageTabs';
 import { TranslationField } from './translation/TranslationField';
+import { removeRestaurantSuffix } from '@/utils/restaurantNamespace';
 import {
   DndContext,
   closestCenter,
@@ -34,21 +35,24 @@ interface CategoryModalProps {
 }
 
 function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
+  // Strip restaurant suffix for display in admin panel
+  const restaurantId = category?.restaurant_id;
+
   // French (source)
-  const [title, setTitle] = useState(category?.title || '');
-  const [text, setText] = useState(category?.text || '');
+  const [title, setTitle] = useState(removeRestaurantSuffix(category?.title, restaurantId) || '');
+  const [text, setText] = useState(removeRestaurantSuffix(category?.text, restaurantId) || '');
 
   // English
-  const [titleEn, setTitleEn] = useState(category?.title_en || '');
-  const [textEn, setTextEn] = useState(category?.text_en || '');
+  const [titleEn, setTitleEn] = useState(removeRestaurantSuffix(category?.title_en, restaurantId) || '');
+  const [textEn, setTextEn] = useState(removeRestaurantSuffix(category?.text_en, restaurantId) || '');
 
   // Italian
-  const [titleIt, setTitleIt] = useState(category?.title_it || '');
-  const [textIt, setTextIt] = useState(category?.text_it || '');
+  const [titleIt, setTitleIt] = useState(removeRestaurantSuffix(category?.title_it, restaurantId) || '');
+  const [textIt, setTextIt] = useState(removeRestaurantSuffix(category?.text_it, restaurantId) || '');
 
   // Spanish
-  const [titleEs, setTitleEs] = useState(category?.title_es || '');
-  const [textEs, setTextEs] = useState(category?.text_es || '');
+  const [titleEs, setTitleEs] = useState(removeRestaurantSuffix(category?.title_es, restaurantId) || '');
+  const [textEs, setTextEs] = useState(removeRestaurantSuffix(category?.text_es, restaurantId) || '');
 
   // Active language tab
   const [activeTab, setActiveTab] = useState<'fr' | 'en' | 'it' | 'es'>('fr');
@@ -338,11 +342,13 @@ function SortableCategoryRow({
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <div className="text-sm font-medium text-gray-900">{category.title}</div>
+        <div className="text-sm font-medium text-gray-900">
+          {removeRestaurantSuffix(category.title, category.restaurant_id) || category.title}
+        </div>
       </td>
       <td className="px-4 py-4 hidden md:table-cell">
         <div className="text-sm text-gray-500 max-w-xs truncate">
-          {category.text || '-'}
+          {removeRestaurantSuffix(category.text, category.restaurant_id) || category.text || '-'}
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
