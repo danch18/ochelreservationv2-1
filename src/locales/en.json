@@ -186,6 +186,9 @@
     },
     "menu": {
       "button": "Discover the Piccolo menu"
+    },
+    "reservation": {
+      "button": "Book a table"
     }
   },
   "common": {

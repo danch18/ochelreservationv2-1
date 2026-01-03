@@ -186,6 +186,9 @@
     },
     "menu": {
       "button": "Descubre el menú Piccolo"
+    },
+    "reservation": {
+      "button": "Reservar una mesa"
     }
   },
   "common": {

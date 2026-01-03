@@ -3,6 +3,7 @@
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import HomePage from '@/components/HomePage';
 import Image from 'next/image';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 /**
  * Piccolo Restaurant Homepage (Development Version)
@@ -11,6 +12,8 @@ import Image from 'next/image';
  * Uses the same HomePage component as Magnifiko but with Piccolo-specific content
  */
 export default function PiccoloNextHome() {
+  const { t } = useTranslation();
+
   return (
     <ErrorBoundary>
       {/* Fixed Reservation Button */}
@@ -30,7 +33,7 @@ export default function PiccoloNextHome() {
             className="w-6 h-6 object-contain"
           />
           <div className="w-px h-6 bg-[#FFF2CC] mx-3"></div>
-          Réserver une table
+          {t('piccolo.reservation.button')}
         </a>
       </div>
 

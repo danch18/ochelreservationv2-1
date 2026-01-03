@@ -3,6 +3,7 @@
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import CertificationsHalalPage from '@/components/CertificationsHalalPage';
 import Image from 'next/image';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 /**
  * Piccolo Certifications Page (Development Version)
@@ -10,6 +11,8 @@ import Image from 'next/image';
  * Displays halal certifications for Piccolo restaurant
  */
 export default function PiccoloNextCertificationsHalal() {
+  const { t } = useTranslation();
+
   return (
     <ErrorBoundary>
       {/* Fixed Reservation Button */}
@@ -29,7 +32,7 @@ export default function PiccoloNextCertificationsHalal() {
             className="w-6 h-6 object-contain"
           />
           <div className="w-px h-6 bg-[#FFF2CC] mx-3"></div>
-          Réserver une table
+          {t('piccolo.reservation.button')}
         </a>
       </div>
 

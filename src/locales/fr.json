@@ -191,6 +191,9 @@
     },
     "menu": {
       "button": "Découvrez le menu piccolo"
+    },
+    "reservation": {
+      "button": "Réserver une table"
     }
   },
   "common": {
