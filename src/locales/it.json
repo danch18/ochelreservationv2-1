@@ -183,6 +183,9 @@
     "hours": {
       "hours": "11:00-23:00",
       "note": "(Tranne venerdì 14:00-Mezzanotte e sabato 11:00-Mezzanotte)"
+    },
+    "menu": {
+      "button": "Scopri il menu Piccolo"
     }
   },
   "common": {

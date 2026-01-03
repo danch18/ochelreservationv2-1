@@ -183,6 +183,9 @@
     "hours": {
       "hours": "11:00-23:00",
       "note": "(Excepto viernes 14:00-Medianoche y sábado 11:00-Medianoche)"
+    },
+    "menu": {
+      "button": "Descubre el menú Piccolo"
     }
   },
   "common": {

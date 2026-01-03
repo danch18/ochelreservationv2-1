@@ -204,7 +204,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 border: 'none',
                 cursor: 'pointer'
               }}>
-                {restaurantId === 'piccolo' ? "Découvrez le menu piccolo" : t('home.menu.button')}
+                {restaurantId === 'piccolo' ? t('piccolo.menu.button') : t('home.menu.button')}
               </button>
             </Link>
           </div>

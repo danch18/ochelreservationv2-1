@@ -183,6 +183,9 @@
     "hours": {
       "hours": "11AM-11PM",
       "note": "(Except Friday 2pm-Midnight and Saturday 11am-Midnight)"
+    },
+    "menu": {
+      "button": "Discover the Piccolo menu"
     }
   },
   "common": {

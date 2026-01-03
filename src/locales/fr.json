@@ -188,6 +188,9 @@
     "hours": {
       "hours": "11H-23H",
       "note": "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)"
+    },
+    "menu": {
+      "button": "Découvrez le menu piccolo"
     }
   },
   "common": {
