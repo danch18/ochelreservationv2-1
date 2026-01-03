@@ -67,7 +67,7 @@ export default function AdminPage() {
               )}
 
               {activeTab === 'piccolo-menu' && (
-                <MenuManagementTab restaurantId="piccolo-next" />
+                <MenuManagementTab restaurantId="piccolo" />
               )}
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function AdminPage() {
                 )}
 
                 {activeTab === 'piccolo-menu' && (
-                  <MenuManagementTab restaurantId="piccolo-next" />
+                  <MenuManagementTab restaurantId="piccolo" />
                 )}
               </div>
             </div>

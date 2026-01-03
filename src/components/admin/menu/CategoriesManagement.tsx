@@ -32,13 +32,14 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface CategoryModalProps {
   category?: Category | null;
-  onSave: (category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>) => Promise<void>;
+  onSave: (category: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order' | 'restaurant_id'>) => Promise<void>;
   onClose: () => void;
 }
 
 function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
   // Strip restaurant suffix for display in admin panel
   const restaurantId = category?.restaurant_id;
+  const [price, setPrice] = useState<string>(category?.price?.toString() || '');
 
   // French (source)
   const [title, setTitle] = useState(removeRestaurantSuffix(category?.title, restaurantId) || '');
@@ -102,6 +103,8 @@ function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
         text_it: textIt.trim() || null,
         title_es: titleEs.trim() || null,
         text_es: textEs.trim() || null,
+
+        price: price ? parseFloat(price) : null,
         status: category?.status || 'active',
         created_by: null,
         updated_by: null,
@@ -184,6 +187,28 @@ function CategoryModal({ category, onSave, onClose }: CategoryModalProps) {
               </div>
             </>
           )}
+
+          {/* Price Field (Optional) - Only for Piccolo or if desired for all */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Prix (Optionnel) - pour les items réguliers agissant comme menu
+            </label>
+            <div className="relative">
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Ex: 15.00"
+                className="pl-8"
+              />
+              <span className="absolute left-3 top-2 text-gray-500">€</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Si laissé vide, aucun prix ne sera affiché.
+            </p>
+          </div>
 
           {/* English Fields */}
           {activeTab === 'en' && (
@@ -354,11 +379,10 @@ function SortableCategoryRow({
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-          category.status === 'active'
-            ? 'bg-green-100 text-green-800'
-            : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${category.status === 'active'
+          ? 'bg-green-100 text-green-800'
+          : 'bg-gray-100 text-gray-800'
+          }`}>
           {category.status === 'active' ? 'Actif' : 'Inactif'}
         </span>
       </td>
@@ -415,7 +439,8 @@ export function CategoriesManagement({ restaurantId }: CategoriesManagementProps
       setLoading(true);
       setError(null);
       const data = await categoryService.getAll();
-      setCategories(data);
+      const mappedData = data.map((item: any) => ({ ...item, restaurant_id: restaurantId })) as Category[];
+      setCategories(mappedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
     } finally {
@@ -460,7 +485,7 @@ export function CategoriesManagement({ restaurantId }: CategoriesManagementProps
     setShowModal(true);
   };
 
-  const handleSave = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
+  const handleSave = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at' | 'order' | 'restaurant_id'>) => {
     if (editingCategory) {
       await categoryService.update(editingCategory.id, categoryData);
     } else {

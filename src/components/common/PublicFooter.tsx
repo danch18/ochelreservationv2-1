@@ -11,7 +11,7 @@ interface PublicFooterProps {
 export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) {
   const { t } = useTranslation();
 
-  const isPiccolo = restaurantId === 'piccolo-next';
+  const isPiccolo = restaurantId === 'piccolo';
 
   return (
     <div id="contact">
@@ -33,8 +33,8 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
           {
             title: t('footer.quickLinks'),
             items: isPiccolo ? [
-              { label: t('footer.home'), href: '/piccolo-next' },
-              { label: t('footer.menu'), href: '/piccolo-next/menu' },
+              { label: t('footer.home'), href: '/piccolo' },
+              { label: t('footer.menu'), href: '/piccolo/menu' },
               { label: t('footer.about'), href: '#about' },
               { label: t('footer.contact'), href: '#contact' },
             ] : [

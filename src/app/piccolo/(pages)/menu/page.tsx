@@ -11,20 +11,20 @@ import Image from 'next/image';
 
 /**
  * Piccolo Menu Page (Development Version)
- * This is at /piccolo-next/menu
+ * This is at /piccolo/menu
  * Displays Piccolo restaurant menu items
  */
 export default function PiccoloNextMenuPage() {
   const { t } = useTranslation();
-  const restaurantConfig = getRestaurantConfig('piccolo-next');
+  const restaurantConfig = getRestaurantConfig('piccolo');
 
-  // Custom navigation items for piccolo-next
+  // Custom navigation items for piccolo
   const primaryItems = [
-    { label: 'nav.certifications', href: '/piccolo-next/certifications' },
+    { label: 'nav.certifications', href: '/piccolo/certifications' },
   ];
 
   const desktopItems = [
-    { label: 'nav.menu', href: '/piccolo-next/menu' },
+    { label: 'nav.menu', href: '/piccolo/menu' },
     { label: 'nav.delivery', href: '#delivery', isDelivery: true },
   ];
 
@@ -76,7 +76,7 @@ export default function PiccoloNextMenuPage() {
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
-        logoLink="/piccolo-next"
+        logoLink="/piccolo"
         primaryItems={primaryItems}
         desktopItems={desktopItems}
       />
@@ -111,13 +111,13 @@ export default function PiccoloNextMenuPage() {
 
           {/* Content Section - Right on desktop, Bottom on mobile/tablet */}
           <div className="w-full lg:w-1/2 bg-[#000000] pt-[100px] min-h-screen">
-            <MenuDisplay restaurantId="piccolo-next" />
+            <MenuDisplay restaurantId="piccolo" />
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <PublicFooter restaurantId="piccolo-next" />
+      <PublicFooter restaurantId="piccolo" />
     </>
   );
 }

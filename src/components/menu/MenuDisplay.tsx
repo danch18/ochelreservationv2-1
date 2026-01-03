@@ -11,6 +11,7 @@ import {
   type Addon,
   type Subcategory
 } from '@/services/menuService';
+import type { PiccoloSetMenu } from '@/services/piccoloMenuService';
 import { getMenuServices } from '@/services/menuServiceSelector';
 import { RestaurantId } from '@/config/restaurants';
 import { useTranslation } from '@/contexts/LanguageContext';
@@ -29,6 +30,7 @@ interface MenuDisplaySection {
     model3DGlbUrl?: string;
     model3DUsdzUrl?: string;
   }[];
+  price?: string; // Header price
 }
 
 // ... imports
@@ -54,6 +56,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
     subcategories: Subcategory[];
     menuItems: MenuItem[];
     addons: Addon[];
+    setMenus?: PiccoloSetMenu[];
   }>>(new Map());
   const [isFading, setIsFading] = useState(false);
 
@@ -67,13 +70,15 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
         // Fetch fresh data (no caching - using realtime updates instead)
         const allMenuData = await menuService.getAllMenuData();
 
-        setMenuDataCache(allMenuData);
+        setMenuDataCache(allMenuData as any);
 
-        const cats = Array.from(allMenuData.values()).map(data => data.category);
-        setCategories(cats);
+        const cats = Array.from(allMenuData.values())
+          .map(data => data.category)
+          .filter(cat => cat.title !== 'Formulllle Midi' && cat.title.toLowerCase() !== 'formules');
+        setCategories(cats as any);
 
         if (cats.length > 0) {
-          setCurrentCategory(cats[0]);
+          setCurrentCategory(cats[0] as any);
         }
       } catch (err) {
         console.error('Failed to load menu data:', err);
@@ -141,6 +146,55 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
 
       const newSections: MenuDisplaySection[] = [];
 
+      // Special handling for Set Menus (Formules)
+      if (menuData.setMenus && menuData.setMenus.length > 0) {
+        const sortedSetMenus = [...menuData.setMenus].sort((a, b) => a.order - b.order);
+
+        for (const setMenu of sortedSetMenus) {
+          const menuTitle = getTranslatedField(setMenu, 'title', locale);
+          const menuPrice = `${setMenu.price.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€`;
+
+          const groups = setMenu.groups ? [...setMenu.groups].sort((a, b) => a.order - b.order) : [];
+
+          groups.forEach((group, index) => {
+            const groupTitle = getTranslatedField(group, 'title', locale);
+            const groupDesc = getTranslatedField(group, 'title', locale); // Use title as fallback if desc missing? No.
+            // Actually PiccoloSetMenuGroup has no description in interface? 
+            // Let's check interface. It has title. No description. Use 'title' refers to Entrées/Plats. I can use title.
+
+            // Construct Title
+            // First group: Menu Name (Price) - Group Name
+            // Others: Menu Name (Price) - Group Name
+            // Keep it consistent.
+            const sectionTitle = `${menuTitle} - ${groupTitle}`;
+            const sectionPrice = setMenu.price > 0 ? `${setMenu.price.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€` : '';
+
+            const groupItems = (group.items || []).sort((a, b) => a.order - b.order);
+
+            if (groupItems.length > 0) {
+              newSections.push({
+                title: sectionTitle,
+                subtitle: index === 0 ? (getTranslatedField(setMenu, 'description', locale) || null) : null,
+                items: groupItems.map(item => ({
+                  id: item.id,
+                  image: undefined, // No image for set menu items
+                  title: getTranslatedField(item, 'title', locale),
+                  subtitle: getTranslatedField(item, 'description', locale),
+                  price: '', // Included in menu price
+                  has3D: false,
+                  model3DGlbUrl: undefined,
+                  model3DUsdzUrl: undefined,
+                })),
+                price: sectionPrice,
+              });
+            }
+          });
+        }
+        setSections(newSections);
+        setTimeout(() => setIsFading(false), 50);
+        return;
+      }
+
       // Find General subcategory
       const generalSubcat = menuData.subcategories.find(s =>
         s.title.toLowerCase().includes('general')
@@ -161,7 +215,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
               image: item.image_path || undefined,
               title: getTranslatedField(item, 'title', locale),
               subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
-              price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
+              price: item.price > 0 ? `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : '',
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DGlbUrl: item.model_3d_url || undefined,
               model3DUsdzUrl: item.redirect_3d_url || undefined,
@@ -189,7 +243,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
               image: item.image_path || undefined,
               title: getTranslatedField(item, 'title', locale),
               subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
-              price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
+              price: item.price > 0 ? `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : '',
               has3D: !!item.model_3d_url || !!item.redirect_3d_url,
               model3DGlbUrl: item.model_3d_url || undefined,
               model3DUsdzUrl: item.redirect_3d_url || undefined,
@@ -213,7 +267,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
             image: item.image_path || undefined,
             title: getTranslatedField(item, 'title', locale),
             subtitle: getTranslatedField(item, 'text', locale) || getTranslatedField(item, 'description', locale),
-            price: `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
+            price: item.price > 0 ? `${item.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : '',
             has3D: !!item.model_3d_url || !!item.redirect_3d_url,
             model3DGlbUrl: item.model_3d_url || undefined,
             model3DUsdzUrl: item.redirect_3d_url || undefined,
@@ -233,7 +287,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
             image: addon.image_path || undefined,
             title: getTranslatedField(addon, 'title', locale),
             subtitle: getTranslatedField(addon, 'description', locale) || undefined,
-            price: `${addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`,
+            price: addon.price > 0 ? `${addon.price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : '',
             has3D: false,
           })),
         });
@@ -292,14 +346,24 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
       {/* Category Title and Description */}
       {currentCategory && (
         <div className="mb-6">
-          <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium capitalize">
-            {getTranslatedField(currentCategory, 'title', locale)}
-          </h2>
-          {getTranslatedField(currentCategory, 'text', locale) && (
-            <p className="text-[14px] md:text-[16px] font-forum text-[#FFD65A]/80 mt-2">
-              {getTranslatedField(currentCategory, 'text', locale)}
-            </p>
-          )}
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1">
+              <h2 className="text-[28px] md:text-[32px] font-forum text-[#FFF2CC] font-medium capitalize">
+                {getTranslatedField(currentCategory, 'title', locale)}
+              </h2>
+              {getTranslatedField(currentCategory, 'text', locale) && (
+                <p className="text-[14px] md:text-[16px] font-forum text-[#FFD65A]/80 mt-2">
+                  {getTranslatedField(currentCategory, 'text', locale)}
+                </p>
+              )}
+            </div>
+
+            {currentCategory.price && currentCategory.price > 0 && (
+              <span className="text-[24px] md:text-[28px] font-forum text-[#FFF2CC] font-medium whitespace-nowrap flex-shrink-0">
+                {currentCategory.price.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€
+              </span>
+            )}
+          </div>
         </div>
       )}
 
@@ -332,9 +396,16 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
                 {/* Section Title - Only show if title is not empty */}
                 {section.title && (
                   <div className="mb-4">
-                    <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium capitalize">
-                      {section.title}
-                    </h3>
+                    <div className="flex justify-between items-baseline">
+                      <h3 className="text-[24px] font-forum text-[#FFF2CC] font-medium capitalize">
+                        {section.title}
+                      </h3>
+                      {section.price && (
+                        <span className="text-[24px] font-forum text-[#FFF2CC] font-medium">
+                          {section.price}
+                        </span>
+                      )}
+                    </div>
                     {section.subtitle && (
                       <p className="text-[14px] font-forum text-[#FFD65A] mt-1">
                         ({section.subtitle})

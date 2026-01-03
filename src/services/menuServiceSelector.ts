@@ -11,15 +11,21 @@ import * as MagnifikoService from './menuService';
 import * as PiccoloService from './piccoloMenuService';
 
 export function getMenuServices(restaurantId: RestaurantId) {
-  const isPiccolo = restaurantId === 'piccolo' || restaurantId === 'piccolo-next';
+  const isPiccolo = restaurantId === 'piccolo';
 
   if (isPiccolo) {
     return {
       categoryService: {
         getAll: () => PiccoloService.piccoloCategoryService.getAll(),
         getById: (id: number) => PiccoloService.piccoloCategoryService.getById(id),
-        create: (cat: any) => PiccoloService.piccoloCategoryService.create(cat),
-        update: (id: number, cat: any) => PiccoloService.piccoloCategoryService.update(id, cat),
+        create: (cat: any) => {
+          const { restaurant_id, ...rest } = cat;
+          return PiccoloService.piccoloCategoryService.create(rest);
+        },
+        update: (id: number, cat: any) => {
+          const { restaurant_id, ...rest } = cat;
+          return PiccoloService.piccoloCategoryService.update(id, rest);
+        },
         delete: (id: number) => PiccoloService.piccoloCategoryService.delete(id),
         reorder: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloCategoryService.reorder(id, dir),
         updateBulkOrder: (updates: any[]) => PiccoloService.piccoloCategoryService.updateBulkOrder(updates),
@@ -28,8 +34,14 @@ export function getMenuServices(restaurantId: RestaurantId) {
         getAll: () => PiccoloService.piccoloSubcategoryService.getAll(),
         getByCategory: (id: number) => PiccoloService.piccoloSubcategoryService.getByCategory(id),
         getById: (id: number) => PiccoloService.piccoloSubcategoryService.getById(id),
-        create: (subcat: any) => PiccoloService.piccoloSubcategoryService.create(subcat),
-        update: (id: number, subcat: any) => PiccoloService.piccoloSubcategoryService.update(id, subcat),
+        create: (subcat: any) => {
+          const { restaurant_id, ...rest } = subcat;
+          return PiccoloService.piccoloSubcategoryService.create(rest);
+        },
+        update: (id: number, subcat: any) => {
+          const { restaurant_id, ...rest } = subcat;
+          return PiccoloService.piccoloSubcategoryService.update(id, rest);
+        },
         delete: (id: number) => PiccoloService.piccoloSubcategoryService.delete(id),
         reorder: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloSubcategoryService.reorder(id, dir),
         updateBulkOrder: (updates: any[]) => PiccoloService.piccoloSubcategoryService.updateBulkOrder(updates),
@@ -38,8 +50,14 @@ export function getMenuServices(restaurantId: RestaurantId) {
         getAll: () => PiccoloService.piccoloMenuItemService.getAll(),
         getBySubcategory: (id: number) => PiccoloService.piccoloMenuItemService.getBySubcategory(id),
         getById: (id: number) => PiccoloService.piccoloMenuItemService.getById(id),
-        create: (item: any) => PiccoloService.piccoloMenuItemService.create(item),
-        update: (id: number, item: any) => PiccoloService.piccoloMenuItemService.update(id, item),
+        create: (item: any) => {
+          const { restaurant_id, ...rest } = item;
+          return PiccoloService.piccoloMenuItemService.create(rest);
+        },
+        update: (id: number, item: any) => {
+          const { restaurant_id, ...rest } = item;
+          return PiccoloService.piccoloMenuItemService.update(id, rest);
+        },
         delete: (id: number) => PiccoloService.piccoloMenuItemService.delete(id),
         getSpecialItems: () => PiccoloService.piccoloMenuItemService.getSpecialItems(),
         reorder: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloMenuItemService.reorder(id, dir),
@@ -50,8 +68,14 @@ export function getMenuServices(restaurantId: RestaurantId) {
         getByCategory: (id: number) => PiccoloService.piccoloAddonService.getByCategory(id),
         getBySubcategory: (id: number) => PiccoloService.piccoloAddonService.getBySubcategory(id),
         getById: (id: number) => PiccoloService.piccoloAddonService.getById(id),
-        create: (addon: any) => PiccoloService.piccoloAddonService.create(addon),
-        update: (id: number, addon: any) => PiccoloService.piccoloAddonService.update(id, addon),
+        create: (addon: any) => {
+          const { restaurant_id, ...rest } = addon;
+          return PiccoloService.piccoloAddonService.create(rest);
+        },
+        update: (id: number, addon: any) => {
+          const { restaurant_id, ...rest } = addon;
+          return PiccoloService.piccoloAddonService.update(id, rest);
+        },
         delete: (id: number) => PiccoloService.piccoloAddonService.delete(id),
         reorder: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloAddonService.reorder(id, dir),
         updateBulkOrder: (updates: any[]) => PiccoloService.piccoloAddonService.updateBulkOrder(updates),
@@ -59,6 +83,29 @@ export function getMenuServices(restaurantId: RestaurantId) {
       menuService: {
         getAllMenuData: () => PiccoloService.piccoloMenuService.getAllMenuData(),
         getActiveCategories: () => PiccoloService.piccoloMenuService.getActiveCategories(),
+      },
+      setMenuService: {
+        getAll: () => PiccoloService.piccoloSetMenuService.getAll(),
+        getById: (id: number) => PiccoloService.piccoloSetMenuService.getById(id),
+        create: (item: any) => PiccoloService.piccoloSetMenuService.create(item),
+        update: (id: number, item: any) => PiccoloService.piccoloSetMenuService.update(id, item),
+        delete: (id: number) => PiccoloService.piccoloSetMenuService.delete(id),
+        reorder: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloSetMenuService.reorder(id, dir),
+        updateBulkOrder: (updates: any[]) => PiccoloService.piccoloSetMenuService.updateBulkOrder(updates),
+
+        // Groups
+        getGroupById: (id: number) => PiccoloService.piccoloSetMenuService.getGroupById(id),
+        createGroup: (group: any) => PiccoloService.piccoloSetMenuService.createGroup(group),
+        updateGroup: (id: number, group: any) => PiccoloService.piccoloSetMenuService.updateGroup(id, group),
+        deleteGroup: (id: number) => PiccoloService.piccoloSetMenuService.deleteGroup(id),
+        reorderGroup: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloSetMenuService.reorderGroup(id, dir),
+
+        // Items
+        getItemById: (id: number) => PiccoloService.piccoloSetMenuService.getItemById(id),
+        createItem: (item: any) => PiccoloService.piccoloSetMenuService.createItem(item),
+        updateItem: (id: number, item: any) => PiccoloService.piccoloSetMenuService.updateItem(id, item),
+        deleteItem: (id: number) => PiccoloService.piccoloSetMenuService.deleteItem(id),
+        reorderItem: (id: number, dir: 'up' | 'down') => PiccoloService.piccoloSetMenuService.reorderItem(id, dir),
       },
     };
   }

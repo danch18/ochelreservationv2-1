@@ -14,20 +14,19 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
   const { t } = useTranslation();
   const restaurantConfig = getRestaurantConfig(restaurantId);
 
-  // Custom navigation items for piccolo-next
-  const primaryItems = restaurantId === 'piccolo-next'
-    ? [{ label: 'nav.certifications', href: '/piccolo-next/certifications' }]
+  // Custom navigation items for piccolo
+  const primaryItems = restaurantId === 'piccolo'
+    ? [{ label: 'nav.certifications', href: '/piccolo/certifications' }]
     : [{ label: 'nav.certifications', href: '/Certifications-halal' }];
 
-  const desktopItems = restaurantId === 'piccolo-next'
+  const desktopItems = restaurantId === 'piccolo'
     ? [
-        { label: 'nav.menu', href: '/piccolo-next/menu' },
+        { label: 'nav.menu', href: '/piccolo/menu' },
         { label: 'nav.delivery', href: '#delivery', isDelivery: true },
       ]
     : [
         { label: 'nav.menu', href: '/menu' },
         { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-        { label: 'nav.piccolo', href: '/piccolo' },
       ];
 
   return (
@@ -35,7 +34,7 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
-        logoLink={restaurantId === 'piccolo-next' ? '/piccolo-next' : '/'}
+        logoLink={restaurantId === 'piccolo' ? '/piccolo' : '/'}
         primaryItems={primaryItems}
         desktopItems={desktopItems}
       />
@@ -47,7 +46,7 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
             {/* Left Column - Image */}
             <div className="relative w-full" style={{ aspectRatio: '348/297' }}>
               <Image
-                src={restaurantId === 'piccolo-next' ? '/images/piccolo/certifications/Piccolo Halal Certificate.jpeg' : '/images/certificate.webp'}
+                src={restaurantId === 'piccolo' ? '/images/piccolo/certifications/Piccolo Halal Certificate.jpeg' : '/images/certificate.webp'}
                 alt="Certifications Halal"
                 fill
                 className="object-cover rounded-lg"

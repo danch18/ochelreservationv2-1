@@ -213,7 +213,10 @@ function MenuItemModal({ menuItem, categories, subcategories, onSave, onClose }:
 
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
+      console.error('Menu item save error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la sauvegarde';
+      console.error('Error message:', errorMessage);
+      setError(errorMessage);
     } finally {
       setSaving(false);
     }
@@ -810,19 +813,26 @@ export function MenuItemsManagement({ restaurantId }: MenuItemsManagementProps) 
   };
 
   const handleSave = async (menuItemData: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>) => {
-    if (editingMenuItem) {
-      await menuItemService.update(editingMenuItem.id, menuItemData);
-    } else {
-      await menuItemService.create({
-        ...menuItemData,
-        restaurant_id: restaurantId,
-      });
+    try {
+      console.log('Saving menu item:', { editingMenuItem: editingMenuItem?.id, restaurantId, menuItemData });
+
+      if (editingMenuItem) {
+        await menuItemService.update(editingMenuItem.id, menuItemData);
+      } else {
+        await menuItemService.create({
+          ...menuItemData,
+          restaurant_id: restaurantId,
+        });
+      }
+      // Notify all tabs that menu data has changed
+      const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
+      menuUpdateChannel.postMessage('invalidate');
+      menuUpdateChannel.close();
+      await loadData();
+    } catch (error) {
+      console.error('handleSave error:', error);
+      throw error; // Re-throw to be caught by handleSubmit
     }
-    // Notify all tabs that menu data has changed
-    const menuUpdateChannel = new BroadcastChannel('menu-data-updates');
-    menuUpdateChannel.postMessage('invalidate');
-    menuUpdateChannel.close();
-    await loadData();
   };
 
   const handleDeleteClick = (item: MenuItem) => {

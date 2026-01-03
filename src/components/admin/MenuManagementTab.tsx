@@ -6,6 +6,7 @@ import { CategoriesManagement } from './menu/CategoriesManagement';
 import { SubcategoriesManagement } from './menu/SubcategoriesManagement';
 import { MenuItemsManagement } from './menu/MenuItemsManagement';
 import { AddonsManagement } from './menu/AddonsManagement';
+
 import { RestaurantId } from '@/config/restaurants';
 
 const menuTabs = [
@@ -22,7 +23,12 @@ interface MenuManagementTabProps {
 export function MenuManagementTab({ restaurantId }: MenuManagementTabProps) {
   const [activeTab, setActiveTab] = useState('categories');
 
-  const restaurantName = restaurantId === 'piccolo-next' ? 'Piccolo Magnifiko' : 'Magnifiko';
+  const isPiccolo = restaurantId === 'piccolo';
+
+  const currentTabs = [...menuTabs];
+
+
+  const restaurantName = restaurantId === 'piccolo' ? 'Piccolo Magnifiko' : 'Magnifiko';
 
   return (
     <div className="space-y-6 font-forum">
@@ -40,7 +46,7 @@ export function MenuManagementTab({ restaurantId }: MenuManagementTabProps) {
       <div className="border-b border-gray-200">
         {/* Desktop Tabs */}
         <nav className="hidden md:flex -mb-px space-x-8">
-          {menuTabs.map((tab) => (
+          {currentTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -59,7 +65,7 @@ export function MenuManagementTab({ restaurantId }: MenuManagementTabProps) {
 
         {/* Mobile Tabs */}
         <div className="md:hidden flex overflow-x-auto scrollbar-hide">
-          {menuTabs.map((tab) => (
+          {currentTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -83,6 +89,7 @@ export function MenuManagementTab({ restaurantId }: MenuManagementTabProps) {
         {activeTab === 'subcategories' && <SubcategoriesManagement restaurantId={restaurantId} />}
         {activeTab === 'items' && <MenuItemsManagement restaurantId={restaurantId} />}
         {activeTab === 'addons' && <AddonsManagement restaurantId={restaurantId} />}
+
       </div>
     </div>
   );

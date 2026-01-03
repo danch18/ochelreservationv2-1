@@ -20,32 +20,30 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
   const { t } = useTranslation();
   const restaurantConfig = getRestaurantConfig(restaurantId);
 
-  // Custom navigation items for piccolo-next
-  const primaryItems = restaurantId === 'piccolo-next'
-    ? [{ label: 'nav.certifications', href: '/piccolo-next/certifications' }]
+  // Custom navigation items for piccolo
+  const primaryItems = restaurantId === 'piccolo'
+    ? [{ label: 'nav.certifications', href: '/piccolo/certifications' }]
     : [{ label: 'nav.certifications', href: '/Certifications-halal' }];
 
-  const desktopItems = restaurantId === 'piccolo-next'
+  const desktopItems = restaurantId === 'piccolo'
     ? [
-        { label: 'nav.menu', href: '/piccolo-next/menu' },
+        { label: 'nav.menu', href: '/piccolo/menu' },
         { label: 'nav.delivery', href: '#delivery', isDelivery: true },
       ]
     : [
         { label: 'nav.menu', href: '/menu' },
         { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-        { label: 'nav.piccolo', href: '/piccolo' },
       ];
 
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
       {/* Location Selection Popup - Only show on main Magnifiko page */}
-      {/* TEMPORARILY HIDDEN - TO RESTORE: Uncomment the line below */}
-      {/* {restaurantId === 'magnifiko' && <LocationSelectionPopup />} */}
+      {restaurantId === 'magnifiko' && <LocationSelectionPopup />}
 
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
-        logoLink={restaurantId === 'piccolo-next' ? '/piccolo-next' : '/'}
+        logoLink={restaurantId === 'piccolo' ? '/piccolo' : '/'}
         primaryItems={primaryItems}
         desktopItems={desktopItems}
       />
@@ -54,7 +52,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
       <section id="hero" className="relative h-screen w-screen flex items-center justify-center overflow-hidden">
         {/* Image Background (Alternative to Video) */}
         <Image
-          src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Home Hero.jpeg' : '/images/HeroLatestImage.jpeg'}
+          src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Home Hero.jpeg' : '/images/HeroLatestImage.jpeg'}
           alt="Restaurant hero"
           fill
           className="absolute inset-0 w-full h-full object-cover"
@@ -85,7 +83,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
 
         <div className="relative z-10 text-center">
           <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4 whitespace-pre-line" suppressHydrationWarning>
-            {restaurantId === 'piccolo-next' ? 'BIENVENUE CHEZ\nPICCOLO MAGNIFIKO' : t('home.hero.title')}
+            {restaurantId === 'piccolo' ? 'BIENVENUE CHEZ\nPICCOLO MAGNIFIKO' : t('home.hero.title')}
           </h1>
         </div>
       </section>
@@ -118,7 +116,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                {restaurantId === 'piccolo-next' ? "Une expérience unique au cœur de Paris" : t('home.experience.title')}
+                {restaurantId === 'piccolo' ? "Une expérience unique au cœur de Paris" : t('home.experience.title')}
               </h2>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -135,7 +133,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             {/* Center Column - Restaurant Interior */}
             <div className="relative w-full" style={{ aspectRatio: '348/447' }}>
               <Image
-                src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Entrance.jpeg' : content.experience.images.interior}
+                src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Entrance.jpeg' : content.experience.images.interior}
                 alt="Restaurant interior"
                 fill
                 className="object-cover rounded-lg"
@@ -147,7 +145,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             <div className="flex flex-col h-full" style={{ gap: '16px' }}>
               <div className="relative flex-1" style={{ minHeight: '370px' }}>
                 <Image
-                  src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.experience.images.pasta}
+                  src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.experience.images.pasta}
                   alt="Pasta dish"
                   fill
                   className="object-cover rounded-lg"
@@ -190,7 +188,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
 
           {/* View Menu Button */}
           <div className="flex justify-center mt-6">
-            <Link href={restaurantId === 'piccolo-next' ? '/piccolo-next/menu' : '/menu'}>
+            <Link href={restaurantId === 'piccolo' ? '/piccolo/menu' : '/menu'}>
               <button style={{
                 display: 'flex',
                 height: '2.5rem',
@@ -206,7 +204,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 border: 'none',
                 cursor: 'pointer'
               }}>
-                {restaurantId === 'piccolo-next' ? "Dirige vers le Menu Piccolo Magnifiko" : t('home.menu.button')}
+                {restaurantId === 'piccolo' ? "Dirige vers le Menu Piccolo Magnifiko" : t('home.menu.button')}
               </button>
             </Link>
           </div>
@@ -217,7 +215,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
       <section id="hours" className="relative py-32 w-full overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src={restaurantId === 'piccolo-next' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.hours.backgroundImage}
+            src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.hours.backgroundImage}
             alt="Restaurant interior evening"
             fill
             className="object-cover"
@@ -260,7 +258,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             textTransform: 'uppercase',
             marginBottom: '8px'
           }} suppressHydrationWarning>
-            {restaurantId === 'piccolo-next' ? "11H-23H" : t('home.hours.hours')}
+            {restaurantId === 'piccolo' ? "11H-23H" : t('home.hours.hours')}
           </h3>
           <p style={{
             color: '#EAEAEA',
@@ -271,7 +269,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             fontWeight: 400,
             lineHeight: '1.40625rem'
           }}>
-            {restaurantId === 'piccolo-next' ? "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)" : t('home.hours.note')}
+            {restaurantId === 'piccolo' ? "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)" : t('home.hours.note')}
           </p>
         </div>
       </section>

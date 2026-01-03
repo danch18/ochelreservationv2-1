@@ -50,7 +50,7 @@ export function LocationSelectionPopup() {
   // Handle Piccolo Magnifiko selection
   const handlePiccoloMagnifiko = () => {
     handleClose();
-    router.push('/piccolo-next');
+    router.push('/piccolo');
   };
 
   // Removed close on click outside and Escape key functionality

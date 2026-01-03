@@ -47,7 +47,6 @@ const defaultDesktopItems: NavigationItem[] = [
   // TEMPORARILY HIDDEN - Uncomment below to restore reservation button
   // { label: 'nav.reservation', href: '#reservation', isReservation: true },
   { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-  { label: 'nav.piccolo', href: '/piccolo' },
 ];
 
 const defaultSecondaryItems: NavigationItem[] = [

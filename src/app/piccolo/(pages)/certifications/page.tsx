@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 /**
  * Piccolo Certifications Page (Development Version)
- * This is at /piccolo-next/certifications
+ * This is at /piccolo/certifications
  * Displays halal certifications for Piccolo restaurant
  */
 export default function PiccoloNextCertificationsHalal() {
@@ -33,7 +33,7 @@ export default function PiccoloNextCertificationsHalal() {
         </a>
       </div>
 
-      <CertificationsHalalPage restaurantId="piccolo-next" />
+      <CertificationsHalalPage restaurantId="piccolo" />
     </ErrorBoundary>
   );
 }

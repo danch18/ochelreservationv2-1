@@ -9,7 +9,7 @@ export const PICCOLO_SUFFIX = ' piccolo';
  * Determines if a restaurant should have its suffix applied
  */
 export function shouldApplySuffix(restaurantId: string): boolean {
-  return restaurantId === 'piccolo' || restaurantId === 'piccolo-next';
+  return restaurantId === 'piccolo';
 }
 
 /**

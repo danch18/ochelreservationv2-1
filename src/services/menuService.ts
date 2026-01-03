@@ -23,6 +23,7 @@ export interface Category {
   updated_at?: string;
   created_by?: number | null;
   updated_by?: number | null;
+  price?: number | null;
 }
 
 export interface Subcategory {
@@ -464,76 +465,129 @@ export const menuItemService = {
   },
 
   async create(menuItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'order'>): Promise<MenuItem> {
-    // Get the max order value within this subcategory to assign next order (filtered by restaurant_id)
-    const { data: maxOrderData } = await supabase
-      .from('menu_items')
-      .select('order')
-      .eq('subcategory_id', menuItem.subcategory_id)
-      .eq('restaurant_id', menuItem.restaurant_id)
-      .order('order', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    try {
+      // Get the max order value within this subcategory to assign next order (filtered by restaurant_id)
+      const { data: maxOrderData, error: orderError } = await supabase
+        .from('menu_items')
+        .select('order')
+        .eq('subcategory_id', menuItem.subcategory_id)
+        .eq('restaurant_id', menuItem.restaurant_id)
+        .order('order', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-    const nextOrder = (maxOrderData?.order || 0) + 1;
-
-    // Add restaurant suffix to all title, text, and description fields for piccolo
-    const menuItemWithSuffix = addSuffixToFields(
-      menuItem,
-      menuItem.restaurant_id,
-      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
-    );
-
-    const { data, error } = await supabase
-      .from('menu_items')
-      .insert({ ...menuItemWithSuffix, order: nextOrder })
-      .select()
-      .single();
-
-    if (error) {
-      // Provide better error messages for common issues
-      if (error.code === '23505') {
-        // Unique constraint violation
-        if (error.message.includes('title_restaurant_id')) {
-          throw new Error(`Un élément avec le titre "${menuItem.title}" existe déjà pour ce restaurant. Veuillez utiliser un titre différent.`);
-        }
-        throw new Error('Ce titre existe déjà. Veuillez utiliser un titre différent.');
+      if (orderError) {
+        console.error('Error fetching max order:', orderError);
+        throw new Error(`Erreur lors de la récupération de l'ordre: ${orderError.message}`);
       }
-      throw error;
+
+      const nextOrder = (maxOrderData?.order || 0) + 1;
+
+      // Add restaurant suffix to all title, text, and description fields for piccolo
+      const menuItemWithSuffix = addSuffixToFields(
+        menuItem,
+        menuItem.restaurant_id,
+        ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
+      );
+
+      console.log('Creating menu item with data:', menuItemWithSuffix);
+
+      const { data, error } = await supabase
+        .from('menu_items')
+        .insert({ ...menuItemWithSuffix, order: nextOrder })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        // Provide better error messages for common issues
+        if (error.code === '23505') {
+          // Unique constraint violation
+          if (error.message.includes('title_restaurant_id')) {
+            throw new Error(`Un élément avec le titre "${menuItem.title}" existe déjà pour ce restaurant. Veuillez utiliser un titre différent.`);
+          }
+          throw new Error('Ce titre existe déjà. Veuillez utiliser un titre différent.');
+        }
+        if (error.code === '23503') {
+          // Foreign key violation
+          throw new Error(`Erreur de référence: la sous-catégorie ou le restaurant spécifié n'existe pas.`);
+        }
+        if (error.code === '42501') {
+          // Insufficient privileges
+          throw new Error(`Permissions insuffisantes. Veuillez vous assurer que vous êtes connecté avec les droits appropriés.`);
+        }
+        // Generic error with more details
+        throw new Error(`Erreur lors de la sauvegarde: ${error.message} (Code: ${error.code || 'inconnu'})`);
+      }
+
+      console.log('Menu item created successfully:', data);
+      return data;
+    } catch (err) {
+      console.error('Menu item create error:', err);
+      throw err;
     }
-    return data;
   },
 
   async update(id: number, menuItem: Partial<MenuItem>): Promise<MenuItem> {
-    // Get existing menu item to determine restaurant_id
-    const existing = await this.getById(id);
-    if (!existing) throw new Error('Menu item not found');
+    try {
+      // Get existing menu item to determine restaurant_id
+      const existing = await this.getById(id);
+      if (!existing) throw new Error('Élément de menu introuvable');
 
-    // If updating image_path, delete the old image from storage
-    if (menuItem.image_path !== undefined) {
-      if (existing?.image_path && isSupabaseUrl(existing.image_path) && existing.image_path !== menuItem.image_path) {
-        // Delete old image asynchronously (don't wait)
-        deleteImage(existing.image_path).catch(err =>
-          console.warn('Failed to delete old menu item image:', err)
-        );
+      // If updating image_path, delete the old image from storage
+      if (menuItem.image_path !== undefined) {
+        if (existing?.image_path && isSupabaseUrl(existing.image_path) && existing.image_path !== menuItem.image_path) {
+          // Delete old image asynchronously (don't wait)
+          deleteImage(existing.image_path).catch(err =>
+            console.warn('Failed to delete old menu item image:', err)
+          );
+        }
       }
+
+      // Add restaurant suffix to all title, text, and description fields for piccolo
+      const menuItemWithSuffix = addSuffixToFields(
+        menuItem,
+        existing.restaurant_id,
+        ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
+      );
+
+      console.log('Updating menu item:', { id, data: menuItemWithSuffix });
+
+      const { data, error } = await supabase
+        .from('menu_items')
+        .update(menuItemWithSuffix)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase update error:', error);
+        // Provide better error messages for common issues
+        if (error.code === '23505') {
+          // Unique constraint violation
+          if (error.message.includes('title_restaurant_id')) {
+            throw new Error(`Un élément avec le titre "${menuItem.title}" existe déjà pour ce restaurant. Veuillez utiliser un titre différent.`);
+          }
+          throw new Error('Ce titre existe déjà. Veuillez utiliser un titre différent.');
+        }
+        if (error.code === '23503') {
+          // Foreign key violation
+          throw new Error(`Erreur de référence: la sous-catégorie spécifiée n'existe pas.`);
+        }
+        if (error.code === '42501') {
+          // Insufficient privileges
+          throw new Error(`Permissions insuffisantes. Veuillez vous assurer que vous êtes connecté avec les droits appropriés.`);
+        }
+        // Generic error with more details
+        throw new Error(`Erreur lors de la mise à jour: ${error.message} (Code: ${error.code || 'inconnu'})`);
+      }
+
+      console.log('Menu item updated successfully:', data);
+      return data;
+    } catch (err) {
+      console.error('Menu item update error:', err);
+      throw err;
     }
-
-    // Add restaurant suffix to all title, text, and description fields for piccolo
-    const menuItemWithSuffix = addSuffixToFields(
-      menuItem,
-      existing.restaurant_id,
-      ['title', 'title_en', 'title_it', 'title_es', 'text', 'text_en', 'text_it', 'text_es', 'description', 'description_en', 'description_it', 'description_es']
-    );
-
-    const { data, error } = await supabase
-      .from('menu_items')
-      .update(menuItemWithSuffix)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
   },
 
   async delete(id: number): Promise<void> {
