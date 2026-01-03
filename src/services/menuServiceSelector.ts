@@ -10,6 +10,16 @@ import { RestaurantId } from '@/config/restaurants';
 import * as MagnifikoService from './menuService';
 import * as PiccoloService from './piccoloMenuService';
 
+/**
+ * Get the appropriate translation function based on restaurant ID
+ */
+export function getTranslatedFieldForRestaurant(restaurantId: RestaurantId) {
+  if (restaurantId === 'piccolo') {
+    return PiccoloService.getPiccoloTranslatedField;
+  }
+  return MagnifikoService.getTranslatedField;
+}
+
 export function getMenuServices(restaurantId: RestaurantId) {
   const isPiccolo = restaurantId === 'piccolo';
 

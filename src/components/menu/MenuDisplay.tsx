@@ -5,14 +5,13 @@ import { cn } from '@/lib';
 import MenuItemCard from './MenuItemCard';
 import MenuItemSkeleton from './MenuItemSkeleton';
 import {
-  getTranslatedField,
   type Category,
   type MenuItem,
   type Addon,
   type Subcategory
 } from '@/services/menuService';
 import type { PiccoloSetMenu } from '@/services/piccoloMenuService';
-import { getMenuServices } from '@/services/menuServiceSelector';
+import { getMenuServices, getTranslatedFieldForRestaurant } from '@/services/menuServiceSelector';
 import { RestaurantId } from '@/config/restaurants';
 import { useTranslation } from '@/contexts/LanguageContext';
 
@@ -43,6 +42,9 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
   // Get the appropriate services based on restaurant
   const services = getMenuServices(restaurantId);
   const { menuService } = services;
+
+  // Get the appropriate translation function based on restaurant
+  const getTranslatedField = getTranslatedFieldForRestaurant(restaurantId);
 
   const { t, locale } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
