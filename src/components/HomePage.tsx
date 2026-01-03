@@ -83,7 +83,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
 
         <div className="relative z-10 text-center">
           <h1 className="font-eb-garamond text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.1em] md:tracking-[0.2em] mb-8 px-4 whitespace-pre-line" suppressHydrationWarning>
-            {restaurantId === 'piccolo' ? 'BIENVENUE CHEZ\nPICCOLO MAGNIFIKO' : t('home.hero.title')}
+            {restaurantId === 'piccolo' ? t('piccolo.hero.title') : t('home.hero.title')}
           </h1>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 lineHeight: '1.8rem',
                 textTransform: 'uppercase'
               }} suppressHydrationWarning>
-                {restaurantId === 'piccolo' ? "Une expérience unique au cœur de Paris" : t('home.experience.title')}
+                {restaurantId === 'piccolo' ? t('piccolo.experience.title') : t('home.experience.title')}
               </h2>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -258,7 +258,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             textTransform: 'uppercase',
             marginBottom: '8px'
           }} suppressHydrationWarning>
-            {restaurantId === 'piccolo' ? "11H-23H" : t('home.hours.hours')}
+            {restaurantId === 'piccolo' ? t('piccolo.hours.hours') : t('home.hours.hours')}
           </h3>
           <p style={{
             color: '#EAEAEA',
@@ -269,7 +269,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             fontWeight: 400,
             lineHeight: '1.40625rem'
           }}>
-            {restaurantId === 'piccolo' ? "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)" : t('home.hours.note')}
+            {restaurantId === 'piccolo' ? t('piccolo.hours.note') : t('home.hours.note')}
           </p>
         </div>
       </section>

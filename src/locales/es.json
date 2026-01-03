@@ -173,6 +173,18 @@
   "menuPage": {
     "title": "NUESTRO MENÚ"
   },
+  "piccolo": {
+    "hero": {
+      "title": "BIENVENIDO A\nPICCOLO MAGNIFIKO"
+    },
+    "experience": {
+      "title": "Una experiencia única en el corazón de París"
+    },
+    "hours": {
+      "hours": "11:00-23:00",
+      "note": "(Excepto viernes 14:00-Medianoche y sábado 11:00-Medianoche)"
+    }
+  },
   "common": {
     "loading": "Cargando...",
     "error": "Ocurrió un error",
