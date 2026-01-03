@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib';
 import MenuItemCard from './MenuItemCard';
 import MenuItemSkeleton from './MenuItemSkeleton';
@@ -43,10 +43,14 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
   const services = getMenuServices(restaurantId);
   const { menuService } = services;
 
-  // Get the appropriate translation function based on restaurant
-  const getTranslatedField = getTranslatedFieldForRestaurant(restaurantId);
-
   const { t, locale } = useTranslation();
+
+  // Get the appropriate translation function based on restaurant
+  // Memoize to ensure proper reactivity when locale changes
+  const getTranslatedField = useMemo(
+    () => getTranslatedFieldForRestaurant(restaurantId),
+    [restaurantId]
+  );
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeTab, setActiveTab] = useState(0);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
@@ -300,7 +304,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
       // Trigger fade in
       setTimeout(() => setIsFading(false), 50);
     }, 150);
-  }, [activeTab, categories, locale, t]);
+  }, [activeTab, categories, locale, t, getTranslatedField, menuDataCache]);
 
   if (categories.length === 0 && !loading) {
     return (
@@ -320,7 +324,7 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-1 md:gap-1">
             {categories.map((category, index) => (
               <button
-                key={category.id}
+                key={`${category.id}-${locale}`}
                 onClick={() => {
                   setActiveTab(index);
                   // Scroll selected tab to center on mobile
