@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { getRestaurantIdFromPath } from '@/config/restaurants';
 
 // Global reference for opening the popup
 let openDeliveryPopupGlobal: (() => void) | null = null;
@@ -14,9 +16,25 @@ export const openDeliveryPopup = () => {
 
 export function DeliveryPopup() {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Detect which restaurant we're on
+  const restaurantId = getRestaurantIdFromPath(pathname);
+
+  // Define delivery links for each restaurant
+  const deliveryLinks = {
+    magnifiko: {
+      uberEats: 'https://www.ubereats.com/fr/store/magnifiko/KZMzirofRcaWBMZN9TWreA?srsltid=AfmBOoqmzepjgRkylRxN0rPgdv14UGlGR-omHI3ugZUQQNotbxsIxKj9',
+      deliveroo: 'https://deliveroo.fr/fr/menu/Paris/ivry-sur-seine-centre/love-pizza-ivry',
+    },
+    piccolo: {
+      uberEats: 'https://www.order.store/fr/store/piccolo-magnifiko/92rlKDUMSHajm9zjYDP4Mw',
+      deliveroo: 'https://deliveroo.fr/fr/menu/Paris/ivry-sur-seine-centre/love-pizza-ivry', // TODO: Update this link later
+    },
+  };
 
   // Set up global reference and event listener
   useEffect(() => {
@@ -145,7 +163,7 @@ export function DeliveryPopup() {
         {/* Buttons */}
         <div className="flex gap-4 w-full">
           <button
-            onClick={() => window.open('https://www.ubereats.com/fr/store/magnifiko/KZMzirofRcaWBMZN9TWreA?srsltid=AfmBOoqmzepjgRkylRxN0rPgdv14UGlGR-omHI3ugZUQQNotbxsIxKj9', '_blank')}
+            onClick={() => window.open(deliveryLinks[restaurantId].uberEats, '_blank')}
             style={{
               display: 'flex',
               height: '2.5rem',
@@ -166,7 +184,7 @@ export function DeliveryPopup() {
             Uber Eats
           </button>
           <button
-            onClick={() => window.open('https://deliveroo.fr/fr/menu/Paris/ivry-sur-seine-centre/love-pizza-ivry', '_blank')}
+            onClick={() => window.open(deliveryLinks[restaurantId].deliveroo, '_blank')}
             style={{
               display: 'flex',
               height: '2.5rem',

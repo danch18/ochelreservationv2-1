@@ -161,7 +161,8 @@
   },
   "delivery": {
     "title": "PEDIR EN LÍNEA",
-    "description": "Disfrute de nuestros deliciosos platos italianos halal directamente en casa a través de nuestros socios de entrega."
+    "description": "Disfrute de nuestros deliciosos platos italianos halal directamente en casa a través de nuestros socios de entrega.",
+    "order": "Pedir"
   },
   "certifications": {
     "subtitle": "Nuestras Certificaciones",

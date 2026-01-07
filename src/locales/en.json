@@ -161,7 +161,8 @@
   },
   "delivery": {
     "title": "ORDER ONLINE",
-    "description": "Enjoy our delicious halal Italian dishes directly at home through our delivery partners."
+    "description": "Enjoy our delicious halal Italian dishes directly at home through our delivery partners.",
+    "order": "Order"
   },
   "certifications": {
     "subtitle": "Our Certifications",

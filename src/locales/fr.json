@@ -166,7 +166,8 @@
   },
   "delivery": {
     "title": "COMMANDEZ EN LIGNE",
-    "description": "Savourez nos délicieux plats italiens halal directement chez vous grâce à nos partenaires de livraison."
+    "description": "Savourez nos délicieux plats italiens halal directement chez vous grâce à nos partenaires de livraison.",
+    "order": "Commander"
   },
   "certifications": {
     "subtitle": "Nos Certifications",

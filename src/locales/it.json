@@ -161,7 +161,8 @@
   },
   "delivery": {
     "title": "ORDINA ONLINE",
-    "description": "Gusta i nostri deliziosi piatti italiani halal direttamente a casa tua tramite i nostri partner di consegna."
+    "description": "Gusta i nostri deliziosi piatti italiani halal direttamente a casa tua tramite i nostri partner di consegna.",
+    "order": "Ordina"
   },
   "certifications": {
     "subtitle": "Le Nostre Certificazioni",
