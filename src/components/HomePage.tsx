@@ -329,7 +329,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             {/* Right Column - Image */}
             <div className="relative w-full" style={{ aspectRatio: '348/447' }}>
               <Image
-                src={content.secrets.image}
+                src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Pinsa Romana.jpeg' : content.secrets.image}
                 alt={content.secrets.title}
                 fill
                 className="object-cover rounded-lg"
