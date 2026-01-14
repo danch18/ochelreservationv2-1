@@ -189,6 +189,11 @@
       "sat": "Sábado 10:30-Medianoche",
       "sun": "Domingo 10:30-23:00"
     },
+    "specialties": {
+      "pizza": {
+        "title": "Pinsa Romana"
+      }
+    },
     "menu": {
       "button": "Descubre el menú Piccolo"
     },

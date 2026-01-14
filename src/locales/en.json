@@ -190,6 +190,11 @@
       "sat": "Saturday 10:30am-Midnight",
       "sun": "Sunday 10:30am-11pm"
     },
+    "specialties": {
+      "pizza": {
+        "title": "Pinsa Romana"
+      }
+    },
     "reservation": {
       "button": "Book a table"
     }

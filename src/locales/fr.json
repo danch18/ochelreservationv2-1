@@ -195,6 +195,11 @@
       "sat": "Samedi 10h30-Minuit",
       "sun": "Dimanche 10h30-23h"
     },
+    "specialties": {
+      "pizza": {
+        "title": "Pinsa Romana"
+      }
+    },
     "reservation": {
       "button": "Réserver une table"
     }
