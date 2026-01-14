@@ -90,7 +90,7 @@ export default function PiccoloNextMenuPage() {
               className={cn(
                 "relative flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat h-[250px] md:h-[300px] lg:h-screen w-full"
               )}
-              style={{ backgroundImage: 'url("/images/piccolo/menu-bg.webp")' }}>
+              style={{ backgroundImage: 'url("/images/piccolo/Home/Tartare de saumon.jpg")' }}>
               {/* Dark overlay */}
               <div className="absolute" style={{
                 width: '100%',
