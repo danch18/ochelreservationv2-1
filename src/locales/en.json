@@ -195,6 +195,10 @@
         "title": "Pinsa Romana"
       }
     },
+    "secrets": {
+      "paragraph1": "We believe that the secret to good pasta also lies in the sauce, which is why all our sauces are prepared on-site using only the finest ingredients. Whether you prefer a classic Arrabiata, a creamy carbonara or a delicious bolognese, we have a sauce that will satisfy your taste buds.",
+      "paragraph2": "In our restaurant, we offer a variety of artisanal pasta shapes and sizes, each with its own unique texture and flavor. Whether you prefer simple tagliatelle or hearty Penne, our selection of pasta dishes will please you."
+    },
     "reservation": {
       "button": "Book a table"
     }

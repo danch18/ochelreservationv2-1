@@ -312,7 +312,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                {t('home.secrets.paragraph1')}
+                {restaurantId === 'piccolo' ? t('piccolo.secrets.paragraph1') : t('home.secrets.paragraph1')}
               </p>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -322,7 +322,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                {t('home.secrets.paragraph2')}
+                {restaurantId === 'piccolo' ? t('piccolo.secrets.paragraph2') : t('home.secrets.paragraph2')}
               </p>
             </div>
 

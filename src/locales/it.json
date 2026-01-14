@@ -194,6 +194,10 @@
         "title": "Pinsa Romana"
       }
     },
+    "secrets": {
+      "paragraph1": "Crediamo che il segreto della buona pasta risieda anche nella salsa, ecco perché tutte le nostre salse sono preparate sul posto utilizzando solo i migliori ingredienti. Che tu preferisca un'Arrabiata classica, una carbonara cremosa o una deliziosa bolognese, abbiamo una salsa che soddisferà il tuo palato.",
+      "paragraph2": "Nel nostro ristorante, offriamo una varietà di forme e dimensioni di pasta artigianale, ognuna con la propria consistenza e sapore unici. Che tu preferisca semplici tagliatelle o sostanziose Penne, la nostra selezione di piatti di pasta ti piacerà."
+    },
     "menu": {
       "button": "Scopri il menu Piccolo"
     },
