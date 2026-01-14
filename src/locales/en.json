@@ -168,6 +168,7 @@
     "subtitle": "Our Certifications",
     "title": "HALAL CERTIFICATIONS",
     "description1": "At Magnifiko, we are committed to upholding the highest halal certification standards. All our ingredients are carefully selected and certified by recognized organizations to guarantee their compliance with Islamic rules.",
+    "description1_piccolo": "At Piccolo Magnifiko, we are committed to upholding the highest halal certification standards. All our ingredients are carefully selected and certified by recognized organizations to guarantee their compliance with Islamic rules.",
     "description2": "Our restaurant is certified by Achahada, one of the most respected halal certification bodies in France. This certification covers our entire supply chain, from supplier selection to dish preparation.",
     "publication": "Achahada Publication"
   },
@@ -183,10 +184,11 @@
     },
     "hours": {
       "hours": "11AM-11PM",
-      "note": "(Except Friday 2pm-Midnight and Saturday 11am-Midnight)"
-    },
-    "menu": {
-      "button": "Discover the Piccolo menu"
+      "note": "(Except Friday 2pm-Midnight and Saturday 11am-Midnight)",
+      "monThu": "Monday to Thursday 10:30am-11pm",
+      "fri": "Friday 1:30pm-Midnight",
+      "sat": "Saturday 10:30am-Midnight",
+      "sun": "Sunday 10:30am-11pm"
     },
     "reservation": {
       "button": "Book a table"

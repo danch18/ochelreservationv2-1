@@ -32,7 +32,7 @@ export function DeliveryPopup() {
     },
     piccolo: {
       uberEats: 'https://www.order.store/fr/store/piccolo-magnifiko/92rlKDUMSHajm9zjYDP4Mw',
-      deliveroo: 'https://deliveroo.fr/fr/menu/Paris/ivry-sur-seine-centre/love-pizza-ivry', // TODO: Update this link later
+      deliveroo: null,
     },
   };
 
@@ -94,9 +94,8 @@ export function DeliveryPopup() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 ${
-        isOpen ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
+        }`}
     >
       {/* Background overlay */}
       <div
@@ -108,9 +107,8 @@ export function DeliveryPopup() {
       {/* Popup content */}
       <div
         ref={popupRef}
-        className={`transition-all duration-300 ease-out ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-        }`}
+        className={`transition-all duration-300 ease-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          }`}
         style={{
           display: 'flex',
           padding: '2rem',
@@ -162,48 +160,52 @@ export function DeliveryPopup() {
 
         {/* Buttons */}
         <div className="flex gap-4 w-full">
-          <button
-            onClick={() => window.open(deliveryLinks[restaurantId].uberEats, '_blank')}
-            style={{
-              display: 'flex',
-              height: '2.5rem',
-              padding: '0 2rem',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: '0.625rem',
-              background: '#FFF2CC',
-              color: '#000',
-              fontFamily: 'Forum',
-              fontSize: '1rem',
-              fontWeight: 400,
-              border: 'none',
-              cursor: 'pointer',
-              flex: 1
-            }}
-          >
-            Uber Eats
-          </button>
-          <button
-            onClick={() => window.open(deliveryLinks[restaurantId].deliveroo, '_blank')}
-            style={{
-              display: 'flex',
-              height: '2.5rem',
-              padding: '0 2rem',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: '0.625rem',
-              background: '#FFF2CC',
-              color: '#000',
-              fontFamily: 'Forum',
-              fontSize: '1rem',
-              fontWeight: 400,
-              border: 'none',
-              cursor: 'pointer',
-              flex: 1
-            }}
-          >
-            Deliveroo
-          </button>
+          {deliveryLinks[restaurantId].uberEats && (
+            <button
+              onClick={() => window.open(deliveryLinks[restaurantId].uberEats!, '_blank')}
+              style={{
+                display: 'flex',
+                height: '2.5rem',
+                padding: '0 2rem',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '0.625rem',
+                background: '#FFF2CC',
+                color: '#000',
+                fontFamily: 'Forum',
+                fontSize: '1rem',
+                fontWeight: 400,
+                border: 'none',
+                cursor: 'pointer',
+                flex: 1
+              }}
+            >
+              Uber Eats
+            </button>
+          )}
+          {deliveryLinks[restaurantId].deliveroo && (
+            <button
+              onClick={() => window.open(deliveryLinks[restaurantId].deliveroo!, '_blank')}
+              style={{
+                display: 'flex',
+                height: '2.5rem',
+                padding: '0 2rem',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '0.625rem',
+                background: '#FFF2CC',
+                color: '#000',
+                fontFamily: 'Forum',
+                fontSize: '1rem',
+                fontWeight: 400,
+                border: 'none',
+                cursor: 'pointer',
+                flex: 1
+              }}
+            >
+              Deliveroo
+            </button>
+          )}
         </div>
       </div>
     </div>

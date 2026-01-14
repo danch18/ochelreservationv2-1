@@ -59,9 +59,10 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
           {
             title: t('footer.hours'),
             items: isPiccolo ? [
-              { label: 'Ouvert tous les jours 11h-23h', text: 'Ouvert tous les jours 11h-23h' },
-              { label: 'Vendredi 14h-Minuit', text: 'Vendredi 14h-Minuit' },
-              { label: 'Samedi 11h-Minuit', text: 'Samedi 11h-Minuit' },
+              { label: t('piccolo.hours.monThu'), text: t('piccolo.hours.monThu') },
+              { label: t('piccolo.hours.fri'), text: t('piccolo.hours.fri') },
+              { label: t('piccolo.hours.sat'), text: t('piccolo.hours.sat') },
+              { label: t('piccolo.hours.sun'), text: t('piccolo.hours.sun') },
             ] : [
               { label: t('footer.openDaily'), text: t('footer.openDaily') },
               { label: t('footer.hours1'), text: t('footer.hours1') },

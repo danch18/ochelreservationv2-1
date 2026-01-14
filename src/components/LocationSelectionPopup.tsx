@@ -9,16 +9,10 @@ export function LocationSelectionPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Show popup on mount (only once - first time ever)
+  // Show popup on mount (every time)
   useEffect(() => {
-    // Check if user has already seen the popup (stored in localStorage)
-    const hasSeenPopup = localStorage.getItem('locationPopupSeen');
-
-    if (!hasSeenPopup) {
-      setIsVisible(true);
-      setIsOpen(true); // Open immediately without animation delay
-      localStorage.setItem('locationPopupSeen', 'true');
-    }
+    setIsVisible(true);
+    setIsOpen(true); // Open immediately without animation delay
   }, []);
 
   // Prevent scrolling on main page when popup is visible
@@ -60,9 +54,8 @@ export function LocationSelectionPopup() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 ${
-        isOpen ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
+        }`}
     >
       {/* Background overlay with blur */}
       <div
@@ -73,9 +66,8 @@ export function LocationSelectionPopup() {
       {/* Popup content */}
       <div
         ref={popupRef}
-        className={`transition-all duration-300 ease-out ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-        }`}
+        className={`transition-all duration-300 ease-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          }`}
         style={{
           display: 'flex',
           padding: '2rem',

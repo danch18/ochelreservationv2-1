@@ -183,7 +183,11 @@
     },
     "hours": {
       "hours": "11:00-23:00",
-      "note": "(Tranne venerdì 14:00-Mezzanotte e sabato 11:00-Mezzanotte)"
+      "note": "(Tranne venerdì 14:00-Mezzanotte e sabato 11:00-Mezzanotte)",
+      "monThu": "Lunedì a Giovedì 10:30-23:00",
+      "fri": "Venerdì 13:30-Mezzanotte",
+      "sat": "Sabato 10:30-Mezzanotte",
+      "sun": "Domenica 10:30-23:00"
     },
     "menu": {
       "button": "Scopri il menu Piccolo"

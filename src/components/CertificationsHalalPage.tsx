@@ -21,13 +21,13 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
 
   const desktopItems = restaurantId === 'piccolo'
     ? [
-        { label: 'nav.menu', href: '/piccolo/menu' },
-        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-      ]
+      { label: 'nav.menu', href: '/piccolo/menu' },
+      { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+    ]
     : [
-        { label: 'nav.menu', href: '/menu' },
-        { label: 'nav.delivery', href: '#delivery', isDelivery: true },
-      ];
+      { label: 'nav.menu', href: '/menu' },
+      { label: 'nav.delivery', href: '#delivery', isDelivery: true },
+    ];
 
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
@@ -88,7 +88,7 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
                 fontWeight: 400,
                 lineHeight: '1.40625rem'
               }}>
-                {t('certifications.description1')}
+                {t(restaurantId === 'piccolo' ? 'certifications.description1_piccolo' : 'certifications.description1')}
               </p>
               <p style={{
                 color: 'rgba(234, 234, 234, 0.70)',
@@ -103,7 +103,12 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
 
               {/* Button */}
               <button
-                onClick={() => window.open('https://www.instagram.com/reel/DJrLIVatQaS/?igsh=MWltdXNrajZkdmFqeA%3D%3D', '_blank')}
+                onClick={() => window.open(
+                  restaurantId === 'piccolo'
+                    ? 'https://achahada.com/les-restaurants/'
+                    : 'https://www.instagram.com/reel/DJrLIVatQaS/?igsh=MWltdXNrajZkdmFqeA%3D%3D',
+                  '_blank'
+                )}
                 style={{
                   display: 'flex',
                   height: '2.5rem',
