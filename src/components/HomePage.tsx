@@ -170,7 +170,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
               title={t('home.menu.pasta.title')}
               description={t('home.menu.pasta.description')}
               note={t('home.menu.pasta.note')}
-              image={content.menu.items[0].image}
+              image={restaurantId === 'piccolo' ? '/images/piccolo/Home/pasta_magnifiko.jpg' : content.menu.items[0].image}
             />
             <MenuCard
               title={restaurantId === 'piccolo' ? t('piccolo.specialties.pizza.title') : t('home.menu.pizza.title')}
