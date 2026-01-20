@@ -188,12 +188,12 @@
       "title": "Une expérience unique au cœur de Paris"
     },
     "hours": {
-      "hours": "11H-23H",
-      "note": "(Sauf Vendredi 14h-Minuit et Samedi 11h-Minuit)",
-      "monThu": "Lundi au Jeudi 10h30-23h",
-      "fri": "Vendredi 13h30-Minuit",
-      "sat": "Samedi 10h30-Minuit",
-      "sun": "Dimanche 10h30-23h"
+      "hours": "10h30 - 15h, 18h - 23h",
+      "note": "(Vendredi 18h - Minuit, Samedi 10h - Minuit, Dimanche 10h - 23h)",
+      "monThu": "Lundi au Jeudi 10h30 - 15h, 18h - 23h",
+      "fri": "Vendredi 18h - Minuit",
+      "sat": "Samedi 10h - Minuit",
+      "sun": "Dimanche 10h - 23h"
     },
     "specialties": {
       "pizza": {

@@ -41,8 +41,8 @@
   "hours": {
     "subtitle": "On vous attend",
     "title": "TOUS LES JOURS",
-    "hours": "11H - MINUIT",
-    "note": "(Sauf Vendredi: 14h - Minuit)",
+    "hours": "10h30 - 15h, 18h - 23h",
+    "note": "(Vendredi 18h - Minuit, Samedi 10h - Minuit, Dimanche 10h - 23h)",
     "backgroundImage": "/images/piccolo/restaurant-evening.webp"
   },
   "secrets": {

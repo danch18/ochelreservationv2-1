@@ -183,12 +183,12 @@
       "title": "A unique experience in the heart of Paris"
     },
     "hours": {
-      "hours": "11AM-11PM",
-      "note": "(Except Friday 2pm-Midnight and Saturday 11am-Midnight)",
-      "monThu": "Monday to Thursday 10:30am-11pm",
-      "fri": "Friday 1:30pm-Midnight",
-      "sat": "Saturday 10:30am-Midnight",
-      "sun": "Sunday 10:30am-11pm"
+      "hours": "10:30am - 3pm, 6pm - 11pm",
+      "note": "(Friday 6pm - Midnight, Saturday 10am - Midnight, Sunday 10am - 11pm)",
+      "monThu": "Monday to Thursday 10:30am - 3pm, 6pm - 11pm",
+      "fri": "Friday 6pm - Midnight",
+      "sat": "Saturday 10am - Midnight",
+      "sun": "Sunday 10am - 11pm"
     },
     "specialties": {
       "pizza": {
