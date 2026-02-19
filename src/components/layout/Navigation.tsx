@@ -60,7 +60,7 @@ const defaultContactInfo = {
   address: ['123 Avenue de la République', '94200 Ivry-sur-Seine'],
   phone: '01 23 45 67 89',
   email: 'contact@restaurant-lm.com',
-  hours: 'Ouvert tous les jours • 11h00 - 00h00',
+  hours: 'Lun-Jeu: 11h-15h, 18h-Minuit | Ven: 14h-Minuit | Sam-Dim: 11h-Minuit',
 };
 
 const defaultSocialLinks: NavigationItem[] = [

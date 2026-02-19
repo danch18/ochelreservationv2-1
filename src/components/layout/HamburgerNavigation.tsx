@@ -180,7 +180,7 @@ export default function HamburgerNavigation() {
                   Tél: 01 23 45 67 89
                 </p>
                 <p className="font-forum text-[#d4af37] text-sm">
-                  Ouvert tous les jours • 11h00 - 00h00
+                  Lun-Jeu: 11h-15h, 18h-Minuit | Ven: 14h-Minuit | Sam-Dim: 11h-Minuit
                 </p>
               </div>
             </div>

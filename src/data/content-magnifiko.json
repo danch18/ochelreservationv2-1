@@ -40,9 +40,9 @@
   },
   "hours": {
     "subtitle": "On vous attend",
-    "title": "TOUS LES JOURS",
-    "hours": "11H - MINUIT",
-    "note": "(Sauf Vendredi: 14h - Minuit)",
+    "title": "HORAIRES",
+    "hours": "LUN-JEU: 11H - 15H, 18H - MINUIT",
+    "note": "VEN: 14h - Minuit | SAM-DIM: 11h - Minuit",
     "backgroundImage": "/images/restaurant-evening.webp"
   },
   "secrets": {

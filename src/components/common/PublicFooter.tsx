@@ -59,15 +59,16 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
           {
             title: t('footer.hours'),
             items: isPiccolo ? [
-              { label: t('piccolo.hours.monThu'), text: t('piccolo.hours.monThu') },
+              { label: t('piccolo.hours.mon'), text: t('piccolo.hours.mon') },
+              { label: t('piccolo.hours.tue'), text: t('piccolo.hours.tue') },
+              { label: t('piccolo.hours.wedThu'), text: t('piccolo.hours.wedThu') },
               { label: t('piccolo.hours.fri'), text: t('piccolo.hours.fri') },
               { label: t('piccolo.hours.sat'), text: t('piccolo.hours.sat') },
               { label: t('piccolo.hours.sun'), text: t('piccolo.hours.sun') },
             ] : [
-              { label: t('footer.openDaily'), text: t('footer.openDaily') },
-              { label: t('footer.hours1'), text: t('footer.hours1') },
+              { label: t('footer.monThu'), text: t('footer.monThu') },
               { label: t('footer.friday'), text: t('footer.friday') },
-              { label: t('footer.hours2'), text: t('footer.hours2') },
+              { label: t('footer.satSun'), text: t('footer.satSun') },
             ],
           },
         ]}

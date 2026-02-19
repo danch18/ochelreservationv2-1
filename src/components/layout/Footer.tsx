@@ -55,9 +55,9 @@ const defaultSections: FooterSection[] = [
   {
     title: 'HORAIRES',
     items: [
-      { label: 'Lundi - Dimanche', text: 'Lundi - Dimanche' },
-      { label: '11h00 - 00h00', text: '11h00 - 00h00' },
-      { label: 'Service continu', text: 'Service continu', highlight: true },
+      { label: 'Lundi au Jeudi: 11h - 15h, 18h - Minuit', text: 'Lundi au Jeudi: 11h - 15h, 18h - Minuit' },
+      { label: 'Vendredi: 14h - Minuit', text: 'Vendredi: 14h - Minuit' },
+      { label: 'Samedi - Dimanche: 11h - Minuit', text: 'Samedi - Dimanche: 11h - Minuit' },
     ],
   },
 ];

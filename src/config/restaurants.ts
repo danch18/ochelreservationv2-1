@@ -76,8 +76,8 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
     email: 'compte.magnifiko@gmail.com',
 
     hours: {
-      regular: '11h - Minuit',
-      special: 'Vendredi: 14h - Minuit',
+      regular: 'Lun-Jeu: 11h - 15h, 18h - Minuit',
+      special: 'Ven: 14h - Minuit | Sam-Dim: 11h - Minuit',
     },
 
     logo: {
@@ -123,8 +123,8 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
     email: 'contact@piccolo-magnifiko.fr', // TODO: Add Piccolo email
 
     hours: {
-      regular: '11h - Minuit',
-      special: 'Vendredi: 14h - Minuit',
+      regular: 'Lun, Mer, Jeu: 10h30 - 15h, 18h - 23h',
+      special: 'Mar: Fermé | Ven: 15h - Minuit | Sam: 10h - Minuit | Dim: 10h - 23h',
     },
 
     logo: {

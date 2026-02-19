@@ -39,9 +39,9 @@
     },
     "hours": {
       "subtitle": "On vous attend",
-      "title": "TOUS LES JOURS",
-      "hours": "11H - MINUIT",
-      "note": "(Sauf Vendredi: 14h - Minuit)"
+      "title": "HORAIRES",
+      "hours": "LUN-JEU: 11H - 15H, 18H - MINUIT",
+      "note": "VEN: 14h - Minuit | SAM-DIM: 11h - Minuit"
     },
     "secrets": {
       "subtitle": "Notre Histoire",
@@ -158,10 +158,9 @@
     "menu": "Menu",
     "about": "À Propos",
     "contact": "Contact",
-    "openDaily": "Ouvert tous les jours",
-    "hours1": "11h - Minuit",
-    "friday": "Vendredi",
-    "hours2": "14h - Minuit",
+    "monThu": "Lundi au Jeudi: 11h - 15h, 18h - Minuit",
+    "friday": "Vendredi: 14h - Minuit",
+    "satSun": "Samedi - Dimanche: 11h - Minuit",
     "copyright": "© 2025 Magnifiko. Tous droits réservés"
   },
   "delivery": {
@@ -189,11 +188,13 @@
     },
     "hours": {
       "hours": "10h30 - 15h, 18h - 23h",
-      "note": "(Vendredi 18h - Minuit, Samedi 10h - Minuit, Dimanche 10h - 23h)",
-      "monThu": "Lundi au Jeudi 10h30 - 15h, 18h - 23h",
-      "fri": "Vendredi 18h - Minuit",
-      "sat": "Samedi 10h - Minuit",
-      "sun": "Dimanche 10h - 23h"
+      "note": "Mardi: Fermé | Ven: 15h - Minuit | Sam: 10h - Minuit | Dim: 10h - 23h",
+      "mon": "Lundi: 10h30 - 15h, 18h - 23h",
+      "tue": "Mardi: Fermé",
+      "wedThu": "Mercredi - Jeudi: 10h30 - 15h, 18h - 23h",
+      "fri": "Vendredi: 15h - Minuit",
+      "sat": "Samedi: 10h - Minuit",
+      "sun": "Dimanche: 10h - 23h"
     },
     "specialties": {
       "pizza": {
