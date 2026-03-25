@@ -41,8 +41,8 @@
   "hours": {
     "subtitle": "On vous attend",
     "title": "HORAIRES",
-    "hours": "LUN-JEU: 11H - 15H, 18H - MINUIT",
-    "note": "VEN: 14h - Minuit | SAM-DIM: 11h - Minuit",
+    "hours": "LUN-JEU: 11H - 22H30",
+    "note": "VEN: 13h30 - Minuit | SAM: 11h - Minuit | DIM: 11h - 22h30",
     "backgroundImage": "/images/restaurant-evening.webp"
   },
   "secrets": {

@@ -180,7 +180,7 @@ export default function HamburgerNavigation() {
                   Tél: 01 23 45 67 89
                 </p>
                 <p className="font-forum text-[#d4af37] text-sm">
-                  Lun-Jeu: 11h-15h, 18h-Minuit | Ven: 14h-Minuit | Sam-Dim: 11h-Minuit
+                  Lun-Jeu: 11h-22h30 | Ven: 13h30-Minuit | Sam: 11h-Minuit | Dim: 11h-22h30
                 </p>
               </div>
             </div>

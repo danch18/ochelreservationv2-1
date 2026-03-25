@@ -68,7 +68,8 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
             ] : [
               { label: t('footer.monThu'), text: t('footer.monThu') },
               { label: t('footer.friday'), text: t('footer.friday') },
-              { label: t('footer.satSun'), text: t('footer.satSun') },
+              { label: t('footer.sat'), text: t('footer.sat') },
+              { label: t('footer.sun'), text: t('footer.sun') },
             ],
           },
         ]}

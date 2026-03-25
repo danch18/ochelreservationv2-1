@@ -535,7 +535,7 @@ function generateConfirmationEmailHTML(reservation: Reservation): string {
             <p>01 49 59 00 94</p>
             <p>compte.magnifiko@gmail.com</p>
             <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
-            <p>Lun-Jeu: 11h - 15h, 18h - Minuit | Ven: 14h - Minuit | Sam-Dim: 11h - Minuit</p>
+            <p>Lun-Jeu: 11h - 22h30 | Ven: 13h30 - Minuit | Sam: 11h - Minuit | Dim: 11h - 22h30</p>
           </div>
 
           <div class="button-container">
@@ -878,7 +878,7 @@ function generateCancellationEmailHTML(reservation: Reservation): string {
             <p>01 49 59 00 94</p>
             <p>compte.magnifiko@gmail.com</p>
             <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
-            <p>Lun-Jeu: 11h - 15h, 18h - Minuit | Ven: 14h - Minuit | Sam-Dim: 11h - Minuit</p>
+            <p>Lun-Jeu: 11h - 22h30 | Ven: 13h30 - Minuit | Sam: 11h - Minuit | Dim: 11h - 22h30</p>
           </div>
 
           <div class="button-container">
@@ -1275,7 +1275,7 @@ function generateSubmissionEmailHTML(reservation: Reservation): string {
               <p><strong>01 49 59 00 94</strong></p>
               <p><strong>compte.magnifiko@gmail.com</strong></p>
               <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
-              <p>Lun-Jeu: 11h - 15h, 18h - Minuit | Ven: 14h - Minuit | Sam-Dim: 11h - Minuit</p>
+              <p>Lun-Jeu: 11h - 22h30 | Ven: 13h30 - Minuit | Sam: 11h - Minuit | Dim: 11h - 22h30</p>
             </div>
           </div>
         </div>
@@ -1646,7 +1646,7 @@ function generateReminderEmailHTML(reservation: Reservation): string {
               <p>01 49 59 00 94</p>
               <p>compte.magnifiko@gmail.com</p>
               <p>63 Bd Paul Vaillant Couturier, 94200 Ivry-sur-Seine, France</p>
-              <p>Lun-Jeu: 11h - 15h, 18h - Minuit | Ven: 14h - Minuit | Sam-Dim: 11h - Minuit</p>
+              <p>Lun-Jeu: 11h - 22h30 | Ven: 13h30 - Minuit | Sam: 11h - Minuit | Dim: 11h - 22h30</p>
             </div>
           </div>
         </div>

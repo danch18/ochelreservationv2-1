@@ -40,8 +40,8 @@
     "hours": {
       "subtitle": "On vous attend",
       "title": "HORAIRES",
-      "hours": "LUN-JEU: 11H - 15H, 18H - MINUIT",
-      "note": "VEN: 14h - Minuit | SAM-DIM: 11h - Minuit"
+      "hours": "LUN-JEU: 11H - 22H30",
+      "note": "VEN: 13h30 - Minuit | SAM: 11h - Minuit | DIM: 11h - 22h30"
     },
     "secrets": {
       "subtitle": "Notre Histoire",
@@ -158,9 +158,10 @@
     "menu": "Menu",
     "about": "À Propos",
     "contact": "Contact",
-    "monThu": "Lundi au Jeudi: 11h - 15h, 18h - Minuit",
-    "friday": "Vendredi: 14h - Minuit",
-    "satSun": "Samedi - Dimanche: 11h - Minuit",
+    "monThu": "Lundi au Jeudi: 11h - 22h30",
+    "friday": "Vendredi: 13h30 - Minuit",
+    "sat": "Samedi: 11h - Minuit",
+    "sun": "Dimanche: 11h - 22h30",
     "copyright": "© 2025 Magnifiko. Tous droits réservés"
   },
   "delivery": {

@@ -34,9 +34,9 @@
     },
     "hours": {
       "subtitle": "Te esperamos",
-      "title": "TODOS LOS DÍAS",
-      "hours": "11:00 - MEDIANOCHE",
-      "note": "(Excepto viernes: 14:00 - Medianoche)"
+      "title": "HORARIOS",
+      "hours": "LUN-JUE: 11:00 - 22:30",
+      "note": "VIE: 13:30 - Medianoche | SÁB: 11:00 - Medianoche | DOM: 11:00 - 22:30"
     },
     "secrets": {
       "subtitle": "Nuestra Historia",
@@ -153,10 +153,10 @@
     "menu": "Menú",
     "about": "Acerca de",
     "contact": "Contacto",
-    "openDaily": "Abierto todos los días",
-    "hours1": "11:00 - Medianoche",
-    "friday": "Viernes",
-    "hours2": "14:00 - Medianoche",
+    "monThu": "Lunes a Jueves: 11:00 - 22:30",
+    "friday": "Viernes: 13:30 - Medianoche",
+    "sat": "Sábado: 11:00 - Medianoche",
+    "sun": "Domingo: 11:00 - 22:30",
     "copyright": "© 2025 Magnifiko. Todos los derechos reservados"
   },
   "delivery": {

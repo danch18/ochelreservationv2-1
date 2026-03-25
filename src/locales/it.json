@@ -34,9 +34,9 @@
     },
     "hours": {
       "subtitle": "Vi aspettiamo",
-      "title": "TUTTI I GIORNI",
-      "hours": "11:00 - MEZZANOTTE",
-      "note": "(Tranne venerdì: 14:00 - Mezzanotte)"
+      "title": "ORARI",
+      "hours": "LUN-GIO: 11:00 - 22:30",
+      "note": "VEN: 13:30 - Mezzanotte | SAB: 11:00 - Mezzanotte | DOM: 11:00 - 22:30"
     },
     "secrets": {
       "subtitle": "La Nostra Storia",
@@ -153,10 +153,10 @@
     "menu": "Menu",
     "about": "Chi Siamo",
     "contact": "Contatto",
-    "openDaily": "Aperto tutti i giorni",
-    "hours1": "11:00 - Mezzanotte",
-    "friday": "Venerdì",
-    "hours2": "14:00 - Mezzanotte",
+    "monThu": "Lunedì a Giovedì: 11:00 - 22:30",
+    "friday": "Venerdì: 13:30 - Mezzanotte",
+    "sat": "Sabato: 11:00 - Mezzanotte",
+    "sun": "Domenica: 11:00 - 22:30",
     "copyright": "© 2025 Magnifiko. Tutti i diritti riservati"
   },
   "delivery": {

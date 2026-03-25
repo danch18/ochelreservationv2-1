@@ -34,9 +34,9 @@
     },
     "hours": {
       "subtitle": "We're waiting for you",
-      "title": "EVERY DAY",
-      "hours": "11AM - MIDNIGHT",
-      "note": "(Except Friday: 2pm - Midnight)"
+      "title": "HOURS",
+      "hours": "MON-THU: 11AM - 10:30PM",
+      "note": "FRI: 1:30PM - Midnight | SAT: 11AM - Midnight | SUN: 11AM - 10:30PM"
     },
     "secrets": {
       "subtitle": "Our Story",
@@ -153,10 +153,10 @@
     "menu": "Menu",
     "about": "About",
     "contact": "Contact",
-    "openDaily": "Open every day",
-    "hours1": "11am - Midnight",
-    "friday": "Friday",
-    "hours2": "2pm - Midnight",
+    "monThu": "Monday to Thursday: 11am - 10:30pm",
+    "friday": "Friday: 1:30pm - Midnight",
+    "sat": "Saturday: 11am - Midnight",
+    "sun": "Sunday: 11am - 10:30pm",
     "copyright": "© 2025 Magnifiko. All rights reserved"
   },
   "delivery": {

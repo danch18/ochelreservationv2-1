@@ -76,8 +76,8 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
     email: 'compte.magnifiko@gmail.com',
 
     hours: {
-      regular: 'Lun-Jeu: 11h - 15h, 18h - Minuit',
-      special: 'Ven: 14h - Minuit | Sam-Dim: 11h - Minuit',
+      regular: 'Lun-Jeu: 11h - 22h30',
+      special: 'Ven: 13h30 - Minuit | Sam: 11h - Minuit | Dim: 11h - 22h30',
     },
 
     logo: {
