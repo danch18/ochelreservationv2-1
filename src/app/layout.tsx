@@ -70,6 +70,14 @@ export default function RootLayout({
           }}
         />
         <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js" async></script>
+        {/* Taap.it Analytics */}
+        <script
+          async
+          src="https://taap.it/scripts/tracker.js"
+          data-project="pk_12b2a2784053c31be24de3e8d974a79a"
+          data-track-outbound="true"
+          data-track-forms="true"
+        ></script>
       </head>
       <body
         className={`${satoshi.variable} ${ebGaramond.variable} ${forum.variable} font-sans antialiased`}
