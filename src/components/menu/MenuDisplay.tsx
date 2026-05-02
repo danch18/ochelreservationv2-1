@@ -14,6 +14,7 @@ import type { PiccoloSetMenu } from '@/services/piccoloMenuService';
 import { getMenuServices, getTranslatedFieldForRestaurant } from '@/services/menuServiceSelector';
 import { RestaurantId } from '@/config/restaurants';
 import { useTranslation } from '@/contexts/LanguageContext';
+import type { SerializedMenuEntry } from '@/services/fetchMenuDataServer';
 
 interface MenuDisplaySection {
   title: string;
@@ -29,16 +30,15 @@ interface MenuDisplaySection {
     model3DGlbUrl?: string;
     model3DUsdzUrl?: string;
   }[];
-  price?: string; // Header price
+  price?: string;
 }
-
-// ... imports
 
 interface MenuDisplayProps {
   restaurantId: RestaurantId;
+  initialData?: SerializedMenuEntry[];
 }
 
-export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
+export default function MenuDisplay({ restaurantId, initialData }: MenuDisplayProps) {
   // Get the appropriate services based on restaurant
   const services = getMenuServices(restaurantId);
   const { menuService } = services;
@@ -51,11 +51,36 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
     () => getTranslatedFieldForRestaurant(restaurantId),
     [restaurantId]
   );
-  const [categories, setCategories] = useState<Category[]>([]);
+
+  const initialCache = useMemo(() => {
+    if (!initialData) return new Map();
+    const map = new Map<number, {
+      category: Category;
+      subcategories: Subcategory[];
+      menuItems: MenuItem[];
+      addons: Addon[];
+      setMenus?: PiccoloSetMenu[];
+    }>();
+    for (const entry of initialData) {
+      map.set(entry.categoryId, entry.data as any);
+    }
+    return map;
+  }, [initialData]);
+
+  const initialCategories = useMemo(() => {
+    if (!initialData) return [];
+    return Array.from(initialCache.values())
+      .map(data => data.category)
+      .filter(cat => cat.title !== 'Formulllle Midi' && cat.title.toLowerCase() !== 'formules');
+  }, [initialData, initialCache]);
+
+  const [categories, setCategories] = useState<Category[]>(initialCategories as any);
   const [activeTab, setActiveTab] = useState(0);
-  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(
+    (initialCategories.length > 0 ? initialCategories[0] : null) as any
+  );
   const [sections, setSections] = useState<MenuDisplaySection[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [menuDataCache, setMenuDataCache] = useState<Map<number, {
     category: Category;
@@ -63,17 +88,16 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
     menuItems: MenuItem[];
     addons: Addon[];
     setMenus?: PiccoloSetMenu[];
-  }>>(new Map());
+  }>>(initialCache as any);
   const [isFading, setIsFading] = useState(false);
 
-  // Load all menu data on mount
+  // Load all menu data on mount (skipped if initialData provided, but realtime still subscribes)
   useEffect(() => {
     const loadAllMenuData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch fresh data (no caching - using realtime updates instead)
         const allMenuData = await menuService.getAllMenuData();
 
         setMenuDataCache(allMenuData as any);
@@ -94,7 +118,9 @@ export default function MenuDisplay({ restaurantId }: MenuDisplayProps) {
       }
     };
 
-    loadAllMenuData();
+    if (!initialData) {
+      loadAllMenuData();
+    }
 
     // Subscribe to realtime changes
     const { supabase } = require('@/lib/supabase');
