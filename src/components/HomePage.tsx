@@ -23,7 +23,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
   // Custom navigation items for piccolo
   const primaryItems = restaurantId === 'piccolo'
     ? [{ label: 'nav.certifications', href: '/piccolo/certifications' }]
-    : [{ label: 'nav.certifications', href: '/Certifications-halal' }];
+    : [{ label: 'nav.certifications', href: '/certifications-halal' }];
 
   const desktopItems = restaurantId === 'piccolo'
     ? [

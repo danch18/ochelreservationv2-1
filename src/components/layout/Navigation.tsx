@@ -39,7 +39,7 @@ export interface NavigationProps {
 
 // NOTE: These will be overridden with translated labels in the component
 const defaultPrimaryItems: NavigationItem[] = [
-  { label: 'nav.certifications', href: '/Certifications-halal' },
+  { label: 'nav.certifications', href: '/certifications-halal' },
 ];
 
 const defaultDesktopItems: NavigationItem[] = [

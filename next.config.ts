@@ -40,6 +40,15 @@ const nextConfig: NextConfig = {
     // Temporarily ignore ESLint during builds
     ignoreDuringBuilds: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/Certifications-halal',
+        destination: '/certifications-halal',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
