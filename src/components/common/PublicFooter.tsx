@@ -77,9 +77,8 @@ export function PublicFooter({ restaurantId = 'magnifiko' }: PublicFooterProps) 
           { label: 'Instagram', href: 'https://www.instagram.com/magnifiko_piccolo/', icon: 'instagram' },
           { label: 'TikTok', href: 'https://www.tiktok.com/@magnifiko.piccolo?_r=1&_t=ZN-928DKVHgHpO', icon: 'tiktok' },
         ] : [
-          { label: 'Instagram', href: '#', icon: 'instagram' },
-          { label: 'Facebook', href: '#', icon: 'facebook' },
-          { label: 'TikTok', href: '#', icon: 'tiktok' },
+          { label: 'Instagram', href: 'https://www.instagram.com/magnifiko.officiel/', icon: 'instagram' },
+          { label: 'TikTok', href: 'https://www.tiktok.com/@magnifikoofficiel', icon: 'tiktok' },
         ]}
         copyright={t('footer.copyright')}
       />
