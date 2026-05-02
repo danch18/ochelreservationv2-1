@@ -206,6 +206,9 @@
       "paragraph1": "Nous croyons que le secret des bonnes pâtes réside aussi dans la sauce, c'est pourquoi toutes nos sauces sont préparées sur place en utilisant uniquement les meilleurs ingrédients. Que vous préfériez une Arrabiata classique, une carbonara crémeuse ou une délicieuse bolognaise, nous avons une sauce qui saura satisfaire vos papilles.",
       "paragraph2": "Dans notre restaurant, nous proposons une variété de formes et de tailles de pâtes artisanales, chacune avec sa propre texture et saveur unique. Que vous préfériez de simples tagliatelle ou de copieux Penne, notre sélection de plats de pâtes saura vous plaire."
     },
+    "menu": {
+      "button": "Découvrez le menu Piccolo"
+    },
     "reservation": {
       "button": "Réserver une table"
     }
