@@ -151,7 +151,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
             {icon && (
               <Image 
                 src={icon} 
-                alt="Date icon" 
+                alt="Calendar icon for reservation date selection" 
                 width={16} 
                 height={16}
                 className="w-4 h-4"
@@ -185,7 +185,7 @@ function DateDropdown({ value, onChange, error, label = "Date", icon, disabled, 
             {icon && (
               <Image 
                 src={icon} 
-                alt="Date icon" 
+                alt="Calendar icon for reservation date selection" 
                 width={16} 
                 height={16}
                 className="w-4 h-4"
@@ -374,7 +374,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
               {icon && (
                 <Image 
                   src={icon} 
-                  alt="Time icon" 
+                  alt="Clock icon for reservation time selection" 
                   width={16} 
                   height={16}
                   className="w-4 h-4"
@@ -409,7 +409,7 @@ function TimeSelector({ value, onChange, error, timeSlots, disabled, icon, isOpe
             {icon && (
               <Image 
                 src={icon} 
-                alt="Time icon" 
+                alt="Clock icon for reservation time selection" 
                 width={16} 
                 height={16}
                 className="w-4 h-4"
@@ -532,7 +532,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
               {icon && (
                 <Image 
                   src={icon} 
-                  alt="Guests icon" 
+                  alt="Guest count icon for party size selection" 
                   width={16} 
                   height={16}
                   className="w-4 h-4"
@@ -567,7 +567,7 @@ function GuestsDropdown({ value, onChange, error, disabled, icon, isOpen = false
             {icon && (
               <Image 
                 src={icon} 
-                alt="Guests icon" 
+                alt="Guest count icon for party size selection" 
                 width={16} 
                 height={16}
                 className="w-4 h-4"
@@ -873,7 +873,7 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               >
                 <Image
                   src="/icons/ochelFullLogoWhite.png"
-                  alt="Logo"
+                  alt="Ochel reservation platform logo"
                   width={30}
                   height={12}
                   className="h-3 w-auto max-sm:h-2"
@@ -1087,9 +1087,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               {/* Reservation Details */}
               <div className="space-y-3 mb-6 max-sm:mb-4 max-sm:space-y-2">
                 <div className="flex items-center gap-3 max-sm:gap-2">
-                  <Image 
-                    src="/icons/guests.svg" 
-                    alt="Guests" 
+                  <Image
+                    src="/icons/guests.svg"
+                    alt="Number of guests selected"
                     width={24} 
                     height={24} 
                     className="w-6 h-6 max-sm:w-5 max-sm:h-5"
@@ -1098,9 +1098,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                 </div>
                 
                 <div className="flex items-center gap-3 max-sm:gap-2">
-                  <Image 
-                    src="/icons/calendar.svg" 
-                    alt="Date" 
+                  <Image
+                    src="/icons/calendar.svg"
+                    alt="Selected reservation date"
                     width={24} 
                     height={24} 
                     className="w-6 h-6 max-sm:w-5 max-sm:h-5"
@@ -1119,9 +1119,9 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
                 </div>
                 
                 <div className="flex items-center gap-3 max-sm:gap-2">
-                  <Image 
-                    src="/icons/clock.svg" 
-                    alt="Time" 
+                  <Image
+                    src="/icons/clock.svg"
+                    alt="Selected reservation time"
                     width={24} 
                     height={24} 
                     className="w-6 h-6 max-sm:w-5 max-sm:h-5"
@@ -1161,8 +1161,8 @@ export function ReservationForm({ onSuccess, onBack, onStepChange }: Reservation
               className="hover:opacity-75 transition-opacity"
             >
               <Image 
-                src="/icons/ochellogofull.png" 
-                alt="Logo" 
+                src="/icons/ochellogofull.png"
+                alt="Ochel reservation platform logo" 
                 width={30}
                 height={12}
                 className="h-3 w-auto max-sm:h-2"

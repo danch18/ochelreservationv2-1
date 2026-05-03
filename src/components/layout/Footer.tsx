@@ -83,7 +83,7 @@ const SocialIcon = ({ icon }: { icon: 'facebook' | 'instagram' | 'tiktok' }) => 
     <div className="w-5 h-5 relative">
       <Image
         src={iconPath}
-        alt={icon}
+        alt={`${iconMap[icon]} social media icon`}
         width={20}
         height={20}
         className="w-full h-full object-contain"
@@ -174,7 +174,7 @@ export default function Footer({
                         <div className="w-5 h-5 flex-shrink-0 relative mt-0.5">
                           <Image
                             src={item.icon}
-                            alt={"footer-icon"}
+                            alt={item.label}
                             width={20}
                             height={20}
                             className="w-full h-full object-contain"
@@ -211,7 +211,7 @@ export default function Footer({
             >
               <Image
                 src="/icons/ochelFullLogoWhite.png"
-                alt="Ochel"
+                alt="Ochel, digital menu with 3d and animated videos"
                 width={48}
                 height={16}
                 className="object-contain"

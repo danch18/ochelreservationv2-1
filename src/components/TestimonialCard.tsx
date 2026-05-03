@@ -62,7 +62,7 @@ export default function TestimonialCard({ rating, title, description, author, li
           {author.image ? (
             <Image
               src={author.image}
-              alt={author.name}
+              alt={`Profile photo of ${author.name}`}
               fill
               className="object-cover"
             />

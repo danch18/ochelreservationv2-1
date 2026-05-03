@@ -51,7 +51,7 @@ export default function HamburgerNavigation() {
             <div className="flex items-center">
               <Image
                 src="/icons/MagnifikoLogo.png"
-                alt="Magnifiko Restaurant"
+                alt="Magnifiko halal Italian restaurant logo"
                 width={50}
                 height={17}
                 className="object-contain"

@@ -113,7 +113,7 @@ export default function MenuItemCard({
               >
                 <Image
                   src="/icons/3d.svg"
-                  alt="3D View"
+                  alt={`View ${title} in 3D`}
                   width={24}
                   height={24}
                   className="w-full h-full cursor-pointer"

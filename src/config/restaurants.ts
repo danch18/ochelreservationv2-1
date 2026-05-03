@@ -82,7 +82,7 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
 
     logo: {
       src: '/icons/MagnifikoLogo.png',
-      alt: 'Magnifiko Restaurant',
+      alt: 'Magnifiko halal Italian restaurant logo',
       width: 50,
       height: 17,
     },
@@ -129,7 +129,7 @@ export const RESTAURANTS: Record<RestaurantId, RestaurantConfig> = {
 
     logo: {
       src: '/images/piccolo/PICCOLO MAGNIFKO LOGO.svg',
-      alt: 'Piccolo Magnifiko',
+      alt: 'Piccolo Magnifiko halal Italian restaurant logo',
       width: 50,
       height: 50,
     },

@@ -158,7 +158,7 @@ function FloatingActionButtonContent({ children, className, currentStep = 1, onC
             <>
               <Image
                 src="/icons/logo.png"
-                alt="Logo"
+                alt="Magnifiko restaurant logo"
                 width={24}
                 height={24}
                 className="w-6 h-6 object-contain"

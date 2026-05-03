@@ -57,7 +57,7 @@ export default function PiccoloMenuPageClient({ initialData }: PiccoloMenuPageCl
         >
           <Image
             src="/icons/Logo Black White.png"
-            alt=""
+            alt="Piccolo Magnifiko logo"
             width={24}
             height={24}
             className="w-6 h-6 object-contain"

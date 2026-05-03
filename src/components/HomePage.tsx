@@ -53,7 +53,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
         {/* Image Background (Alternative to Video) */}
         <Image
           src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Home Hero.jpeg' : '/images/HeroLatestImage.jpeg'}
-          alt="Restaurant hero"
+          alt={restaurantId === 'piccolo' ? 'Piccolo Magnifiko halal Italian restaurant interior in Pigalle Paris 9e' : 'Magnifiko halal Italian restaurant dining experience in Ivry-sur-Seine'}
           fill
           className="absolute inset-0 w-full h-full object-cover"
           priority
@@ -134,7 +134,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             <div className="relative w-full" style={{ aspectRatio: '348/447' }}>
               <Image
                 src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Entrance.jpeg' : content.experience.images.interior}
-                alt="Restaurant interior"
+                alt={restaurantId === 'piccolo' ? 'Piccolo Magnifiko restaurant entrance on Rue Pigalle Paris' : 'Magnifiko restaurant elegant interior with warm lighting in Ivry-sur-Seine'}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 33vw"
@@ -146,7 +146,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
               <div className="relative flex-1" style={{ minHeight: '370px' }}>
                 <Image
                   src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.experience.images.pasta}
-                  alt="Pasta dish"
+                  alt={restaurantId === 'piccolo' ? 'Piccolo Magnifiko cosy restaurant seating area in Paris 9e' : 'Fresh handmade Italian pasta dish served at Magnifiko'}
                   fill
                   className="object-cover rounded-lg"
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -216,7 +216,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
         <div className="absolute inset-0">
           <Image
             src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Piccolo Interior.jpeg' : content.hours.backgroundImage}
-            alt="Restaurant interior evening"
+            alt={restaurantId === 'piccolo' ? 'Piccolo Magnifiko restaurant evening ambiance Paris Pigalle' : 'Magnifiko restaurant interior with evening ambiance Ivry-sur-Seine'}
             fill
             className="object-cover"
           />
@@ -330,7 +330,7 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
             <div className="relative w-full" style={{ aspectRatio: '348/447' }}>
               <Image
                 src={restaurantId === 'piccolo' ? '/images/piccolo/Home/Pinsa Romana.jpeg' : content.secrets.image}
-                alt={content.secrets.title}
+                alt={restaurantId === 'piccolo' ? 'Pinsa Romana artisan flatbread at Piccolo Magnifiko Paris' : 'Handmade Italian sauce and fresh pasta preparation at Magnifiko'}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 50vw"

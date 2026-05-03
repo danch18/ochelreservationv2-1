@@ -47,7 +47,7 @@ export default function CertificationsHalalPage({ restaurantId = 'magnifiko' }: 
             <div className="relative w-full" style={{ aspectRatio: '348/297' }}>
               <Image
                 src={restaurantId === 'piccolo' ? '/images/piccolo/certifications/Piccolo Halal Certificate.jpeg' : '/images/certificate.webp'}
-                alt="Certifications Halal"
+                alt={restaurantId === 'piccolo' ? 'Achahada halal certification for Piccolo Magnifiko restaurant Paris 9e' : 'Achahada halal certification for Magnifiko restaurant Ivry-sur-Seine'}
                 fill
                 className="object-cover rounded-lg"
                 sizes="(max-width: 768px) 100vw, 50vw"
