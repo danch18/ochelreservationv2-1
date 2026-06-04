@@ -10,7 +10,6 @@ import SectionHeader from '@/components/SectionHeader';
 import content from '@/data/content.json';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { getRestaurantConfig, RestaurantId } from '@/config/restaurants';
-import { LocationSelectionPopup } from '@/components/LocationSelectionPopup';
 
 interface HomePageProps {
   restaurantId?: RestaurantId;
@@ -37,9 +36,6 @@ export default function HomePage({ restaurantId = 'magnifiko' }: HomePageProps) 
 
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden w-full max-w-full">
-      {/* Location Selection Popup - Only show on main Magnifiko page */}
-      {restaurantId === 'magnifiko' && <LocationSelectionPopup />}
-
       {/* Navigation */}
       <Navigation
         logo={restaurantConfig.logo}
